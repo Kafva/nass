@@ -10,7 +10,7 @@ RUN apk add -U pass
 
 USER nass
 
-COPY ./server go.mod ./
+COPY main.go go.mod ./server ./
 RUN go build
 ENTRYPOINT ["./nass"]
 
