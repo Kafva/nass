@@ -1,13 +1,5 @@
 package main
 
-// Endpoints:
-//  /get?path=Service/wow
-//  /add?path=Service/wow  { value: '************' }
-//  /del?path=Service/wow
-//  /list
-// We do not need a list endpoint if we are writing purely for
-// web since in that case the data would be directly embedded in the HTML
-//
 // Autehntication: (IP based)
 // The server will accept a mapping file on the form
 //  { User1: [ 10.0.67.1, 10.0.67.2 ], ... }
@@ -49,8 +41,17 @@ func main(){
     log.Printf("%+v\n", users);
 	}
 
-
-  http.HandleFunc("/", Handler)
+	// Endpoints:
+	//  /get?path=Service/wow
+	//  /add?path=Service/wow  { value: '************' }
+	//  /del?path=Service/wow
+	//  /list
+	// We would not need a /list endpoint if we were writing purely for
+	// web since in that case the data would be directly embedded in the HTML
+  http.HandleFunc("/",    ListPass)
+  http.HandleFunc("/get",  GetPass)
+  http.HandleFunc("/add",  AddPass)
+  http.HandleFunc("/del",  DelPass)
 
   listener := CONFIG.BindAddress+":"+strconv.Itoa(CONFIG.Port)
 
@@ -61,8 +62,4 @@ func main(){
 }
 
 
-func Handler(res http.ResponseWriter, req *http.Request) {
-  res.Header().Add("Accept-Encoding", "XDDDDDDDDDDDD") 
-  res.Write([]byte("hey :D\n"))
-}
 
