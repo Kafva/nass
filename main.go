@@ -15,52 +15,44 @@ package main
 // !! The server is only intended to be ran in a wireguard network !!
 // Authentication is indirectly handled by the fact that the wireguard
 // server knows the pubkey and expected origin of every user.
-
-
+//
+// The server will _not_ create keys, a GPG key should be created seperatly
+// for each user.
 
 import (
-  "fmt"
+	"flag"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"strconv"
-	"io/ioutil"
-  "flag"
 
-	"encoding/json"
+	"gopkg.in/yaml.v3"
 
 	. "github.com/Kafva/nass/server"
 )
 
-const PORT = 5678
-
-type UserMapping struct {
-  IPs []string
-}
 
 func main(){ 
-
 	var config = ""
-  flag.StringVar(&config, "c", "", "Path to a YAML user mapping file")
+  flag.StringVar(&config, "c", "", "Path to a YAML configuration file")
   flag.Parse()
 	if config != "" {
 		f,err := ioutil.ReadFile(config)
 		if err != nil {
 			Die(err)
 		}
-    // TODO: Neither yaml nor json seems to have an easy interface for reading
-    // key names.
-    data := []UserMapping{}
-		err = json.Unmarshal(f, &data)
+    users := []User{}
+		err = yaml.Unmarshal(f, &users)
 		if err != nil {
 			Die(err)
 		}
-    fmt.Printf("%+v\n", data);
+    log.Printf("%+v\n", users);
 	}
 
 
   http.HandleFunc("/", Handler)
 
-  listener := "0.0.0.0:"+strconv.Itoa(PORT)
+  listener := CONFIG.BindAddress+":"+strconv.Itoa(CONFIG.Port)
 
   log.Println("Listening on "+listener+"...")
   if err := http.ListenAndServe(listener, nil); err != nil {

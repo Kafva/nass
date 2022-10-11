@@ -12,5 +12,6 @@ USER nass
 
 COPY main.go go.mod ./server ./
 RUN go build
+# RUN pass init
 ENTRYPOINT ["./nass"]
 
