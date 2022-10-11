@@ -5,18 +5,14 @@ RUN adduser \
   --home "/nass" --uid "6000" \
   nass
 
-RUN apk add -U pass git
+RUN apk add -U pass git openssh
 
 WORKDIR /nass
 USER nass
 
-COPY --chown=nass main.go ./server ./
-COPY --chown=nass go.mod ./go.mod
-
-
-RUN go get
+COPY . .
+RUN go get -u
 RUN go build
-RUN pass init
 
 ENTRYPOINT ["./nass"]
 
