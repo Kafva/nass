@@ -5,7 +5,12 @@
 
 ```bash
 docker build --rm --tag=nass .
-docker run -p 5678:5678 -it --entrypoint /bin/ash nass 
+
+# Release
+docker run -p 5678:5678 -d nass
+
+# Development
+docker run -p 5678:5678 -v `pwd`/scripts:/nass/scripts -it --entrypoint /bin/ash nass
 ```
 
 ## Related projects

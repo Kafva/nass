@@ -5,7 +5,7 @@ RUN adduser \
   --home "/nass" --uid "6000" \
   nass
 
-RUN apk add -U pass git openssh
+RUN apk add -U pass gpg-agent git openssh
 
 WORKDIR /nass
 USER nass

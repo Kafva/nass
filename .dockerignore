@@ -2,3 +2,4 @@
 README*
 client
 Dockerfile
+.dockerignore
