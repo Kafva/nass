@@ -7,6 +7,9 @@ func GetPass(res http.ResponseWriter, req *http.Request) {
   res.Write([]byte("hey :D\n"))
 }
 
+/// /add?path=Service/web  
+///   value=*****
+///   generate=falss
 func AddPass(res http.ResponseWriter, req *http.Request) {
   res.Header().Add("Accept-Encoding", "XDDDDDDDDDDDD") 
   res.Write([]byte("hey :D\n"))

@@ -10,6 +10,9 @@ package main
 //
 // The server will _not_ create keys, a GPG key should be created seperatly
 // for each user.
+//
+// To avoid name conflicts each user should have their own subfolder under
+// .password-store
 
 import (
 	"flag"
