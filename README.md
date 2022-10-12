@@ -4,13 +4,14 @@
 ## Server
 
 ```bash
-docker build --rm --tag=nass .
 
 # Release
+docker build --rm --tag=nass .
 docker run -p 5678:5678 -d nass
 
 # Development
-docker run -p 5678:5678 -v `pwd`/scripts:/nass/scripts -it --entrypoint /bin/ash nass
+docker build -f Dockerfile.dev --rm --tag=nass-dev .
+docker run -p 5678:5678 -v `pwd`/scripts:/nass/scripts -it --entrypoint /bin/ash nass-dev
 ```
 
 ## Related projects

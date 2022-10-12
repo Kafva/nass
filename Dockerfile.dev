@@ -1,0 +1,11 @@
+FROM nass
+
+USER root
+RUN apk add -U neovim file
+
+USER nass
+WORKDIR /nass
+COPY . .
+RUN ./scripts/dev_setup.sh
+
+ENTRYPOINT ["./nass"]

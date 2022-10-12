@@ -1,4 +1,4 @@
-FROM golang:alpine3.16
+FROM golang:alpine3.16 as nass
 
 RUN adduser \
   --disabled-password --gecos "" \
