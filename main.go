@@ -8,7 +8,7 @@ package main
 // Authentication is indirectly handled by the fact that the wireguard
 // server knows the pubkey and expected origin of every user.
 //
-// The server will _not_ create keys, a GPG key should be created seperatly
+// The server will _not_ create keys, a GPG key should be created separately
 // for each user.
 //
 // To avoid name conflicts each user should have their own subfolder under
@@ -28,11 +28,14 @@ import (
 
 
 func main(){ 
-	var config = ""
-  flag.StringVar(&config, "c", "", "Path to a YAML configuration file")
+	var user_config = ""
+	var server_config = ""
+  flag.StringVar(&user_config,   "u", "", "Path to user configuration")
+  flag.StringVar(&server_config, "c", "", "Path to server configuration")
   flag.Parse()
-	if config != "" {
-		f,err := ioutil.ReadFile(config)
+
+	if user_config != "" {
+		f,err := ioutil.ReadFile(user_config)
 		if err != nil {
 			Die(err)
 		}
@@ -41,7 +44,20 @@ func main(){
 		if err != nil {
 			Die(err)
 		}
-    log.Printf("%+v\n", users);
+	} else {
+		Die("Missing [-u] users.yml configuration")
+	}
+
+	if server_config != "" {
+		f,err := ioutil.ReadFile(server_config)
+		if err != nil {
+			Die(err)
+		}
+		err = yaml.Unmarshal(f, &CONFIG)
+		if err != nil {
+			Die(err)
+		}
+		log.Printf("%+v\n", CONFIG);
 	}
 
 	// Endpoints:
