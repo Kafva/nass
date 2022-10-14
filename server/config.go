@@ -4,6 +4,26 @@ import (
 	"os"
 )
 
+// An application user
+type User struct {
+	// Display name of the user
+  Name string
+	// The IP addresses which this user can connect from
+  Origins []string
+	// The name of the GPG key file to use for password operations
+  KeyFile string
+}
+
+func (u *User) HasOrigin(origin string) bool {
+	for _,o := range u.Origins {
+		if o == origin {
+			return true
+		}
+	}
+	return false
+}
+
+// Server configuration object
 type Config struct {
 	BindAddress string
 	Port int
@@ -29,4 +49,5 @@ func DefaultConfig() Config {
 }
 
 
+var USERS  = []User{}
 var CONFIG = DefaultConfig()

@@ -8,6 +8,10 @@ package main
 // Authentication is indirectly handled by the fact that the wireguard
 // server knows the pubkey and expected origin of every user.
 //
+// Just for fun, we could add an application specific key that needs
+// to be passed with all requests (configured just like the moat key, shared
+// between all users)
+//
 // The server will _not_ create keys, a GPG key should be created separately
 // for each user.
 //
@@ -39,8 +43,7 @@ func main(){
 		if err != nil {
 			Die(err)
 		}
-    users := []User{}
-		err = yaml.Unmarshal(f, &users)
+		err = yaml.Unmarshal(f, &USERS)
 		if err != nil {
 			Die(err)
 		}
@@ -57,7 +60,6 @@ func main(){
 		if err != nil {
 			Die(err)
 		}
-		log.Printf("%+v\n", CONFIG);
 	}
 
 	// Endpoints:
