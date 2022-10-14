@@ -11,7 +11,12 @@ usage="usage: $(basename $0) <name> <email>"
 NAME="$1"
 EMAIL=$2
 PASSPHRASE=xd
+EXPORT_DIR=keys
 GPG_PARAMS=$(mktemp)
+GPG_BATCH=(
+  --batch --yes --pinentry-mode loopback
+  --passphrase "$PASSPHRASE"
+)
 
 # Key-Type 1: RSA and RSA
 # Subkey-Type 1:
@@ -27,9 +32,10 @@ Name-Email: $EMAIL
 Expire-Date: 0
 EOF
 
-gpg --batch --yes --pinentry-mode loopback \
-  --passphrase "$PASSPHRASE" --gen-key ${GPG_PARAMS}
+gpg ${GPG_BATCH[@]} --gen-key ${GPG_PARAMS}
 
 KEYID=$(gpg --list-keys|grep -B1 "$NAME <$EMAIL>"|head -n1)
-gpg --export-secret-keys $KEYID > "$NAME.gpg"
-info "Backed up secret key to '$NAME.gpg'"
+
+mkdir -p $EXPORT_DIR  
+gpg ${GPG_BATCH[@]} --export-secret-keys $KEYID > "$EXPORT_DIR/$NAME.gpg" &&
+  info "Backed up secret key to '$EXPORT_DIR/$NAME.gpg'"
