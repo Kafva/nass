@@ -22,7 +22,7 @@ import SwiftUI
             // the scene (which we give a transparent background)
             BKG_GRADIENT
                 .edgesIgnoringSafeArea(.vertical) // Fill entire screen
-            ContentView()
+            ListingView()
             // https://stackoverflow.com/a/57518324/9033629
             .navigationBarTitle("")
             .navigationBarHidden(true)

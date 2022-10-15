@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DD166F5828FB2A1700F77455 /* ListingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD166F5728FB2A1700F77455 /* ListingView.swift */; };
 		DD886F4128FAFC6200F121A9 /* nassApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD886F4028FAFC6200F121A9 /* nassApp.swift */; };
-		DD886F4328FAFC6200F121A9 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD886F4228FAFC6200F121A9 /* ContentView.swift */; };
 		DD886F4528FAFC6300F121A9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DD886F4428FAFC6300F121A9 /* Assets.xcassets */; };
 		DD886F5228FAFC6300F121A9 /* nassTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD886F5128FAFC6300F121A9 /* nassTests.swift */; };
 		DDEA3F0228FB1D1800B6C633 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDEA3F0128FB1D1800B6C633 /* Config.swift */; };
@@ -29,9 +29,9 @@
 		1B0D1CBA3082F9D13C1C73EE /* Pods-nass.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nass.release.xcconfig"; path = "Target Support Files/Pods-nass/Pods-nass.release.xcconfig"; sourceTree = "<group>"; };
 		64E120B0C7CB3844318CFC10 /* Pods_nass.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nass.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8381DB9AECDE44B2D5F70478 /* Pods-nass.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nass.debug.xcconfig"; path = "Target Support Files/Pods-nass/Pods-nass.debug.xcconfig"; sourceTree = "<group>"; };
+		DD166F5728FB2A1700F77455 /* ListingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListingView.swift; sourceTree = "<group>"; };
 		DD886F3D28FAFC6200F121A9 /* nass.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = nass.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD886F4028FAFC6200F121A9 /* nassApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = nassApp.swift; sourceTree = "<group>"; };
-		DD886F4228FAFC6200F121A9 /* ContentView.swift */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; tabWidth = 2; };
 		DD886F4428FAFC6300F121A9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DD886F4D28FAFC6300F121A9 /* nassTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = nassTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD886F5128FAFC6300F121A9 /* nassTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = nassTests.swift; sourceTree = "<group>"; };
@@ -74,6 +74,14 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		DD166F5628FB29F800F77455 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				DD166F5728FB2A1700F77455 /* ListingView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		DD886F3428FAFC6200F121A9 = {
 			isa = PBXGroup;
 			children = (
@@ -97,9 +105,9 @@
 		DD886F3F28FAFC6200F121A9 /* client */ = {
 			isa = PBXGroup;
 			children = (
+				DD166F5628FB29F800F77455 /* Views */,
 				DDEA3F0128FB1D1800B6C633 /* Config.swift */,
 				DD886F4028FAFC6200F121A9 /* nassApp.swift */,
-				DD886F4228FAFC6200F121A9 /* ContentView.swift */,
 				DD886F4428FAFC6300F121A9 /* Assets.xcassets */,
 			);
 			path = client;
@@ -238,9 +246,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DD886F4328FAFC6200F121A9 /* ContentView.swift in Sources */,
 				DD886F4128FAFC6200F121A9 /* nassApp.swift in Sources */,
 				DDEA3F0228FB1D1800B6C633 /* Config.swift in Sources */,
+				DD166F5828FB2A1700F77455 /* ListingView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
