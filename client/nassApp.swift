@@ -13,9 +13,23 @@ import SwiftUI
 
 // swiftlint:disable type_name
 @main struct nassApp: App {
-    var body: some Scene {
-        WindowGroup {
+
+  var body: some Scene {
+    WindowGroup {
+      NavigationView {
+        ZStack {
+            // The Gradient background needs to be placed inside the ZStack to appear beneath
+            // the scene (which we give a transparent background)
+            BKG_GRADIENT_LINEAR
+                .edgesIgnoringSafeArea(.vertical) // Fill entire screen
             ContentView()
+            // https://stackoverflow.com/a/57518324/9033629
+            .navigationBarTitle("")
+            .navigationBarHidden(true)
         }
+      }
+      //  https://stackoverflow.com/a/64752414/9033629
+      .navigationViewStyle(StackNavigationViewStyle())
     }
+  }
 }

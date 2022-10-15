@@ -11,6 +11,8 @@
 		DD886F4328FAFC6200F121A9 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD886F4228FAFC6200F121A9 /* ContentView.swift */; };
 		DD886F4528FAFC6300F121A9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DD886F4428FAFC6300F121A9 /* Assets.xcassets */; };
 		DD886F5228FAFC6300F121A9 /* nassTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD886F5128FAFC6300F121A9 /* nassTests.swift */; };
+		DDE872D228FB211C00433C53 /* Extensions in Resources */ = {isa = PBXBuildFile; fileRef = DDE872D128FB211C00433C53 /* Extensions */; };
+		DDEA3F0228FB1D1800B6C633 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDEA3F0128FB1D1800B6C633 /* Config.swift */; };
 		F1E9BA9CDA087BBB578CFC06 /* Pods_nass.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64E120B0C7CB3844318CFC10 /* Pods_nass.framework */; };
 /* End PBXBuildFile section */
 
@@ -34,6 +36,8 @@
 		DD886F4428FAFC6300F121A9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DD886F4D28FAFC6300F121A9 /* nassTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = nassTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD886F5128FAFC6300F121A9 /* nassTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = nassTests.swift; sourceTree = "<group>"; };
+		DDE872D128FB211C00433C53 /* Extensions */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Extensions; sourceTree = "<group>"; };
+		DDEA3F0128FB1D1800B6C633 /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +99,8 @@
 		DD886F3F28FAFC6200F121A9 /* client */ = {
 			isa = PBXGroup;
 			children = (
+				DDE872D128FB211C00433C53 /* Extensions */,
+				DDEA3F0128FB1D1800B6C633 /* Config.swift */,
 				DD886F4028FAFC6200F121A9 /* nassApp.swift */,
 				DD886F4228FAFC6200F121A9 /* ContentView.swift */,
 				DD886F4428FAFC6300F121A9 /* Assets.xcassets */,
@@ -192,6 +198,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DDE872D228FB211C00433C53 /* Extensions in Resources */,
 				DD886F4528FAFC6300F121A9 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -237,6 +244,7 @@
 			files = (
 				DD886F4328FAFC6200F121A9 /* ContentView.swift in Sources */,
 				DD886F4128FAFC6200F121A9 /* nassApp.swift in Sources */,
+				DDEA3F0228FB1D1800B6C633 /* Config.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
