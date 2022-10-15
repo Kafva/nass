@@ -1,10 +1,3 @@
-//
-//  ContentView.swift
-//  nass
-//
-//  Created by Jonas on 2022-10-15.
-//
-
 import SwiftUI
 
 struct ContentView: View {
