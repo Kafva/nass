@@ -2,6 +2,8 @@ package server
 
 import (
 	"log"
+	"os"
+	"strings"
 )
 
 func Die(strs ... interface{}) {
@@ -39,3 +41,9 @@ func logPrefix(color string, label string) {
     log.SetPrefix(label+" ")
   }
 }
+
+func ExpandTilde(path string) string {
+  home,_ := os.UserHomeDir()
+  return strings.ReplaceAll(path, "~", home)
+}
+

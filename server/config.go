@@ -22,15 +22,6 @@ type User struct {
   KeyFile string
 }
 
-func (u *User) HasOrigin(origin string) bool {
-	for _,o := range u.Origins {
-		if o == origin {
-			return true
-		}
-	}
-	return false
-}
-
 // Server configuration object
 type Config struct {
 	BindAddress string
@@ -44,6 +35,14 @@ type Config struct {
 	Passwordstore string
 }
 
+func (u *User) HasOrigin(origin string) bool {
+	for _,o := range u.Origins {
+		if o == origin {
+			return true
+		}
+	}
+	return false
+}
 
 func DefaultConfig() Config {
 	home, _ := os.UserHomeDir()
