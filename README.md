@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./nass/Assets.xcassets/AppIcon.appiconset/120.png"/>
+  <img src="./client/Assets.xcassets/AppIcon.appiconset/120.png"/>
 </p>
 <h1 align="center">nass</h1>
 

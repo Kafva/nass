@@ -82,6 +82,20 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		DD5F4E6028FB446700D1DEEA /* Models */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		DD5F4E6128FB447900D1DEEA /* Util */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Util;
+			sourceTree = "<group>";
+		};
 		DD886F3428FAFC6200F121A9 = {
 			isa = PBXGroup;
 			children = (
@@ -105,6 +119,8 @@
 		DD886F3F28FAFC6200F121A9 /* client */ = {
 			isa = PBXGroup;
 			children = (
+				DD5F4E6128FB447900D1DEEA /* Util */,
+				DD5F4E6028FB446700D1DEEA /* Models */,
 				DD166F5628FB29F800F77455 /* Views */,
 				DDEA3F0128FB1D1800B6C633 /* Config.swift */,
 				DD886F4028FAFC6200F121A9 /* nassApp.swift */,

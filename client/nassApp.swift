@@ -13,7 +13,6 @@ import SwiftUI
 
 // swiftlint:disable type_name
 @main struct nassApp: App {
-
   var body: some Scene {
     WindowGroup {
       NavigationView {
