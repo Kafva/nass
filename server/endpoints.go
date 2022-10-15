@@ -33,55 +33,45 @@ func DelPass(res http.ResponseWriter, req *http.Request) {
   res.Write([]byte("hey: "+user.Name+"\n"))
 }
 
-type JsonDir struct {
-	Children map[string]JsonDir
-}
 
-// Respond with the subtree of the password store that
-// relates to the origin of the request as:
+// Respond with the subtree of the password store for the relevant user:
+//  {
+//    "Name": "user",
+//    "Children": [
+//      {
+//        "Name": "Service",
+//        "Children": [
+//          {
+//            "Name": "acc1.gpg",
+//            "Children": []
+//          },
+//          ...
+//        ]
+//      },
+//		],
+//   ...
 //
-//  [
-//    "dir0": [
-//      "dir1": [
-//          "pass0", "pass1"
-//      ],
-//			"dir2": [...]
-//    ]
-//    "dir1": [...]
-//  ]
 func ListPass(res http.ResponseWriter, req *http.Request) {
   var user = User{}
   if !requestIsValid(res, req, &user) { return }
 
-	dirs := map[string]JsonDir{}
+	dirs := JsonEntry{ Name: user.Name }
 
-	//rootDir := ExpandTilde(CONFIG.Passwordstore)+"/"+user.Name
+	//rootDir := ExpandTilde(CONFIG.Passwordstore)+"/"+user.Name TODO
 	rootDir := ExpandTilde(CONFIG.Passwordstore)
+
 	filepath.WalkDir(rootDir, func (path string, d fs.DirEntry, err error) error {
 		name := d.Name()
-		if strings.HasPrefix(name, ".git") || name == ".gpg-id" {
-			if d.IsDir() {
+		if name == ".git" {
 				return filepath.SkipDir
-			} else {
+		}
+		if strings.HasPrefix(name, ".git") || name == ".gpg-id" || 
+			name == filepath.Base(rootDir) {
 				return nil
-			}
 		}
 
-		// Extract the parent directories relative to the rootDir
-		nodes := strings.Split(strings.TrimPrefix(path, rootDir), "/")
-
-		// Go down the corresponding number of levels in the `dirs`
-		cursor := dirs
-
-		for _,node := range nodes {
-			// Create a new `JsonDir` if a matching entry does not already exist
-			// at the current level
-			if _, ok := cursor[node]; !ok {
-				cursor[node] = JsonDir{ Children: map[string]JsonDir{} }
-			}
-			cursor = cursor[node].Children
-		}
-
+		nodes := strings.Split(strings.TrimPrefix(path, rootDir+"/"), "/")
+		dirs.AddChildren(nodes)
 		return nil
 	})
 
@@ -101,7 +91,7 @@ func requestIsValid(res http.ResponseWriter, req *http.Request, user *User) bool
 
   if req.Header.Get(PSK_HEADER) != os.Getenv(PSK_ENV) {
     Warn("Invalid PSK received from "+ipFromAddr(req))
-    return errorResponse(res, "Invalid PSK")
+    return errorResponse(res, "Unauthorized")
   }
   *user = mapReqToUser(req)
   if user.Name == "" {
@@ -133,10 +123,8 @@ func mapReqToUser(req *http.Request) User {
 
 func errorResponse(res http.ResponseWriter, msg string) bool {
   res.WriteHeader(http.StatusUnauthorized)
-  res.Write([]byte("{ error: \""+msg+"\" }\n"))
+  res.Write([]byte("{ \"Error\": \""+msg+"\" }\n"))
   return false
 }
-
-
 
 

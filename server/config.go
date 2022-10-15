@@ -12,16 +12,6 @@ const PSK_ENV = "NASS_KEY"
 // HTTP header to use for the PSK
 const PSK_HEADER = "x-creds"
 
-// An application user
-type User struct {
-	// Display name of the user
-  Name string
-	// The IP addresses which this user can connect from
-  Origins []string
-	// The name of the GPG key file to use for password operations
-  KeyFile string
-}
-
 // Server configuration object
 type Config struct {
 	BindAddress string
@@ -33,15 +23,6 @@ type Config struct {
 	// Each user will have their resources stored
 	// under a top-level folder that matches their name (UID)
 	Passwordstore string
-}
-
-func (u *User) HasOrigin(origin string) bool {
-	for _,o := range u.Origins {
-		if o == origin {
-			return true
-		}
-	}
-	return false
 }
 
 func DefaultConfig() Config {
