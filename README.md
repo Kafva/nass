@@ -1,8 +1,9 @@
-<p align="center">
-  <img src="./client/Assets.xcassets/AppIcon.appiconset/120.png"/>
-</p>
 <h1 align="center">nass</h1>
 
+## Client
+```bash
+vite build
+```
 
 ## Server
 
