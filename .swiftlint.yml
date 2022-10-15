@@ -1,0 +1,7 @@
+disabled_rules:
+  - colon
+
+included:
+  - client
+
+line_length: 80
