@@ -7,11 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DD22083D28FB2396007567B8 /* Color+hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD22083C28FB2396007567B8 /* Color+hex.swift */; };
 		DD886F4128FAFC6200F121A9 /* nassApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD886F4028FAFC6200F121A9 /* nassApp.swift */; };
 		DD886F4328FAFC6200F121A9 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD886F4228FAFC6200F121A9 /* ContentView.swift */; };
 		DD886F4528FAFC6300F121A9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DD886F4428FAFC6300F121A9 /* Assets.xcassets */; };
 		DD886F5228FAFC6300F121A9 /* nassTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD886F5128FAFC6300F121A9 /* nassTests.swift */; };
-		DDE872D228FB211C00433C53 /* Extensions in Resources */ = {isa = PBXBuildFile; fileRef = DDE872D128FB211C00433C53 /* Extensions */; };
 		DDEA3F0228FB1D1800B6C633 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDEA3F0128FB1D1800B6C633 /* Config.swift */; };
 		F1E9BA9CDA087BBB578CFC06 /* Pods_nass.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64E120B0C7CB3844318CFC10 /* Pods_nass.framework */; };
 /* End PBXBuildFile section */
@@ -30,13 +30,13 @@
 		1B0D1CBA3082F9D13C1C73EE /* Pods-nass.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nass.release.xcconfig"; path = "Target Support Files/Pods-nass/Pods-nass.release.xcconfig"; sourceTree = "<group>"; };
 		64E120B0C7CB3844318CFC10 /* Pods_nass.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nass.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8381DB9AECDE44B2D5F70478 /* Pods-nass.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nass.debug.xcconfig"; path = "Target Support Files/Pods-nass/Pods-nass.debug.xcconfig"; sourceTree = "<group>"; };
+		DD22083C28FB2396007567B8 /* Color+hex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Color+hex.swift"; sourceTree = "<group>"; };
 		DD886F3D28FAFC6200F121A9 /* nass.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = nass.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD886F4028FAFC6200F121A9 /* nassApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = nassApp.swift; sourceTree = "<group>"; };
 		DD886F4228FAFC6200F121A9 /* ContentView.swift */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; tabWidth = 2; };
 		DD886F4428FAFC6300F121A9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DD886F4D28FAFC6300F121A9 /* nassTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = nassTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD886F5128FAFC6300F121A9 /* nassTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = nassTests.swift; sourceTree = "<group>"; };
-		DDE872D128FB211C00433C53 /* Extensions */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Extensions; sourceTree = "<group>"; };
 		DDEA3F0128FB1D1800B6C633 /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -76,6 +76,14 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		DD22083B28FB2376007567B8 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				DD22083C28FB2396007567B8 /* Color+hex.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		DD886F3428FAFC6200F121A9 = {
 			isa = PBXGroup;
 			children = (
@@ -99,7 +107,7 @@
 		DD886F3F28FAFC6200F121A9 /* client */ = {
 			isa = PBXGroup;
 			children = (
-				DDE872D128FB211C00433C53 /* Extensions */,
+				DD22083B28FB2376007567B8 /* Extensions */,
 				DDEA3F0128FB1D1800B6C633 /* Config.swift */,
 				DD886F4028FAFC6200F121A9 /* nassApp.swift */,
 				DD886F4228FAFC6200F121A9 /* ContentView.swift */,
@@ -198,7 +206,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DDE872D228FB211C00433C53 /* Extensions in Resources */,
 				DD886F4528FAFC6300F121A9 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -243,6 +250,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DD886F4328FAFC6200F121A9 /* ContentView.swift in Sources */,
+				DD22083D28FB2396007567B8 /* Color+hex.swift in Sources */,
 				DD886F4128FAFC6200F121A9 /* nassApp.swift in Sources */,
 				DDEA3F0228FB1D1800B6C633 /* Config.swift in Sources */,
 			);
