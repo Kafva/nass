@@ -32,47 +32,47 @@ import (
 )
 
 
-func main(){ 
-	var user_config = ""
-	var server_config = ""
+func main(){
+  var user_config = ""
+  var server_config = ""
   flag.StringVar(&user_config,   "u", "", "Path to user configuration")
   flag.StringVar(&server_config, "c", "", "Path to server configuration")
   flag.Parse()
 
-	if user_config != "" {
-		f,err := ioutil.ReadFile(user_config)
-		if err != nil {
-			Die(err)
-		}
-		err = yaml.Unmarshal(f, &USERS)
-		if err != nil {
-			Die(err)
-		}
-	} else {
-		Die("Missing [-u] users.yml configuration")
-	}
+  if user_config != "" {
+    f,err := ioutil.ReadFile(user_config)
+    if err != nil {
+      Die(err)
+    }
+    err = yaml.Unmarshal(f, &USERS)
+    if err != nil {
+      Die(err)
+    }
+  } else {
+    Die("Missing [-u] users.yml configuration")
+  }
 
-	if server_config != "" {
-		f,err := ioutil.ReadFile(server_config)
-		if err != nil {
-			Die(err)
-		}
-		err = yaml.Unmarshal(f, &CONFIG)
-		if err != nil {
-			Die(err)
-		}
-	}
-	if os.Getenv(PSK_ENV) == "" {
-		Die("Missing value for '"+PSK_ENV+"'")
-	}
+  if server_config != "" {
+    f,err := ioutil.ReadFile(server_config)
+    if err != nil {
+      Die(err)
+    }
+    err = yaml.Unmarshal(f, &CONFIG)
+    if err != nil {
+      Die(err)
+    }
+  }
+  if os.Getenv(PSK_ENV) == "" {
+    Die("Missing value for '"+PSK_ENV+"'")
+  }
 
-	// Endpoints:
-	//  /get?path=Service/wow
-	//  /add?path=Service/wow  { value: '************' }
-	//  /del?path=Service/wow
-	//  /list
-	// We would not need a /list endpoint if we were writing purely for
-	// web since in that case the data would be directly embedded in the HTML
+  // Endpoints:
+  //  /get?path=Service/wow
+  //  /add?path=Service/wow  { value: '************' }
+  //  /del?path=Service/wow
+  //  /list
+  // We would not need a /list endpoint if we were writing purely for
+  // web since in that case the data would be directly embedded in the HTML
   http.HandleFunc("/",    ListPass)
   http.HandleFunc("/get",  GetPass)
   http.HandleFunc("/add",  AddPass)
@@ -85,6 +85,4 @@ func main(){
     log.Fatal(err)
   }
 }
-
-
 

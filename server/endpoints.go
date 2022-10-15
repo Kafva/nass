@@ -1,30 +1,36 @@
 package server
 
 import (
-  "net/http"
-  "os"
-  "strings"
+	"net/http"
+	"os"
+	"strings"
 )
 
 func GetPass(res http.ResponseWriter, req *http.Request) {
-  res.Header().Add("Accept-Encoding", "XDDDDDDDDDDDD")
-  res.Write([]byte("hey :D\n"))
+  var user = User{}
+  if !requestIsValid(res, req, &user) { return }
+
+  res.Write([]byte("hey: "+user.Name+"\n"))
 }
 
 // /add?path=Service/web
 //   value=*****
 //   generate=falss
 func AddPass(res http.ResponseWriter, req *http.Request) {
-  res.Header().Add("Accept-Encoding", "XDDDDDDDDDDDD")
-  res.Write([]byte("hey :D\n"))
+  var user = User{}
+  if !requestIsValid(res, req, &user) { return }
+
+  res.Write([]byte("hey: "+user.Name+"\n"))
 }
 
 func DelPass(res http.ResponseWriter, req *http.Request) {
-  res.Header().Add("Accept-Encoding", "XDDDDDDDDDDDD")
-  res.Write([]byte("hey :D\n"))
+  var user = User{}
+  if !requestIsValid(res, req, &user) { return }
+
+  res.Write([]byte("hey: "+user.Name+"\n"))
 }
 
-// Responed with the subtree of the password store that
+// Respond with the subtree of the password store that
 // relates to the origin of the request as:
 //
 //  [
@@ -43,36 +49,47 @@ func ListPass(res http.ResponseWriter, req *http.Request) {
 }
 
 
-// Verify that the correct PSK has been provided and fetch
+// Verify that the correct PSK has been provided and set
 // the `User` that matches the origin of the request
 func requestIsValid(res http.ResponseWriter, req *http.Request, user *User) bool {
   if req.Header.Get(PSK_HEADER) != os.Getenv(PSK_ENV) {
+    Warn("Invalid PSK received from "+ipFromAddr(req))
     return errorResponse(res, "Invalid PSK")
   }
   *user = mapReqToUser(req)
   if user.Name == "" {
+    Warn("Origin has no matching user: "+ipFromAddr(req))
     return errorResponse(res, "Invalid origin or user")
   }
   return true
 }
 
-func mapReqToUser(req *http.Request) User {
+func ipFromAddr(req *http.Request) string {
   remoteAddr := strings.SplitN(req.RemoteAddr, ":", 2)
   if len(remoteAddr) == 2 {
-    remoteIP := remoteAddr[0]
-
-    for _,user := range USERS {
-      if user.HasOrigin(remoteIP) {
-        return user
-      }
-    }
+    return remoteAddr[0]
+  } else {
+    return ""
   }
+}
 
+func mapReqToUser(req *http.Request) User {
+  if remoteIP := ipFromAddr(req); remoteIP != "" {
+     for _,user := range USERS {
+       if user.HasOrigin(remoteIP) {
+         return user
+       }
+     }
+  }
   return User{}
 }
 
 func errorResponse(res http.ResponseWriter, msg string) bool {
+  res.WriteHeader(http.StatusUnauthorized)
   res.Write([]byte("{ error: \""+msg+"\" }\n"))
   return false
 }
+
+
+
 

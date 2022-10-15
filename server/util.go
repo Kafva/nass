@@ -11,8 +11,8 @@ func Die(strs ... interface{}) {
 }
 
 func Info(strs ... interface{}) {
-	logPrefix("32", "INFO")
-	log.Println(strs ...)
+  logPrefix("32", "INFO")
+  log.Println(strs ...)
 }
 
 func Debug(strs ... interface{}) {
