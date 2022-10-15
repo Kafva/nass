@@ -20,7 +20,7 @@ import SwiftUI
         ZStack {
             // The Gradient background needs to be placed inside the ZStack to appear beneath
             // the scene (which we give a transparent background)
-            BKG_GRADIENT_LINEAR
+            BKG_GRADIENT
                 .edgesIgnoringSafeArea(.vertical) // Fill entire screen
             ContentView()
             // https://stackoverflow.com/a/57518324/9033629
