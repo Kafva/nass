@@ -23,6 +23,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 
 	"gopkg.in/yaml.v3"
@@ -60,6 +61,9 @@ func main(){
 		if err != nil {
 			Die(err)
 		}
+	}
+	if os.Getenv(PSK_ENV) == "" {
+		Die("Missing value for '"+PSK_ENV+"'")
 	}
 
 	// Endpoints:

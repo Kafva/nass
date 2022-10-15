@@ -4,6 +4,14 @@ import (
 	"os"
 )
 
+// Name of the environement variable that contains the pre-shared key
+// for the application. All users utilise the same PSK and are identified
+// based on their source IP.
+const PSK_ENV = "NASS_KEY"
+
+// HTTP header to use for the PSK
+const PSK_HEADER = "x-creds"
+
 // An application user
 type User struct {
 	// Display name of the user

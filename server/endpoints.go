@@ -2,6 +2,7 @@ package server
 
 import (
 	"net/http"
+	"os"
 	"strings"
 )
 
@@ -35,12 +36,23 @@ func DelPass(res http.ResponseWriter, req *http.Request) {
 ///		"dir1": [...]
 ///	]
 func ListPass(res http.ResponseWriter, req *http.Request) {
+  if !hasValidKey(req) {
+		res.Write([]byte{})
+  }
 	user := mapReqToUser(req)
 	if user.Name == "" {
 		res.Write([]byte{})
 	} else {
 		res.Write([]byte("hey: "+user.Name+"\n"))
 	}
+}
+
+func errorResponse(res http.ResponseWriter) {
+
+}
+
+func hasValidKey(req *http.Request) bool {
+  return req.Header.Get(PSK_HEADER) == os.Getenv(PSK_ENV)
 }
 
 func mapReqToUser(req *http.Request) User {
