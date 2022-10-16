@@ -16,16 +16,20 @@
   const entry = { name: "root", subitems:[] } as PassEntry
   const tmpl = GetHTMLElement<HTMLDivElement>("#tmpl")
   const rootEntry = PassEntryFromDOM(tmpl, entry)
-
 </script>
 
 <main>
   <h1>nass</h1>
-  <PasswordTree entry={rootEntry} />
+  <PasswordTree entry={rootEntry}/>
 </main>
 
-<style>
+<style global>
 
-
+html, body {
+  font-family: Arial;
+  height: 100%;
+  background-image: linear-gradient(to right, #23283d, #1f1f47);
+  color: #f5e4f3;
+}
 
 </style>
