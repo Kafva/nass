@@ -3,6 +3,7 @@ package server
 import (
 	"io/fs"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strings"
 	"text/template"
@@ -38,6 +39,12 @@ func TemplateHook(next http.Handler) http.Handler {
 			var tmpl = template.Must(template.ParseFiles(WEBROOT+"/index.html"))
 
       rootDir := password_root_dir(&user)
+      if _, err := os.Stat(rootDir); err != nil {
+        Err(err.Error())
+        ErrorResponse(res, "Missing passwordstore", http.StatusInternalServerError)
+        return
+      }
+
       passTree := PassEntry{ Name: user.Name }
 
       filepath.WalkDir(rootDir, func (path string, d fs.DirEntry, err error) error {
@@ -67,8 +74,8 @@ func TemplateHook(next http.Handler) http.Handler {
   })
 }
 
-func ErrorResponse(res http.ResponseWriter, msg string) bool {
-  res.WriteHeader(http.StatusUnauthorized)
+func ErrorResponse(res http.ResponseWriter, msg string, code int) bool {
+  res.WriteHeader(code)
 	res.Header().Set("Content-Type", "application/json")
   res.Write([]byte("{ \"Error\": \""+msg+"\" }\n"))
   return false
@@ -90,7 +97,7 @@ func MapReqToUser(res http.ResponseWriter, req *http.Request) User {
 
   if user.Name == "" {
     Warn("Origin has no matching user: "+req.RemoteAddr)
-    ErrorResponse(res, "Invalid origin or user")
+    ErrorResponse(res, "Invalid origin or user", http.StatusUnauthorized)
   }
 
   return user

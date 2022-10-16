@@ -1,11 +1,14 @@
 FROM nass
 
 USER root
-RUN apk add -U npm go neovim file
 
-USER nass
-WORKDIR /nass
+RUN apk add -U npm go neovim file entr
+RUN npm i -g pnpm vite
+
+WORKDIR /root
 COPY . .
+RUN go get -u
+RUN pnpm i
 RUN ./scripts/dev.sh
 
 ENTRYPOINT ["./nass", "-c", "${CONF}", "-u", "${USERS}"]

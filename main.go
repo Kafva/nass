@@ -19,14 +19,14 @@ package main
 // .password-store
 
 import (
-  "flag"
-  "io/ioutil"
-  "net/http"
-  "strconv"
+	"flag"
+	"io/ioutil"
+	"net/http"
+	"strconv"
 
-  "gopkg.in/yaml.v3"
+	"gopkg.in/yaml.v3"
 
-  . "github.com/Kafva/nass/server"
+	. "github.com/Kafva/nass/server"
 )
 
 
