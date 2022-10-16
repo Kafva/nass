@@ -9,7 +9,7 @@ WORKDIR /root
 COPY . .
 RUN go get -u
 RUN pnpm i
-RUN ./scripts/dev.sh
+RUN ./scripts/dev_setup.sh
 
 ENTRYPOINT ["./nass", "-c", "${CONF}", "-u", "${USERS}"]
 

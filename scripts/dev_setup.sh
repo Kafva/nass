@@ -8,5 +8,5 @@ for u in ${USERS[@]}; do
   # Initalise password store with dummy data
   gpg --import keys/${u}.gpg
   KEYID=$(gpg --show-keys keys/${u}.gpg | grep "^ ")
-  pass init --path="$HOME/.password-store/$u" $KEYID
+  pass init --path="$u" $KEYID
 done
