@@ -1,25 +1,24 @@
 <script lang="ts">
 import type {PassEntry} from '../types'
-
-export let name: string;
-export let subitems: Array<PassEntry>;
+export let entry: PassEntry;
 </script>
 
-<li>
-{#if subitems.length == 0}
-{name}
-
+<div>
+{#if entry.subitems.length == 0}
+  {entry.name}
 {:else}
 
-<ul>
-{#each subitems as child}
+{#each entry.subitems as subitem}
   <!-- Create a new entry recursively for each child -->
-  <svelte:self name={child.name} subitems={child.subitems}/>
+  <svelte:self entry={subitem}/>
 {/each}
-</ul>
 
 {/if}
-</li>
+</div>
 
 
-
+<style>
+div {
+  text-align: left;
+}
+</style>

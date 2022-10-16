@@ -1,5 +1,7 @@
 package server
 
+import "strings"
+
 type PassEntry struct {
 	Name string
 	Children []PassEntry
@@ -16,7 +18,7 @@ type User struct {
 
 //============================================================================//
 
-// Recursivly create a `PassEntry` for each name in the provided array
+// Recursively create a `PassEntry` for each name in the provided array
 // with the first entry being the root parent, i.e.
 //	/a/b/c --> [a,b,c]
 //
@@ -38,19 +40,22 @@ type User struct {
 //   ...
 //
 func (d *PassEntry) AddChildren(names []string) {
-		// Basecase
-		if len(names)==0 {
-				return
-		}
-
 		// Add a child with the current first node name if one does not exist
 		var idx = d.HasChildWithName(names[0])
 		if idx == -1 {
-			d.Children = append(d.Children, PassEntry{ Name: names[0], Children: []PassEntry{} })
+			d.Children = append(d.Children, PassEntry{ 
+        Name: strings.TrimSuffix(names[0], ".gpg"), 
+        Children: []PassEntry{},
+      })
 			idx = len(d.Children)-1
 		}
 
-		// Recursivly add children for the remaining node names
+		// Basecase
+		if len(names)==1 {
+				return
+		}
+
+		// Recursively add children for the remaining node names
 		d.Children[idx].AddChildren(names[1:])
 }
 

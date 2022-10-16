@@ -1,14 +1,13 @@
 <!DOCTYPE HTML>
 
 {{- define "passfolder" }}
-  <ul>
   {{ range .Children -}}
-    <li>{{ .Name -}}</li>
+    <div title="{{ .Name }}">
     {{- if gt (len .Children) 0 -}}
       {{- template "passfolder" . -}}
     {{ end }}
+    </div>
   {{ end }}
-  </ul>
 {{ end }}
 
 <html lang="en">
