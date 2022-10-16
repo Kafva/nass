@@ -20,4 +20,6 @@ docker run -p 5678:5678 -d nass
 ```
 
 ## Related projects
+<!-- `pass` itself is a shell script -->
+* https://git.zx2c4.com/password-store
 * https://github.com/BenoitZugmeyer/pass-web

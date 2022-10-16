@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 if [ "$1" = clean ]; then
-  containers=$(docker ps -a --format "{{.Image}} {{.Names}}" | 
+  containers=$(docker ps -a --format "{{.Image}} {{.Names}}" |
                rg "^nass(-dev)* "|cut -f2 -d' ')
-  docker rm ${containers}
-  docker rmi nass-dev
+
+  docker rm ${containers} 2> /dev/null
+  docker rmi nass-dev 2> /dev/null
 fi
 
 docker images --format '{{.Repository}}'|rg -q "^nass$" ||
@@ -14,7 +15,7 @@ docker images --format '{{.Repository}}'|rg -q "^nass-dev$" ||
 
 # Mounting the entire directory produces unnecessary files
 # on the main host.
-docker run -p 5678:5678 -it --entrypoint /bin/ash \
+docker run -p 5678:5678 --name nass_dev -it --entrypoint /bin/ash \
   -v `pwd`/client:/root/client  \
   -v `pwd`/server:/root/server  \
   -v `pwd`/public:/root/public  \

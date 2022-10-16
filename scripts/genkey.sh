@@ -10,7 +10,7 @@ usage="usage: $(basename $0) <name> <email>"
 
 NAME="$1"
 EMAIL=$2
-PASSPHRASE=xd
+PASSPHRASE=${PASSPHRASE:-xd}
 EXPORT_DIR=keys
 GPG_PARAMS=$(mktemp)
 GPG_BATCH=(
@@ -36,6 +36,6 @@ gpg ${GPG_BATCH[@]} --gen-key ${GPG_PARAMS}
 
 KEYID=$(gpg --list-keys|grep -B1 "$NAME <$EMAIL>"|head -n1)
 
-mkdir -p $EXPORT_DIR  
+mkdir -p $EXPORT_DIR
 gpg ${GPG_BATCH[@]} --export-secret-keys $KEYID > "$EXPORT_DIR/$NAME.gpg" &&
   info "Backed up secret key to '$EXPORT_DIR/$NAME.gpg'"
