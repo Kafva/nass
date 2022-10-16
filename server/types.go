@@ -1,9 +1,5 @@
 package server
 
-type TemplateData struct {
-  PasswordTree PassEntry
-}
-
 type PassEntry struct {
 	Name string
 	Children []PassEntry

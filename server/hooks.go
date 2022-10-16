@@ -25,26 +25,17 @@ func DisableDirListings(next http.Handler) http.Handler {
   })
 }
 
-
-func password_root_dir(user *User) string {
-  if CONFIG.SingleUser {
-    return ExpandTilde(CONFIG.Passwordstore)
-  } else {
-    return ExpandTilde(CONFIG.Passwordstore)+"/"+user.Name
-  }
-}
-
 // Instead of fetching the password list after loading index.html
 // we use a template to include these resources automatically on every request
 func TemplateHook(next http.Handler) http.Handler {
   return http.HandlerFunc( func(res http.ResponseWriter, req *http.Request) {
+    user := MapReqToUser(res, req) 
+    if user.Name == "" { return }
+
     if filepath.Base(req.URL.Path) == "index.html" {
 			// We need to use the version of `index.html` under `dist` that
 			// has paths resolved by Vite
 			var tmpl = template.Must(template.ParseFiles(WEBROOT+"/index.html"))
-
-      user := MapReqToUser(res, req) 
-      if user.Name == "" { return }
 
       rootDir := password_root_dir(&user)
       passTree := PassEntry{ Name: user.Name }
@@ -64,17 +55,12 @@ func TemplateHook(next http.Handler) http.Handler {
         return nil
       })
 
-      data := TemplateData {
-        PasswordTree: passTree,
-      }
-
-
 			// Only allow resources to be loaded from whitelisted domains
 			for _,value := range CSP_VALUES {
 				res.Header().Add("Content-Security-Policy", value)
 			}
 
-      tmpl.Execute(res, data)
+      tmpl.Execute(res, passTree)
     } else {
       next.ServeHTTP(res, req)
     }
@@ -108,6 +94,14 @@ func MapReqToUser(res http.ResponseWriter, req *http.Request) User {
   }
 
   return user
+}
+
+func password_root_dir(user *User) string {
+  if CONFIG.SingleUser {
+    return ExpandTilde(CONFIG.Passwordstore)
+  } else {
+    return ExpandTilde(CONFIG.Passwordstore)+"/"+user.Name
+  }
 }
 
 func ipFromAddr(req *http.Request) string {

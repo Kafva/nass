@@ -1,4 +1,16 @@
 <!DOCTYPE HTML>
+
+{{- define "passfolder" }}
+  <ul>
+  {{ range .Children -}}
+    <li>{{ .Name -}}</li>
+    {{- if gt (len .Children) 0 -}}
+      {{- template "passfolder" . -}}
+    {{ end }}
+  {{ end }}
+  </ul>
+{{ end }}
+
 <html>
 <head>
   <title>nass</title>
@@ -9,12 +21,7 @@
 <body>
   <div id="app"></div>
   <script type="module" src="/client/main.ts"></script>
-
-  <div id="tmpl">
-    {{ range .PasswordTree.Children -}}
-    <li> {{ .Name }} </li>
-    {{ end }}
-  </div>
+  <div id="tmpl">{{ template "passfolder" . }}</div>
 </body>
 
 </html>
