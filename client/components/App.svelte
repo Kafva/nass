@@ -7,29 +7,33 @@
   // Collapsable list-items
   //
   // Password dialog (popup based on server response)
-  // After one entry, any item can be pressed to reveal text or copy to clipboard
+  // After one entry, any item can be pressed to reveal text or 
+  // copy to clipboard
   import type {PassEntry} from '../ts/types'
   import {GetHTMLElement, PassEntryFromDOM} from '../ts/util'
   import PasswordTree from './PasswordTree.svelte'
 
-
-  const entry = { name: "root", subitems:[] } as PassEntry
   const tmpl = GetHTMLElement<HTMLDivElement>("#tmpl")
-  const rootEntry = PassEntryFromDOM(tmpl, entry)
+  const rootEntry = PassEntryFromDOM(tmpl, {name: "", subitems:[]} as PassEntry)
 </script>
 
-<main>
-  <h1>nass</h1>
-  <PasswordTree entry={rootEntry}/>
-</main>
+<PasswordTree entry={rootEntry}/>
 
-<style global>
+<style lang="css" global>
+:root {
+  --bg: #23283d;
+  --white: #f5e4f3;
+}
 
 html, body {
   font-family: Arial;
   height: 100%;
-  background-image: linear-gradient(to right, #23283d, #1f1f47);
-  color: #f5e4f3;
+  background-image: linear-gradient(to right, var(--bg), #1f1f47);
+  color: var(--white);
+  text-align: center;
 }
 
+#root {
+  display: inline-block;
+}
 </style>
