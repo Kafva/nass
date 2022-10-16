@@ -4,17 +4,17 @@ import (
 	"os"
 )
 
-// Name of the environement variable that contains the pre-shared key
-// for the application. All users utilise the same PSK and are identified
-// based on their source IP.
-const PSK_ENV = "NASS_KEY"
+const WEBROOT = "./dist"
 
-// HTTP header to use for the PSK
-const PSK_HEADER = "x-creds"
+// Only allow content from the current domain
+// to be loaded by the client
+var CSP_VALUES = [...]string{
+  "default-src 'self';",
+}
 
 // Server configuration object
 type Config struct {
-	BindAddress string
+  BindAddress string `yaml:"bind_address"`
 	Port int
 	Debug bool
 	// Color in log messages
@@ -22,7 +22,14 @@ type Config struct {
 	// Root folder for encrypted passwords
 	// Each user will have their resources stored
 	// under a top-level folder that matches their name (UID)
-	Passwordstore string
+	Passwordstore string `yaml:"passwordstore"`
+  // Disable multi-user support (consider the `Passwordstore`
+  // as the only root for a single user)
+  SingleUser bool `yaml:"single_user"`
+
+  TlsEnabled bool `yaml:"tls_enabled"`
+  TlsCert string `yaml:"tls_cert"`
+  TlsKey string `yaml:"tls_key"`
 }
 
 func DefaultConfig() Config {
@@ -33,6 +40,10 @@ func DefaultConfig() Config {
 		Port: 5678,
 		Debug: false,
 		Color: true,
+    SingleUser: false,
+    TlsEnabled: false,
+    TlsCert: "",
+    TlsKey: "",
 	}
 }
 

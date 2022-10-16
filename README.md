@@ -1,5 +1,5 @@
 <p align="center">
-  <img width=128 height=128 src="./public/icon.png"/>
+  <img width=128 height=128 src="./public/nass.png"/>
 </p>
 <h1 align="center">nass</h1>
 

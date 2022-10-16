@@ -1,7 +1,9 @@
-bindaddress: 0.0.0.0
+bind_address: 0.0.0.0
 port: 5678
-passwordstore: ~/.password-store
+password_store: ~/.password-store
 
 debug: false
 color: true
 
+single_user: true
+tls_enabled: false

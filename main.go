@@ -19,16 +19,14 @@ package main
 // .password-store
 
 import (
-	"flag"
-	"io/ioutil"
-	"log"
-	"net/http"
-	"os"
-	"strconv"
+  "flag"
+  "io/ioutil"
+  "net/http"
+  "strconv"
 
-	"gopkg.in/yaml.v3"
+  "gopkg.in/yaml.v3"
 
-	. "github.com/Kafva/nass/server"
+  . "github.com/Kafva/nass/server"
 )
 
 
@@ -62,9 +60,6 @@ func main(){
       Die(err)
     }
   }
-  if os.Getenv(PSK_ENV) == "" {
-    Die("Missing value for '"+PSK_ENV+"'")
-  }
 
   // Endpoints:
   //  /get?path=Service/wow
@@ -73,16 +68,39 @@ func main(){
   //  /list
   // We would not need a /list endpoint if we were writing purely for
   // web since in that case the data would be directly embedded in the HTML
-  http.HandleFunc("/",    ListPass)
   http.HandleFunc("/get",  GetPass)
   http.HandleFunc("/add",  AddPass)
   http.HandleFunc("/del",  DelPass)
 
+  // Web app resources are mounted at `/app`
+  // The entrypoint is `/app/index.html`
+  web_root := http.FileServer(http.Dir(WEBROOT))
+  http.Handle("/app/",
+    http.StripPrefix("/app", TemplateHook(DisableDirListings(web_root)),
+  ))
+  http.HandleFunc("/", redirect_to_app)
+
+
   listener := CONFIG.BindAddress+":"+strconv.Itoa(CONFIG.Port)
 
-  log.Println("Listening on "+listener+"...")
-  if err := http.ListenAndServe(listener, nil); err != nil {
-    log.Fatal(err)
+  if CONFIG.TlsEnabled {
+    Info("Listening on 'https://"+listener+"'...")
+    err := http.ListenAndServeTLS(listener,
+      CONFIG.TlsCert,
+      CONFIG.TlsKey, nil,
+    )
+    if err != nil {
+        Die("ListenAndServeTLS", err)
+    }
+  } else {
+    Info("Listening on 'http://"+listener+"'...")
+    http.ListenAndServe(listener, nil)
   }
+}
+
+func redirect_to_app(w http.ResponseWriter, r *http.Request) {
+    if r.URL.Path == "/" {
+      http.Redirect(w, r, "/app/index.html", 301)
+    }
 }
 

@@ -4,11 +4,17 @@
   <title>nass</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="/client/style.css" rel="stylesheet" , type="text/css">
-  <link rel="shortcut icon" type="img/png" href="icon.png">
+  <link rel="shortcut icon" type="img/ico" href="favicon.ico">
 </head>
 <body>
   <div id="app"></div>
   <script type="module" src="/client/main.ts"></script>
+
+  <div id="tmpl">
+    {{ range .PasswordTree.Children -}}
+    <li> {{ .Name }} </li>
+    {{ end }}
+  </div>
 </body>
 
 </html>

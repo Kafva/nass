@@ -1,8 +1,12 @@
 package server
 
-type JsonEntry struct {
+type TemplateData struct {
+  PasswordTree PassEntry
+}
+
+type PassEntry struct {
 	Name string
-	Children []JsonEntry
+	Children []PassEntry
 }
 
 type User struct {
@@ -16,10 +20,28 @@ type User struct {
 
 //============================================================================//
 
-// Recursivly create a `JsonEntry` for each name in the provided array
+// Recursivly create a `PassEntry` for each name in the provided array
 // with the first entry being the root parent, i.e.
 //	/a/b/c --> [a,b,c]
-func (d *JsonEntry) AddChildren(names []string) {
+//
+// Example output:
+//  {
+//    "Name": "user",
+//    "Children": [
+//      {
+//        "Name": "Service",
+//        "Children": [
+//          {
+//            "Name": "acc1.gpg",
+//            "Children": []
+//          },
+//          ...
+//        ]
+//      },
+//		],
+//   ...
+//
+func (d *PassEntry) AddChildren(names []string) {
 		// Basecase
 		if len(names)==0 {
 				return
@@ -28,7 +50,7 @@ func (d *JsonEntry) AddChildren(names []string) {
 		// Add a child with the current first node name if one does not exist
 		var idx = d.HasChildWithName(names[0])
 		if idx == -1 {
-			d.Children = append(d.Children, JsonEntry{ Name: names[0], Children: []JsonEntry{} })
+			d.Children = append(d.Children, PassEntry{ Name: names[0], Children: []PassEntry{} })
 			idx = len(d.Children)-1
 		}
 
@@ -36,7 +58,7 @@ func (d *JsonEntry) AddChildren(names []string) {
 		d.Children[idx].AddChildren(names[1:])
 }
 
-func (d *JsonEntry) HasChildWithName(name string) int {
+func (d *PassEntry) HasChildWithName(name string) int {
 	for i,child := range d.Children {
 		if child.Name == name {
 			return i
