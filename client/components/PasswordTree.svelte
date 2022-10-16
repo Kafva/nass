@@ -1,5 +1,5 @@
 <script lang="ts">
-import type {PassEntry} from '../types'
+import type {PassEntry} from '../ts/types'
 export let entry: PassEntry;
 </script>
 

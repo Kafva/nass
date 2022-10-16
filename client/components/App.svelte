@@ -8,9 +8,9 @@
   //
   // Password dialog (popup based on server response)
   // After one entry, any item can be pressed to reveal text or copy to clipboard
-  import type {PassEntry} from './types'
-  import {GetHTMLElement, PassEntryFromDOM} from './util'
-  import PasswordTree from './components/PasswordTree.svelte'
+  import type {PassEntry} from '../ts/types'
+  import {GetHTMLElement, PassEntryFromDOM} from '../ts/util'
+  import PasswordTree from './PasswordTree.svelte'
 
 
   const entry = { name: "root", subitems:[] } as PassEntry
