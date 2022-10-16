@@ -12,16 +12,16 @@ import (
 // An exception is made for `/app` which will result
 // in a redirect to index.html instead of a 404
 func DisableDirListings(next http.Handler) http.Handler {
-  return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-    if strings.HasSuffix(r.URL.Path, "/") {
-			if strings.HasPrefix(r.URL.Path, "/app") {
-				http.Redirect(w, r, "/app/index.html", 301)
+  return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+    if strings.HasSuffix(req.URL.Path, "/") {
+			if strings.HasPrefix(req.URL.Path, "/app") {
+				http.Redirect(res, req, "/app/index.html", 301)
 			} else {
-				http.NotFound(w, r)
+				http.NotFound(res, req)
 			}
       return
     }
-    next.ServeHTTP(w, r)
+    next.ServeHTTP(res, req)
   })
 }
 

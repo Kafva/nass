@@ -8,5 +8,4 @@ WORKDIR /nass
 COPY . .
 RUN ./scripts/dev_setup.sh
 
-ENV NASS_KEY=xd
 ENTRYPOINT ["./nass"]

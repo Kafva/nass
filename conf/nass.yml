@@ -2,7 +2,7 @@ bind_address: 0.0.0.0
 port: 5678
 password_store: ~/.password-store
 
-debug: false
+debug: true
 color: true
 
 single_user: true
