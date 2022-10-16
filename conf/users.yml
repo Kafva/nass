@@ -2,13 +2,11 @@
   origins:
     - 10.0.77.11,
     - 10.0.77.12
-  keyfile: jane.gpg
 
 - name: james
   origins:
     - 10.0.77.13,
     - 10.0.77.14
-  keyfile: james.gpg
 
 - name: jonas
   origins:
@@ -16,5 +14,4 @@
     - 127.0.0.1
     - 10.0.1.6
     - 10.0.1.8
-  keyfile: jonas.gpg
 

@@ -27,7 +27,7 @@ Key-Type: 1
 Key-Length: 4096
 Subkey-Type: 1
 Subkey-Length: 2048
-Name-Real: "$NAME"
+Name-Real: $NAME
 Name-Email: $EMAIL
 Expire-Date: 0
 EOF
