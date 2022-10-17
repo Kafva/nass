@@ -4,6 +4,7 @@ import (
 	"net/http"
 )
 
+// https://superuser.com/a/1212720/986426
 func GetPass(res http.ResponseWriter, req *http.Request) {
 	res.Header().Set("Content-Type", "application/json")
 

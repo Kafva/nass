@@ -42,3 +42,14 @@ for entry in ${DB[@]}; do
     die "Decryption error: '$password' != '$plaintext'"
 done
 
+: '''
+Invocation that succeds if gpg-agent has the passphrase cached
+  export PASSWORD_STORE_GPG_OPTS="--pinentry-mode error --no-tty"
+  pass john/Github/James0x1
+
+  gpg_agent:
+  --no-allow-external-cache --default-cache-ttl 60
+
+  gpg --output - --decrypt /root/.password-store/jane/Wallets/eth/main.gpg
+'''
+
