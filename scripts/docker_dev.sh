@@ -13,6 +13,7 @@ docker images --format '{{.Repository}}'|rg -q "^nass$" ||
 docker images --format '{{.Repository}}'|rg -q "^nass-dev$" ||
   docker build -f Dockerfile.dev --rm --tag=nass-dev .
 
+
 # Mounting the entire directory produces unnecessary files
 # on the main host.
 docker run -p 5678:5678 --name nass_dev -it --entrypoint /bin/bash \

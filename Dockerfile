@@ -30,6 +30,9 @@ WORKDIR /nass
 USER nass
 COPY --from=builder --chown=nass /nass .
 
+RUN mkdir -m 700 /nass/.gnupg
+RUN cp /nass/conf/gpg-agent.conf /nass/.gnupg
+
 ENTRYPOINT ["./nass", "-c", "${CONF}", "-u", "${USERS}"]
 
 

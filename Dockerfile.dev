@@ -9,6 +9,8 @@ WORKDIR /root
 COPY . .
 RUN go get -u
 RUN pnpm i
+RUN mkdir -m 700 /root/.gnupg
+RUN cp /nass/.gnupg/gpg-agent.conf /root/.gnupg
 RUN ./scripts/dev_setup.sh
 
 ENTRYPOINT ["./nass", "-c", "${CONF}", "-u", "${USERS}"]

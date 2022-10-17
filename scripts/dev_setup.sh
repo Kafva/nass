@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 die(){ printf "\033[31m!>\033[0m $1\n" >&2 ; exit 1; }
 
+if ! [ -f /.dockerenv ]; then
+  printf "Not inside Docker, run anyway? [y/N] "
+  read ans
+  [ "$ans" = y ] || exit 1
+fi
+
 USERS=(john jane)
 
 DB=(
@@ -17,15 +23,12 @@ DB=(
   jane/Github/Jane0x2
 )
 
-# Maybe we need '> trust'
-
 # Extra GPG options for pass
-export PASSPHRASE=xd
 export PASSWORD_STORE_GPG_OPTS="--pinentry-mode loopback --passphrase $PASSPHRASE"
 
 # Create development keys
 for u in ${USERS[@]}; do
-  ./scripts/genkey.sh $u $u@kafva.one
+  PASSPHRASE="${u}" ./scripts/genkey.sh $u $u@kafva.one
 
   # Initalise password store with dummy data
   gpg --import keys/${u}.gpg
@@ -37,7 +40,10 @@ for entry in ${DB[@]}; do
   password="xd${RANDOM}"
   pass insert ${entry} < <(printf "$password\n$password\n")
 
+  export PASSPHRASE=$(cut -f1 -d/ <<< $entry)
+  export PASSWORD_STORE_GPG_OPTS="--pinentry-mode loopback --passphrase $PASSPHRASE"
   plaintext=$(pass ${entry})
+
   [ "$password" = "$plaintext" ] ||
     die "Decryption error: '$password' != '$plaintext'"
 done
@@ -47,9 +53,8 @@ Invocation that succeds if gpg-agent has the passphrase cached
   export PASSWORD_STORE_GPG_OPTS="--pinentry-mode error --no-tty"
   pass john/Github/James0x1
 
-  gpg_agent:
-  --no-allow-external-cache --default-cache-ttl 60
-
   gpg --output - --decrypt /root/.password-store/jane/Wallets/eth/main.gpg
+
+  gpg --output - --decrypt /nass/.password-store/jane/Wallets/eth/main.gpg
 '''
 
