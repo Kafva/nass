@@ -65,9 +65,7 @@ func main(){
   //  /get?path=Service/wow
   //  /add?path=Service/wow  { value: '************' }
   //  /del?path=Service/wow
-  //  /list
-  // We would not need a /list endpoint if we were writing purely for
-  // web since in that case the data would be directly embedded in the HTML
+  //
   http.HandleFunc("/get",  GetPass)
   http.HandleFunc("/add",  AddPass)
   http.HandleFunc("/del",  DelPass)

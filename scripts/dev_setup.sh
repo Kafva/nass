@@ -23,8 +23,6 @@ DB=(
   jane/Github/Jane0x2
 )
 
-# Extra GPG options for pass
-export PASSWORD_STORE_GPG_OPTS="--pinentry-mode loopback --passphrase $PASSPHRASE"
 
 # Create development keys
 for u in ${USERS[@]}; do
@@ -40,6 +38,7 @@ for entry in ${DB[@]}; do
   password="xd${RANDOM}"
   pass insert ${entry} < <(printf "$password\n$password\n")
 
+  # Extra GPG options for pass
   export PASSPHRASE=$(cut -f1 -d/ <<< $entry)
   export PASSWORD_STORE_GPG_OPTS="--pinentry-mode loopback --passphrase $PASSPHRASE"
   plaintext=$(pass ${entry})
@@ -47,14 +46,3 @@ for entry in ${DB[@]}; do
   [ "$password" = "$plaintext" ] ||
     die "Decryption error: '$password' != '$plaintext'"
 done
-
-: '''
-Invocation that succeds if gpg-agent has the passphrase cached
-  export PASSWORD_STORE_GPG_OPTS="--pinentry-mode error --no-tty"
-  pass john/Github/James0x1
-
-  gpg --output - --decrypt /root/.password-store/jane/Wallets/eth/main.gpg
-
-  gpg --output - --decrypt /nass/.password-store/jane/Wallets/eth/main.gpg
-'''
-

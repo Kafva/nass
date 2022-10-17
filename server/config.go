@@ -6,6 +6,12 @@ import (
 
 const WEBROOT = "./dist"
 
+// 1-20 alpha numeric characters including '-' and '_'
+const PASSENTRY_REGEX = "[-_a-zA-Z0-9]{1,20}"
+
+// Valid format for password paths, maximum tree depth: 6
+const PASSPATH_REGEX = "("+PASSENTRY_REGEX+"/){0,5}"+PASSENTRY_REGEX
+
 // Only allow content from the current domain
 // to be loaded by the client
 var CSP_VALUES = [...]string{

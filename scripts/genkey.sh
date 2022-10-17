@@ -39,3 +39,7 @@ KEYID=$(gpg --list-keys|grep -B1 "$NAME <$EMAIL>"|head -n1)
 mkdir -p $EXPORT_DIR
 gpg ${GPG_BATCH[@]} --export-secret-keys $KEYID > "$EXPORT_DIR/$NAME.gpg" &&
   info "Backed up secret key to '$EXPORT_DIR/$NAME.gpg'"
+
+# Decryption without pass:
+#   gpg --output - --decrypt .../password.gpg
+
