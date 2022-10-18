@@ -21,7 +21,7 @@ func GetPass(res http.ResponseWriter, req *http.Request) {
   if user.Name == "" { return }
 
   passPath := validatePath(res, req)
-  Debug("Valid path", passPath)
+  Debug("Realer! Valid path", passPath)
   if passPath == "" { return }
 
 

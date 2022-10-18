@@ -25,21 +25,31 @@ case "$1" in
     docker exec -it $CONTAINER /bin/bash
     exit
   ;;
+  logs)
+    docker logs -f $CONTAINER
+    exit
+  ;;
 esac
+
 
 # [-t] is required to avoid immediate exit with [-d]
 build_image
-
 docker ps --format "{{.Names}}"|rg -q "^${CONTAINER}$" ||
-  docker run -p 5678:5678 --name $CONTAINER -d -t --entrypoint /bin/bash ${IMAGE}
+  docker run -p 5678:5678 --name $CONTAINER -d -t ${IMAGE}
 
 # We copy over files (instead of using a [-v] volume) for several reasons:
 #   * Single files cannot be mounted and updated from the main host
 #   since editors like vim create a new file (and thus a new inode)
 #   * Everything in the volume becomes owned by root
-#   * The main host recieves several files that should be kept on the guest
+#   * The main host receives several files that should be kept on the guest
 #   .ash_history, .gnupg etc.
 #
+
+# On change to source files on the host:
+#   Copy over all source files to the guest
+#   Rebuild
+#   Restart from default --entrypoint
+# View logs from seperate terminal
 find . \
   -path ./dist -prune -o \
   -path ./node_modules -prune -o \
@@ -53,12 +63,8 @@ find . \
     docker cp public $CONTAINER:/nass/ 2> /dev/null
     docker cp conf $CONTAINER:/nass/ 2> /dev/null
     docker cp scripts $CONTAINER:/nass/ 2> /dev/null
+    docker exec -u root $CONTAINER chown -R nass:nass /nass
     docker exec $CONTAINER go build
-    docker exec $CONTAINER pkill -x nass
-    docker exec $CONTAINER ./nass -c conf/nass.yml -u conf/users.yml
+    docker stop $CONTAINER
+    docker start $CONTAINER
 "
-
-
-
-
-
