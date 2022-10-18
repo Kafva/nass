@@ -1,43 +1,64 @@
 #!/usr/bin/env bash
-if [ "$1" = clean ]; then
-  containers=$(docker ps -a --format "{{.Image}} {{.Names}}" |
-               rg "^nass(-dev)* "|cut -f2 -d' ')
+CONTAINER=nass_dev
+IMAGE=nass-dev
 
-  docker rm ${containers} 2> /dev/null
-  docker rmi nass-dev 2> /dev/null
-fi
+build_image(){
+  docker images --format '{{.Repository}}'|rg -q "^nass$" ||
+    docker build --rm --tag=nass .
 
-docker images --format '{{.Repository}}'|rg -q "^nass$" ||
-  docker build --rm --tag=nass .
+  docker images --format '{{.Repository}}'|rg -q "^${IMAGE}$" ||
+    docker build -f Dockerfile.dev --rm --tag=${IMAGE} .
+}
 
-docker images --format '{{.Repository}}'|rg -q "^nass-dev$" ||
-  docker build -f Dockerfile.dev --rm --tag=nass-dev .
+case "$1" in
+  *clean)
+    containers=$(docker ps -a --format "{{.Image}} {{.Names}}" |
+                 rg "^nass(-dev)* "|cut -f2 -d' ')
 
-while :; do
-  sleep 2
-  docker cp main.go    nass_dev:/root/ 2> /dev/null
-  docker cp index.html nass_dev:/root/ 2> /dev/null
-done &
+    docker rm ${containers} 2> /dev/null
+    docker rmi ${IMAGE} 2> /dev/null
+    [ "$1" = fullclean ] && 
+      docker rmi nass 2> /dev/null
+  ;;
+  enter)
+    build_image
+    docker exec -it $CONTAINER /bin/bash
+    exit
+  ;;
+esac
 
-SYNC_PID=$!
+# [-t] is required to avoid immediate exit with [-d]
+build_image
 
-# Mounting the entire directory produces unnecessary files
-# on the main host.
-# Note that file mounts cannot be updated from the host since
-# vim replaces the current file with a swap file, changing the inode.
-docker run -p 5678:5678 --name nass_dev -it --entrypoint /bin/bash \
-  -v `pwd`/client:/root/client  \
-  -v `pwd`/server:/root/server  \
-  -v `pwd`/public:/root/public  \
-  -v `pwd`/conf:/root/conf  \
-  -v `pwd`/scripts:/root/scripts  \
-  -v `pwd`/index.html:/root/index.html \
-  -v `pwd`/main.go:/root/main.go \
-  -v `pwd`/package.json:/root/package.json \
-  -v `pwd`/svelte.config.js:/root/svelte.config.js \
-  -v `pwd`/tsconfig.json:/root/tsconfig.json \
-  -v `pwd`/tsconfig.node.json:/root/tsconfig.node.json \
-  -v `pwd`/vite.config.ts:/root/vite.config.ts \
-  nass-dev
+docker ps --format "{{.Names}}"|rg -q "^${CONTAINER}$" ||
+  docker run -p 5678:5678 --name $CONTAINER -d -t --entrypoint /bin/bash ${IMAGE}
 
-kill $SYNC_PID
+# We copy over files (instead of using a [-v] volume) for several reasons:
+#   * Single files cannot be mounted and updated from the main host
+#   since editors like vim create a new file (and thus a new inode)
+#   * Everything in the volume becomes owned by root
+#   * The main host recieves several files that should be kept on the guest
+#   .ash_history, .gnupg etc.
+#
+find . \
+  -path ./dist -prune -o \
+  -path ./node_modules -prune -o \
+  -name "*.go" -o -name "*.js" -o -name "*.ts" -o -name "*.tsx" \
+  -o -name "*.html" -o -name "*.scss" -o -name "*.css" \
+  -o -name "*.yml" -o -name "*.svelte" |entr -n -s "
+    docker cp main.go    $CONTAINER:/nass/ 2> /dev/null
+    docker cp index.html $CONTAINER:/nass/ 2> /dev/null
+    docker cp client $CONTAINER:/nass/ 2> /dev/null
+    docker cp server $CONTAINER:/nass/ 2> /dev/null
+    docker cp public $CONTAINER:/nass/ 2> /dev/null
+    docker cp conf $CONTAINER:/nass/ 2> /dev/null
+    docker cp scripts $CONTAINER:/nass/ 2> /dev/null
+    docker exec $CONTAINER go build
+    docker exec $CONTAINER pkill -x nass
+    docker exec $CONTAINER ./nass -c conf/nass.yml -u conf/users.yml
+"
+
+
+
+
+

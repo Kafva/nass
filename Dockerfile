@@ -15,8 +15,10 @@ RUN vite build
 
 #============================================================================#
 FROM alpine:3.16 as nass
-ARG CONF="conf/nass.yml"
-ARG USERS="conf/users.yml"
+
+# `ARG` values are only available during the actual build
+ENV CONF="conf/nass.yml"
+ENV USERS="conf/users.yml"
 
 RUN adduser \
   --disabled-password --gecos "" \
@@ -33,6 +35,6 @@ COPY --from=builder --chown=nass /nass .
 RUN mkdir -m 700 /nass/.gnupg
 RUN cp /nass/conf/gpg-agent.conf /nass/.gnupg
 
-ENTRYPOINT ["./nass", "-c", "${CONF}", "-u", "${USERS}"]
 
-
+# Using the `[]` format will not expand environment variables
+ENTRYPOINT ./nass -c "${CONF}" -u "${USERS}"

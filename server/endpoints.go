@@ -21,6 +21,7 @@ func GetPass(res http.ResponseWriter, req *http.Request) {
   if user.Name == "" { return }
 
   passPath := validatePath(res, req)
+  Debug("Valid path", passPath)
   if passPath == "" { return }
 
 
@@ -57,7 +58,6 @@ func DelPass(res http.ResponseWriter, req *http.Request) {
 func validatePath(res http.ResponseWriter, req *http.Request) string {
   passPath := req.URL.Query().Get("path")
   regex := regexp.MustCompile(PASSPATH_REGEX)
-  Debug(passPath)
   if regex.Match([]byte(passPath)) {
     return passPath
   } else {

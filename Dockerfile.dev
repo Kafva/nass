@@ -1,17 +1,12 @@
 FROM nass
 
 USER root
-
 RUN apk add -U npm go neovim file entr bash-completion pass-bash-completion
 RUN npm i -g pnpm vite
 
-WORKDIR /root
-COPY . .
-RUN go get -u
-RUN pnpm i
-RUN mkdir -m 700 /root/.gnupg
-RUN cp /nass/.gnupg/gpg-agent.conf /root/.gnupg
-RUN ./scripts/dev_setup.sh
+WORKDIR /nass
+USER nass
+RUN ./scripts/init_pass.sh
 
-ENTRYPOINT ["./nass", "-c", "${CONF}", "-u", "${USERS}"]
+ENTRYPOINT ./nass -c "${CONF}" -u "${USERS}"
 
