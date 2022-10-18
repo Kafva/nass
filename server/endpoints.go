@@ -2,8 +2,9 @@ package server
 
 import (
 	"net/http"
-	//"os/exec"
+	"os/exec"
 	"regexp"
+	"strings"
 )
 
 /*
@@ -15,17 +16,17 @@ import (
   https://superuser.com/a/1212720/986426
 */
 func GetPass(res http.ResponseWriter, req *http.Request) {
-	res.Header().Set("Content-Type", "application/json")
+  res.Header().Set("Content-Type", "application/json")
 
   user := MapReqToUser(res, req)
   if user.Name == "" { return }
 
   passPath := validatePath(res, req)
-  Debug("Realer! Valid path", passPath)
   if passPath == "" { return }
+  Debug("valid path", passPath)
 
 
-  //exec.Command("pass", )
+  exec.Command("pass")
 
   res.Write([]byte("{ \"You\": \""+user.Name+"\" }\n"))
 }
@@ -36,18 +37,18 @@ func GetPass(res http.ResponseWriter, req *http.Request) {
    generate=falss
 */
 func AddPass(res http.ResponseWriter, req *http.Request) {
-	res.Header().Set("Content-Type", "application/json")
+  res.Header().Set("Content-Type", "application/json")
 
-  user := MapReqToUser(res, req) 
+  user := MapReqToUser(res, req)
   if user.Name == "" { return }
 
   res.Write([]byte("{ \"You\": \""+user.Name+"\" }\n"))
 }
 
 func DelPass(res http.ResponseWriter, req *http.Request) {
-	res.Header().Set("Content-Type", "application/json")
+  res.Header().Set("Content-Type", "application/json")
 
-  user := MapReqToUser(res, req) 
+  user := MapReqToUser(res, req)
   if user.Name == "" { return }
 
   res.Write([]byte("{ \"You\": \""+user.Name+"\" }\n"))
@@ -57,8 +58,12 @@ func DelPass(res http.ResponseWriter, req *http.Request) {
 // on success and an empty string if validation fails.
 func validatePath(res http.ResponseWriter, req *http.Request) string {
   passPath := req.URL.Query().Get("path")
-  regex := regexp.MustCompile(PASSPATH_REGEX)
-  if regex.Match([]byte(passPath)) {
+  regex := regexp.MustCompile(PASSENTRY_REGEX)
+
+  if regex.Match([]byte(passPath)) &&
+   strings.Count(passPath, "/") <= MAX_PASS_DEPTH &&
+   !strings.HasPrefix(passPath, "/") &&
+   !strings.HasSuffix(passPath, "/") {
     return passPath
   } else {
     ErrorResponse(res, "Invalid path format", http.StatusBadRequest)

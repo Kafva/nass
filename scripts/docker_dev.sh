@@ -26,8 +26,11 @@ case "$1" in
     exit
   ;;
   logs)
-    docker logs -f $CONTAINER
-    exit
+    while :; do
+      sleep 0.5
+      # The command exits when the container is restarted
+      docker logs -f $CONTAINER
+    done
   ;;
 esac
 
@@ -49,7 +52,7 @@ docker ps --format "{{.Names}}"|rg -q "^${CONTAINER}$" ||
 #   Copy over all source files to the guest
 #   Rebuild
 #   Restart from default --entrypoint
-# View logs from seperate terminal
+# View logs from separate terminal
 find . \
   -path ./dist -prune -o \
   -path ./node_modules -prune -o \

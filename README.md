@@ -16,7 +16,10 @@ docker build --rm --tag=nass .
 docker run -p 5678:5678 -d nass
 
 # Development
-./scripts/docker_dev.sh
+# Start `watch` rebuild in Docker
+./scripts/docker_dev.sh fullclean
+# Tail application logs from the container
+./scripts/docker_dev.sh logs
 ```
 
 ## Related projects
