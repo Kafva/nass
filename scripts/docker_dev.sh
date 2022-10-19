@@ -2,6 +2,8 @@
 CONTAINER=nass_dev
 IMAGE=nass-dev
 
+die(){ printf "$1\n" >&2 ; exit 1; }
+
 build_image(){
   docker images --format '{{.Repository}}'|rg -q "^nass$" ||
     docker build --rm --tag=nass .
@@ -9,6 +11,8 @@ build_image(){
   docker images --format '{{.Repository}}'|rg -q "^${IMAGE}$" ||
     docker build -f Dockerfile.dev --rm --tag=${IMAGE} .
 }
+
+pgrep docker &> /dev/null || die "Docker daemon is not running"
 
 case "$1" in
   *clean)

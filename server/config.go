@@ -33,6 +33,7 @@ type Config struct {
   // Disable multi-user support (consider the `Passwordstore`
   // as the only root for a single user)
   SingleUser bool `yaml:"single_user"`
+  PassBinary string
 
   TlsEnabled bool `yaml:"tls_enabled"`
   TlsCert string `yaml:"tls_cert"`
@@ -47,6 +48,7 @@ func DefaultConfig() Config {
 		Port: 5678,
 		Debug: false,
 		Color: true,
+    PassBinary: "/usr/bin/pass",
     SingleUser: false,
     TlsEnabled: false,
     TlsCert: "",

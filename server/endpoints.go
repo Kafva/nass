@@ -1,10 +1,11 @@
 package server
 
 import (
-	"net/http"
-	"os/exec"
-	"regexp"
-	"strings"
+  "net/http"
+  "os"
+  "os/exec"
+  "regexp"
+  "strings"
 )
 
 /*
@@ -23,12 +24,23 @@ func GetPass(res http.ResponseWriter, req *http.Request) {
 
   passPath := validatePath(res, req)
   if passPath == "" { return }
-  Debug("valid path", passPath)
 
+  cmd := exec.Command(CONFIG.PassBinary, passPath)
+  cmd.Env = os.Environ()
+  cmd.Env = append(cmd.Env,
+    "PASSWORD_STORE_GPG_OPTS='--pinentry-mode error --no-tty'",
+  )
 
-  exec.Command("pass")
+  out, err := cmd.Output()
+  if err != nil {
+    // TODO: capture stderr
+    Err(err) // 1 -> path does not exist
+             // 2 -> gpg decryption failed
+    ErrorResponse(res, "Internal server error", http.StatusInternalServerError)
+    return
+  }
 
-  res.Write([]byte("{ \"You\": \""+user.Name+"\" }\n"))
+  res.Write([]byte("{ \"You\": \""+string(out)+"\" }\n"))
 }
 
 /*
