@@ -13,6 +13,9 @@ const PASSENTRY_REGEX = "^[-_a-zA-Z0-9/]{1,255}$"
 // Maximum allowed folder depth in the password store
 const MAX_PASS_DEPTH = 6
 
+// The expected output if PIN entry is required to fetch a secret
+const GPG_FAIL_STRING = "gpg: decryption failed: No secret key"
+
 // Only allow content from the current domain
 // to be loaded by the client
 var CSP_VALUES = [...]string{

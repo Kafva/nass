@@ -12,33 +12,7 @@ build_image(){
     docker build -f Dockerfile.dev --rm --tag=${IMAGE} .
 }
 
-pgrep docker &> /dev/null || die "Docker daemon is not running"
-
-case "$1" in
-  *clean)
-    containers=$(docker ps -a --format "{{.Image}} {{.Names}}" |
-                 rg "^nass(-dev)* "|cut -f2 -d' ')
-
-    docker rm ${containers} 2> /dev/null
-    docker rmi ${IMAGE} 2> /dev/null
-    [ "$1" = fullclean ] && 
-      docker rmi nass 2> /dev/null
-  ;;
-  enter)
-    build_image
-    docker exec -it $CONTAINER /bin/bash
-    exit
-  ;;
-  logs)
-    while :; do
-      sleep 0.5
-      # The command exits when the container is restarted
-      docker logs -f $CONTAINER
-    done
-  ;;
-esac
-
-
+watch_src(){
 # [-t] is required to avoid immediate exit with [-d]
 build_image
 docker ps --format "{{.Names}}"|rg -q "^${CONTAINER}$" ||
@@ -75,3 +49,37 @@ find . \
     docker stop $CONTAINER
     docker start $CONTAINER
 "
+}
+
+pgrep docker &> /dev/null || die "Docker daemon is not running"
+
+case "$1" in
+  *clean)
+    containers=$(docker ps -a --format "{{.Image}} {{.Names}}" |
+                 rg "^nass(-dev)* "|cut -f2 -d' ')
+
+    docker rm ${containers} 2> /dev/null
+    docker rmi ${IMAGE} 2> /dev/null
+    [ "$1" = fullclean ] &&
+      docker rmi nass 2> /dev/null
+    watch_src
+  ;;
+  enter)
+    build_image
+    docker exec -it $CONTAINER /bin/bash
+  ;;
+  logs)
+    while :; do
+      sleep 0.5
+      # The command exits when the container is restarted
+      docker logs -f $CONTAINER
+    done
+  ;;
+  watch)
+    watch_src
+  ;;
+  *) die "usage: $(basename $0) <clean|enter|logs|watch>"
+  ;;
+esac
+
+

@@ -77,7 +77,7 @@ func TemplateHook(next http.Handler) http.Handler {
 func ErrorResponse(res http.ResponseWriter, msg string, code int) bool {
   res.WriteHeader(code)
 	res.Header().Set("Content-Type", "application/json")
-  res.Write([]byte("{ \"Error\": \""+msg+"\" }\n"))
+  res.Write([]byte("{ \"Error\": \""+  strings.TrimSpace(msg) +"\" }\n"))
   return false
 }
 
