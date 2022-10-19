@@ -20,6 +20,9 @@ docker run -p 5678:5678 -d nass
 ./scripts/docker_dev.sh fullclean
 # Tail application logs from the container
 ./scripts/docker_dev.sh logs
+
+curl -d "pass=xd" -X POST 'localhost:5678/get?path=john/Wallets/btc/main'
+
 ```
 
 ## Related projects

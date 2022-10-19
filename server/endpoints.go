@@ -19,28 +19,62 @@ import (
 func GetPass(res http.ResponseWriter, req *http.Request) {
   res.Header().Set("Content-Type", "application/json")
 
+  if req.Method != http.MethodPost && req.Method != http.MethodGet {
+    ErrorResponse(res, "Unsupported method", http.StatusForbidden)
+    return
+  }
+
   user := MapReqToUser(res, req)
   if user.Name == "" { return }
 
   passPath := validatePath(res, req)
   if passPath == "" { return }
 
-  Debug(CONFIG.PassBinary, passPath)
   cmd := exec.Command(CONFIG.PassBinary, passPath)
   cmd.Env = os.Environ()
-  cmd.Env = append(cmd.Env,
-    "PASSWORD_STORE_GPG_OPTS=--pinentry-mode error --no-tty",
-  )
+
+  if req.Method == http.MethodGet {
+    cmd.Env = append(cmd.Env,
+      "PASSWORD_STORE_GPG_OPTS=--pinentry-mode error --no-tty",
+    )
+  } else {
+    req.ParseForm()
+    passphrase := req.Form.Get("pass")
+
+    if passphrase == "" {
+      ErrorResponse(res, "Missing value for passphrase", http.StatusBadRequest)
+      return
+    }
+
+    cmd.Env = append(cmd.Env,
+      "PASSWORD_STORE_GPG_OPTS=--pinentry-mode loopback --passphrase " +
+      passphrase,
+    )
+    Debug(passphrase)
+  }
 
   bytes, err := cmd.CombinedOutput()
   output := strings.TrimSpace(string(bytes))
 
   if err != nil && output != GPG_FAIL_STRING {
-    ErrorResponse(res, output, http.StatusInternalServerError)
-    return
-  }
+    // Non-existant password or other error
+    ErrorResponse(res, output, http.StatusBadRequest)
 
-  res.Write([]byte("{ \"You\": \""+output+"\" }\n"))
+  } else if output == GPG_FAIL_STRING {
+    if req.Method == http.MethodGet {
+      // Retry with POST request to the same endpoint
+      res.Write([]byte("{ \"Status\": \"retry\" }\n"))
+    } else {
+      ErrorResponse(res, output, http.StatusBadRequest)
+    }
+
+  } else if err == nil {
+    // Reply with decrypted password
+    res.Write([]byte("{ \"Value\": \""+output+"\" }\n"))
+  } else {
+    // This should never happen
+    ErrorResponse(res, "Bad request", http.StatusBadRequest)
+  }
 }
 
 /*

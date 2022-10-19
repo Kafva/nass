@@ -62,7 +62,7 @@ case "$1" in
     docker rmi ${IMAGE} 2> /dev/null
     [ "$1" = fullclean ] &&
       docker rmi nass 2> /dev/null
-    watch_src
+    build_image
   ;;
   enter)
     build_image

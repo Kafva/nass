@@ -34,8 +34,9 @@ for u in ${USERS[@]}; do
   pass init --path="$u" $KEYID
 done
 
+i=0
 for entry in ${DB[@]}; do
-  password="xd${RANDOM}"
+  password="xd${i}"
   pass insert ${entry} < <(printf "$password\n$password\n")
 
   # Extra GPG options for pass
@@ -45,4 +46,7 @@ for entry in ${DB[@]}; do
 
   [ "$password" = "$plaintext" ] ||
     die "Decryption error: '$password' != '$plaintext'"
+
+
+  i=$((i+1))
 done
