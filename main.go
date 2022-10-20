@@ -21,8 +21,10 @@ package main
 import (
 	"flag"
 	"io/ioutil"
+	"math/rand"
 	"net/http"
 	"strconv"
+	"time"
 
 	"gopkg.in/yaml.v3"
 
@@ -60,6 +62,9 @@ func main(){
       Die(err)
     }
   }
+
+  // Seed randomness for password generation
+  rand.Seed(time.Now().UnixNano())
 
   // Endpoints:
   //  /get?path=Service/wow

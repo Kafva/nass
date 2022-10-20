@@ -1,11 +1,15 @@
 package server
 
 import (
-	"net/http"
-	"os"
-	"os/exec"
-	"regexp"
-	"strings"
+  "io"
+  "math/rand"
+  "net/http"
+  "os"
+  "os/exec"
+  "regexp"
+
+  //"strconv"
+  "strings"
 )
 
 /*
@@ -31,7 +35,7 @@ func GetPass(res http.ResponseWriter, req *http.Request) {
   user := MapReqToUser(res, req)
   if user.Name == "" { return }
 
-  passPath := validatePath(res, req)
+  passPath := validatePath(res, req, &user)
   if passPath == "" { return }
 
   cmd := exec.Command(CONFIG.PassBinary, passPath)
@@ -44,7 +48,7 @@ func GetPass(res http.ResponseWriter, req *http.Request) {
   } else {
     req.ParseForm()
 
-    passphrase := formGet(res, req, "pass")
+    passphrase := formGet(res, req, "pass", true)
     if passphrase == "" { return }
 
     cmd.Env = append(cmd.Env,
@@ -91,18 +95,56 @@ func AddPass(res http.ResponseWriter, req *http.Request) {
   user := MapReqToUser(res, req)
   if user.Name == "" { return }
 
-  passPath := validatePath(res, req)
+  passPath := validatePath(res, req, &user)
   if passPath == "" { return }
 
   req.ParseForm()
 
-  passphrase := formGet(res, req, "pass")
-  if passphrase == "" { return }
+  passphrase := formGet(res, req, "pass", false)
+  generate   := formGet(res, req, "generate", false) == "true"
 
-  // TODO switch to multi user
-  // generate := formGet(res, req, "generate") == "true"
+  if passphrase == "" && !generate { return }
 
-  res.Write([]byte("{ \"You\": \""+user.Name+" "+passPath+"\" }\n"))
+  fspath := CONFIG.Passwordstore+"/"+passPath+".gpg"
+
+  if _,err := os.Stat(fspath); os.IsNotExist(err) {
+    if generate {
+      passphrase = genPass()
+    }
+
+    cmd := exec.Command(CONFIG.PassBinary, "insert", passPath)
+    stdin, err := cmd.StdinPipe()
+    defer stdin.Close()
+
+    if err != nil {
+      ErrorResponse(res, "Failed to open stdin", http.StatusInternalServerError)
+      return
+    }
+    err = cmd.Start()
+    if err != nil {
+      ErrorResponse(res, "Failed to start pass", http.StatusInternalServerError)
+      return
+    }
+
+    // Provide the password twice for confirmation
+    io.WriteString(stdin, passphrase+"\n"+passphrase+"\n")
+    cmd.Wait()
+
+    if cmd.ProcessState.ExitCode() == 0 && generate {
+      res.Write([]byte(
+        "{  \"Status\": \"success\", \"Value\": \""+passphrase+"\" }\n",
+      ))
+    } else if cmd.ProcessState.ExitCode() == 0 {
+      res.Write([]byte("{  \"Status\": \"success\" }\n"))
+
+    } else {
+      ErrorResponse(res, "Failed to insert password",
+                    http.StatusInternalServerError)
+    }
+
+  } else {
+    ErrorResponse(res, "Entry already exists", http.StatusBadRequest)
+  }
 }
 
 func DelPass(res http.ResponseWriter, req *http.Request) {
@@ -114,10 +156,16 @@ func DelPass(res http.ResponseWriter, req *http.Request) {
   res.Write([]byte("{ \"You\": \""+user.Name+"\" }\n"))
 }
 
-// Returns a sanitized password entry path (relative to the current user's root)
-// on success and an empty string if validation fails.
-func validatePath(res http.ResponseWriter, req *http.Request) string {
+// Returns a sanitized password entry path on success and an empty string if
+// validation fails. The path should be specified relative to the current user
+// unless the `SingleUser` mode is active.
+func validatePath(res http.ResponseWriter, req *http.Request, user *User) string {
   passPath := req.URL.Query().Get("path")
+
+  if ! CONFIG.SingleUser {
+    passPath = user.Name + "/" + passPath
+  }
+
   regex := regexp.MustCompile(PASSENTRY_REGEX)
 
   if regex.Match([]byte(passPath)) &&
@@ -131,11 +179,23 @@ func validatePath(res http.ResponseWriter, req *http.Request) string {
   }
 }
 
+// There is a built-in password generation option in `pass` but
+// we would like the output to be alpha-numerics + certain symbols (not any
+// ASCII symbol).
+func genPass() string {
+  password := ""
+  for len(password) < GEN_PASS_LEN {
+     idx := rand.Intn(len(GEN_PASS_CHARS))
+     password = password + GEN_PASS_CHARS[idx:idx+1]
+  }
+  return password
+}
 
-func formGet(res http.ResponseWriter, req *http.Request, param string) string {
+func formGet(res http.ResponseWriter, req *http.Request, param string,
+             mandatory bool) string {
     value := req.Form.Get(param)
 
-    if value == "" {
+    if value == "" && mandatory {
       ErrorResponse(res, "Missing value for "+param, http.StatusBadRequest)
     }
     return value

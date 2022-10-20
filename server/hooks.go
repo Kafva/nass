@@ -15,11 +15,11 @@ import (
 func DisableDirListings(next http.Handler) http.Handler {
   return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
     if strings.HasSuffix(req.URL.Path, "/") {
-			if strings.HasPrefix(req.URL.Path, "/app") {
-				http.Redirect(res, req, "/app/index.html", 301)
-			} else {
-				http.NotFound(res, req)
-			}
+      if strings.HasPrefix(req.URL.Path, "/app") {
+        http.Redirect(res, req, "/app/index.html", 301)
+      } else {
+        http.NotFound(res, req)
+      }
       return
     }
     next.ServeHTTP(res, req)
@@ -30,13 +30,13 @@ func DisableDirListings(next http.Handler) http.Handler {
 // we use a template to include these resources automatically on every request
 func TemplateHook(next http.Handler) http.Handler {
   return http.HandlerFunc( func(res http.ResponseWriter, req *http.Request) {
-    user := MapReqToUser(res, req) 
+    user := MapReqToUser(res, req)
     if user.Name == "" { return }
 
     if filepath.Base(req.URL.Path) == "index.html" {
-			// We need to use the version of `index.html` under `dist` that
-			// has paths resolved by Vite
-			var tmpl = template.Must(template.ParseFiles(WEBROOT+"/index.html"))
+      // We need to use the version of `index.html` under `dist` that
+      // has paths resolved by Vite
+      var tmpl = template.Must(template.ParseFiles(WEBROOT+"/index.html"))
 
       rootDir := password_root_dir(&user)
       if _, err := os.Stat(rootDir); err != nil {
@@ -52,7 +52,7 @@ func TemplateHook(next http.Handler) http.Handler {
         if name == ".git" {
             return filepath.SkipDir
         }
-        if strings.HasPrefix(name, ".git") || name == ".gpg-id" || 
+        if strings.HasPrefix(name, ".git") || name == ".gpg-id" ||
           name == filepath.Base(rootDir) {
             return nil
         }
@@ -62,10 +62,10 @@ func TemplateHook(next http.Handler) http.Handler {
         return nil
       })
 
-			// Only allow resources to be loaded from whitelisted domains
-			for _,value := range CSP_VALUES {
-				res.Header().Add("Content-Security-Policy", value)
-			}
+      // Only allow resources to be loaded from whitelisted domains
+      for _,value := range CSP_VALUES {
+        res.Header().Add("Content-Security-Policy", value)
+      }
 
       tmpl.Execute(res, passTree)
     } else {
@@ -76,7 +76,6 @@ func TemplateHook(next http.Handler) http.Handler {
 
 func ErrorResponse(res http.ResponseWriter, msg string, code int) bool {
   res.WriteHeader(code)
-	res.Header().Set("Content-Type", "application/json")
   res.Write([]byte("{ \"Error\": \""+  strings.TrimSpace(msg) +"\" }\n"))
   return false
 }
@@ -118,7 +117,7 @@ func ipFromAddr(req *http.Request) string {
       return remoteAddr[0]
     }
   } else { // IPv6, the address should be enclosed in '[]'
-    return req.RemoteAddr[1:strings.LastIndex(req.RemoteAddr, "]")]  
+    return req.RemoteAddr[1:strings.LastIndex(req.RemoteAddr, "]")]
   }
   return ""
 }

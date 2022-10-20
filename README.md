@@ -16,12 +16,15 @@ docker build --rm --tag=nass .
 docker run -p 5678:5678 -d nass
 
 # Development
+
 # Start `watch` rebuild in Docker
 ./scripts/docker_dev.sh fullclean
+
 # Tail application logs from the container
 ./scripts/docker_dev.sh logs
 
-curl -d "pass=xd" -X POST 'localhost:5678/get?path=john/Wallets/btc/main'
+# Test endpoints, e.g.
+curl -d "pass=xd" -X POST 'localhost:5678/get?path=Wallets/btc/main'
 
 ```
 
