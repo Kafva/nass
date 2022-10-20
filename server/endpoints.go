@@ -59,24 +59,22 @@ func GetPass(res http.ResponseWriter, req *http.Request) {
   bytes, err := cmd.CombinedOutput()
   output := strings.TrimSpace(string(bytes))
 
-  if err != nil && output != GPG_FAIL_STRING {
-    // Non-existant password or other error
-    ErrorResponse(res, output, http.StatusBadRequest)
-
-  } else if output == GPG_FAIL_STRING {
+  if err != nil && output == GPG_FAIL_STRING {
+    // We need a nil check on 'err' in case that someone sets
+    // 'GPG_FAIL_STRING' as their password
     if req.Method == http.MethodGet {
-      // Retry with POST request to the same endpoint
+      // GET: Retry with PIN entry request (POST) to the same endpoint
       res.Write([]byte("{ \"Status\": \"retry\" }\n"))
     } else {
-      ErrorResponse(res, output, http.StatusBadRequest)
+      // POST: Invalid PIN entry
+      ErrorResponse(res, "Incorrect PIN entry", http.StatusBadRequest)
     }
-
-  } else if err == nil {
+  } else if err != nil {
     // Reply with decrypted password
     res.Write([]byte("{ \"Value\": \""+output+"\" }\n"))
   } else {
-    // This should never happen
-    ErrorResponse(res, "Bad request", http.StatusBadRequest)
+    // Fallback for other errors
+    ErrorResponse(res, output, http.StatusBadRequest)
   }
 }
 
