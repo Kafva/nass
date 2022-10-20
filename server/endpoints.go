@@ -10,9 +10,13 @@ import (
 
 /*
 1. Try to reveal the password using a cached pin:
-  export PASSWORD_STORE_GPG_OPTS="--pinentry-mode error --no-tty"
+    GET /get?path=<...>
+  PASSWORD_STORE_GPG_OPTS="--pinentry-mode error --no-tty"
+
 2. If this fails, prompt the user for the master password and re-run:
-  export PASSWORD_STORE_GPG_OPTS="--pinentry-mode loopback --passphrase $PASSPHRASE"
+    POST /get?path=<...>
+    pass=<...>
+  PASSWORD_STORE_GPG_OPTS="--pinentry-mode loopback --passphrase $PASSPHRASE"
 
   https://superuser.com/a/1212720/986426
 */
@@ -50,7 +54,6 @@ func GetPass(res http.ResponseWriter, req *http.Request) {
       "PASSWORD_STORE_GPG_OPTS=--pinentry-mode loopback --passphrase " +
       passphrase,
     )
-    Debug(passphrase)
   }
 
   bytes, err := cmd.CombinedOutput()
