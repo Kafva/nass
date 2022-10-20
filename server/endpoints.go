@@ -1,15 +1,15 @@
 package server
 
 import (
-  "io"
-  "math/rand"
-  "net/http"
-  "os"
-  "os/exec"
-  "regexp"
+	"io"
+	"math/rand"
+	"net/http"
+	"os"
+	"os/exec"
+	"regexp"
 
-  //"strconv"
-  "strings"
+	//"strconv"
+	"strings"
 )
 
 /*
@@ -81,7 +81,7 @@ func GetPass(res http.ResponseWriter, req *http.Request) {
 
 /*
  POST /add?path=Service/web
-   pass=*****
+   pass=[********]
    generate=false
 */
 func AddPass(res http.ResponseWriter, req *http.Request) {
@@ -107,7 +107,7 @@ func AddPass(res http.ResponseWriter, req *http.Request) {
 
   fspath := CONFIG.Passwordstore+"/"+passPath+".gpg"
 
-  if _,err := os.Stat(fspath); os.IsNotExist(err) {
+  if !PathExists(fspath) {
     if generate {
       passphrase = genPass()
     }
@@ -147,11 +147,28 @@ func AddPass(res http.ResponseWriter, req *http.Request) {
   }
 }
 
+/*
+  This operation works for both directories and lone files
+  DELETE /del?path=Service/web
+*/
 func DelPass(res http.ResponseWriter, req *http.Request) {
   res.Header().Set("Content-Type", "application/json")
 
+  if req.Method != http.MethodDelete {
+    ErrorResponse(res, "Unsupported method", http.StatusForbidden)
+    return
+  }
+
   user := MapReqToUser(res, req)
   if user.Name == "" { return }
+
+  passPath := validatePath(res, req, &user)
+  if passPath == "" { return }
+
+  fspath := CONFIG.Passwordstore+"/"+passPath
+  if PathExists(fspath) || PathExists(fspath+".gpg") {
+    // DELETE
+  }
 
   res.Write([]byte("{ \"You\": \""+user.Name+"\" }\n"))
 }
@@ -170,6 +187,7 @@ func validatePath(res http.ResponseWriter, req *http.Request, user *User) string
 
   if regex.Match([]byte(passPath)) &&
    strings.Count(passPath, "/") <= MAX_PASS_DEPTH &&
+   !strings.Contains(passPath, ".gpg") &&
    !strings.HasPrefix(passPath, "/") &&
    !strings.HasSuffix(passPath, "/") {
     return passPath

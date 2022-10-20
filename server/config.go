@@ -13,7 +13,7 @@ const GEN_PASS_LEN = 24
 const GEN_PASS_CHARS =
   "-_.@/0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 
-// 1-20 alpha numeric characters including '-', '_', '.' and '@'
+// 1-255 alpha numeric characters including '-', '_', '.' and '@'
 // '/' is only allowed up to MAX_PASS_DEPTH times, checked separately
 const PASSENTRY_REGEX = "^[-_.@/a-zA-Z0-9]{1,255}$"
 

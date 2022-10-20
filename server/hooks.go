@@ -3,7 +3,6 @@ package server
 import (
 	"io/fs"
 	"net/http"
-	"os"
 	"path/filepath"
 	"strings"
 	"text/template"
@@ -39,8 +38,7 @@ func TemplateHook(next http.Handler) http.Handler {
       var tmpl = template.Must(template.ParseFiles(WEBROOT+"/index.html"))
 
       rootDir := password_root_dir(&user)
-      if _, err := os.Stat(rootDir); err != nil {
-        Err(err.Error())
+      if !PathExists(rootDir) {
         ErrorResponse(res, "Missing passwordstore", http.StatusInternalServerError)
         return
       }

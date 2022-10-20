@@ -47,3 +47,10 @@ func ExpandTilde(path string) string {
   return strings.ReplaceAll(path, "~", home)
 }
 
+func PathExists(path string) bool {
+  if _,err := os.Stat(path); os.IsNotExist(err) {
+    return false
+  }
+  return true
+}
+
