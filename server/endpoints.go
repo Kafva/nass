@@ -1,11 +1,11 @@
 package server
 
 import (
-  "net/http"
-  "os"
-  "os/exec"
-  "regexp"
-  "strings"
+	"net/http"
+	"os"
+	"os/exec"
+	"regexp"
+	"strings"
 )
 
 /*
@@ -43,12 +43,9 @@ func GetPass(res http.ResponseWriter, req *http.Request) {
     )
   } else {
     req.ParseForm()
-    passphrase := req.Form.Get("pass")
 
-    if passphrase == "" {
-      ErrorResponse(res, "Missing value for passphrase", http.StatusBadRequest)
-      return
-    }
+    passphrase := formGet(res, req, "pass")
+    if passphrase == "" { return }
 
     cmd.Env = append(cmd.Env,
       "PASSWORD_STORE_GPG_OPTS=--pinentry-mode loopback --passphrase " +
@@ -79,17 +76,33 @@ func GetPass(res http.ResponseWriter, req *http.Request) {
 }
 
 /*
- /add?path=Service/web
-   value=*****
-   generate=falss
+ POST /add?path=Service/web
+   pass=*****
+   generate=false
 */
 func AddPass(res http.ResponseWriter, req *http.Request) {
   res.Header().Set("Content-Type", "application/json")
 
+  if req.Method != http.MethodPost {
+    ErrorResponse(res, "Unsupported method", http.StatusForbidden)
+    return
+  }
+
   user := MapReqToUser(res, req)
   if user.Name == "" { return }
 
-  res.Write([]byte("{ \"You\": \""+user.Name+"\" }\n"))
+  passPath := validatePath(res, req)
+  if passPath == "" { return }
+
+  req.ParseForm()
+
+  passphrase := formGet(res, req, "pass")
+  if passphrase == "" { return }
+
+  // TODO switch to multi user
+  // generate := formGet(res, req, "generate") == "true"
+
+  res.Write([]byte("{ \"You\": \""+user.Name+" "+passPath+"\" }\n"))
 }
 
 func DelPass(res http.ResponseWriter, req *http.Request) {
@@ -119,3 +132,11 @@ func validatePath(res http.ResponseWriter, req *http.Request) string {
 }
 
 
+func formGet(res http.ResponseWriter, req *http.Request, param string) string {
+    value := req.Form.Get(param)
+
+    if value == "" {
+      ErrorResponse(res, "Missing value for "+param, http.StatusBadRequest)
+    }
+    return value
+}
