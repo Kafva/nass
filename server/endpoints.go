@@ -184,6 +184,8 @@ func validatePath(res http.ResponseWriter, req *http.Request, user *User) string
   }
 
   regex := regexp.MustCompile(PASSENTRY_REGEX)
+  //pathTraversalRegex := regexp.MustCompile(".+/")
+  // !pathTraversalRegex.Match([]byte(passPath)) &&
 
   if regex.Match([]byte(passPath)) &&
    strings.Count(passPath, "/") <= MAX_PASS_DEPTH &&
