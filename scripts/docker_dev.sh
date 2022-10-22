@@ -30,6 +30,8 @@ if ! docker ps --format "{{.Names}}"|rg -q "^${CONTAINER}$"; then
   fi
 fi
 
+trap cleanup SIGINT
+
 # We copy over files (instead of using a [-v] volume) for several reasons:
 #   * Single files cannot be mounted and updated from the main host
 #   since editors like vim create a new file (and thus a new inode)
@@ -63,6 +65,15 @@ find . \
 "
 }
 
+cleanup(){
+  pkill -x entr
+  docker stop $CONTAINER
+  docker rm $CONTAINER
+  exit $?
+}
+
+#==============================================================================#
+
 if ! which podman &> /dev/null; then
   pgrep docker &> /dev/null || die "Docker daemon is not running"
 fi
@@ -83,10 +94,19 @@ case "$1" in
     docker exec -it $CONTAINER /bin/bash
   ;;
   logs)
+    docker ps --format "{{.Names}}"|grep -q "^$CONTAINER$" ||
+      die "Not running: $CONTAINER"
+
+    trap exit SIGINT
+
     while :; do
       sleep 0.5
       # The command exits when the container is restarted
-      docker logs -f $CONTAINER
+      if which podman &> /dev/null; then
+        podman logs --tail 10 --follow $CONTAINER
+      else
+        docker logs -f $CONTAINER
+      fi
     done
   ;;
   watch)
