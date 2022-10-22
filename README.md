@@ -25,7 +25,8 @@ docker run -p 5678:5678 -d nass
 ./scripts/docker_dev.sh logs
 
 # Test endpoints, e.g.
-curl -d "pass=xd" -X POST 'http://localhost:5678/get?path=Wallets/btc/main'
+curl -X POST -d "pass=jane" -L 'http://10.0.1.6:5678/get?path=Wallets/eth/main'|jq
+curl -X GET -L 'http://10.0.1.6:5678/get?path=Wallets/eth/main'|jq
 
 
 # Run server tests

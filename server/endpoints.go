@@ -7,8 +7,6 @@ import (
 	"os"
 	"os/exec"
 	"regexp"
-
-	//"strconv"
 	"strings"
 )
 
@@ -64,17 +62,18 @@ func GetPass(res http.ResponseWriter, req *http.Request) {
     // We need a nil check on 'err' in case that someone sets
     // 'GPG_FAIL_STRING' as their password
     if req.Method == http.MethodGet {
-      // GET: Retry with PIN entry request (POST) to the same endpoint
-      res.Write([]byte("{ \"Status\": \"retry\" }\n"))
+      WriteResponse(res, StatusRetry, 
+                    "Retry with PIN entry in POST request", "")
     } else {
       // POST: Invalid PIN entry
       ErrorResponse(res, "Incorrect PIN entry", http.StatusBadRequest)
     }
-  } else if err != nil {
+  } else if err == nil {
     // Reply with decrypted password
-    res.Write([]byte("{ \"Value\": \""+output+"\" }\n"))
+    WriteResponse(res, StatusSuccess, "", output)
   } else {
     // Fallback for other errors
+    Err(err)
     ErrorResponse(res, output, http.StatusBadRequest)
   }
 }
@@ -107,7 +106,7 @@ func AddPass(res http.ResponseWriter, req *http.Request) {
 
   fspath := CONFIG.Passwordstore+"/"+passPath+".gpg"
 
-  if !PathExists(fspath) {
+  if !Exists(fspath) {
     if generate {
       passphrase = genPass()
     }
@@ -131,17 +130,16 @@ func AddPass(res http.ResponseWriter, req *http.Request) {
     cmd.Wait()
 
     if cmd.ProcessState.ExitCode() == 0 && generate {
-      res.Write([]byte(
-        "{  \"Status\": \"success\", \"Value\": \""+passphrase+"\" }\n",
-      ))
+      // Respond with generated passphrase
+      WriteResponse(res, StatusSuccess, "", passphrase)
+
     } else if cmd.ProcessState.ExitCode() == 0 {
-      res.Write([]byte("{  \"Status\": \"success\" }\n"))
+      WriteResponse(res, StatusSuccess, "", "")
 
     } else {
       ErrorResponse(res, "Failed to insert password",
                     http.StatusInternalServerError)
     }
-
   } else {
     ErrorResponse(res, "Entry already exists", http.StatusBadRequest)
   }
@@ -166,11 +164,19 @@ func DelPass(res http.ResponseWriter, req *http.Request) {
   if passPath == "" { return }
 
   fspath := CONFIG.Passwordstore+"/"+passPath
-  if PathExists(fspath) || PathExists(fspath+".gpg") {
-    // DELETE
+  if IsDir(fspath) || IsFile(fspath+".gpg") {
+    _, err := exec.Command(CONFIG.PassBinary, "rm", "--force", passPath).Output()
+    if err != nil {
+      ErrorResponse(res, "Failed to remove password", 
+                    http.StatusInternalServerError)
+      return
+    }
+  } else {
+    ErrorResponse(res, "Invalid path", http.StatusBadRequest)
+    return
   }
 
-  res.Write([]byte("{ \"You\": \""+user.Name+"\" }\n"))
+  WriteResponse(res, StatusSuccess, "", "")
 }
 
 // Returns a sanitized password entry path on success and an empty string if
@@ -224,3 +230,5 @@ func formGet(res http.ResponseWriter, req *http.Request, param string,
     }
     return value
 }
+
+

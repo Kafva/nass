@@ -14,6 +14,19 @@ type User struct {
   Origins []string
 }
 
+type ResponseStatus string
+const (
+  StatusRetry ResponseStatus = "retry"
+  StatusSuccess = "success"
+  StatusError = "error"
+)
+
+type JsonResponse struct {
+  Status ResponseStatus `json:"status"`
+  Desc string `json:"desc,omitempty"`
+  Value string `json:"value,omitempty"`
+}
+
 //============================================================================//
 
 // Recursively create a `PassEntry` for each name in the provided array

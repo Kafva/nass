@@ -1,6 +1,7 @@
 package server
 
 import (
+	"encoding/json"
 	"io/fs"
 	"net/http"
 	"path/filepath"
@@ -38,7 +39,7 @@ func TemplateHook(next http.Handler) http.Handler {
       var tmpl = template.Must(template.ParseFiles(WEBROOT+"/index.html"))
 
       rootDir := password_root_dir(&user)
-      if !PathExists(rootDir) {
+      if !IsDir(rootDir) {
         ErrorResponse(res, "Missing passwordstore", http.StatusInternalServerError)
         return
       }
@@ -72,9 +73,25 @@ func TemplateHook(next http.Handler) http.Handler {
   })
 }
 
-func ErrorResponse(res http.ResponseWriter, msg string, code int) bool {
+func WriteResponse(res http.ResponseWriter, status ResponseStatus, 
+                   desc string, value string) {
+  data, err := json.Marshal(JsonResponse { 
+    Status: status, 
+    Desc: strings.TrimSpace(desc), 
+    Value: strings.TrimSpace(value),
+  })
+  if err == nil {
+    res.Write(data)
+  } else {
+    res.Write([]byte(
+      "{ \"status\": \"error\" \"desc\": \"Encoding failure\" }\n",
+    ))
+  }
+}
+
+func ErrorResponse(res http.ResponseWriter, desc string, code int) bool {
   res.WriteHeader(code)
-  res.Write([]byte("{ \"Error\": \""+  strings.TrimSpace(msg) +"\" }\n"))
+  WriteResponse(res, StatusError, desc, "")
   return false
 }
 

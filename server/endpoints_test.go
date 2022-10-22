@@ -54,6 +54,4 @@ func Test_validatePath(t *testing.T) {
   assert_validatePath(t, res, req, &user, "Email/\"$HOME\"", "")
   assert_validatePath(t, res, req, &user, "Email/\\", "")
   assert_validatePath(t, res, req, &user, "Email/😉", "")
-
-
 }
