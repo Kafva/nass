@@ -60,6 +60,7 @@ find . \
     docker cp scripts $CONTAINER:/nass/ 2> /dev/null
     docker exec -u root $CONTAINER chown -R nass:nass /nass
     docker exec $CONTAINER go build
+    docker exec $CONTAINER vite build
     docker stop $CONTAINER
     docker start $CONTAINER
 "

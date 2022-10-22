@@ -3,8 +3,6 @@ import type {PassEntry} from '../ts/types'
 
 export let entry: PassEntry;
 
-
-
 </script>
 
 <div class="{entry.subitems.length > 0 ? 'dir' : '' }">

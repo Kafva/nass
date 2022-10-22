@@ -11,12 +11,15 @@
   // copy to clipboard
   import type {PassEntry} from '../ts/types'
   import {GetHTMLElement, PassEntryFromDOM} from '../ts/util'
+  import Search from './Search.svelte'
   import PasswordTree from './PasswordTree.svelte'
 
+  var queryString = ""
   const tmpl = GetHTMLElement<HTMLDivElement>("#tmpl")
   const rootEntry = PassEntryFromDOM(tmpl, {name: "", subitems:[]} as PassEntry)
 </script>
 
+<Search queryString={queryString}/>
 <PasswordTree entry={rootEntry}/>
 
 <style lang="css" global>
