@@ -176,6 +176,8 @@ func DelPass(res http.ResponseWriter, req *http.Request) {
 // Returns a sanitized password entry path on success and an empty string if
 // validation fails. The path should be specified relative to the current user
 // unless the `SingleUser` mode is active.
+// '.' is not allowed as a prefix or suffix
+// Sequences of '.' are not allowed
 func validatePath(res http.ResponseWriter, req *http.Request, user *User) string {
   passPath := req.URL.Query().Get("path")
 
@@ -184,12 +186,14 @@ func validatePath(res http.ResponseWriter, req *http.Request, user *User) string
   }
 
   regex := regexp.MustCompile(PASSENTRY_REGEX)
-  //pathTraversalRegex := regexp.MustCompile(".+/")
-  // !pathTraversalRegex.Match([]byte(passPath)) &&
 
   if regex.Match([]byte(passPath)) &&
    strings.Count(passPath, "/") <= MAX_PASS_DEPTH &&
+   !strings.Contains(passPath, "//") &&
    !strings.Contains(passPath, ".gpg") &&
+   !strings.Contains(passPath, "..") &&
+   !strings.Contains(passPath, "/.") &&
+   !strings.Contains(passPath, "./") &&
    !strings.HasPrefix(passPath, "/") &&
    !strings.HasSuffix(passPath, "/") {
     return passPath

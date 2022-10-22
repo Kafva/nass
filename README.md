@@ -27,6 +27,9 @@ docker run -p 5678:5678 -d nass
 # Test endpoints, e.g.
 curl -d "pass=xd" -X POST 'http://localhost:5678/get?path=Wallets/btc/main'
 
+
+# Run server tests
+go test -v --run $test_name ./server
 ```
 
 ## Related projects
