@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 die(){ printf "\033[31m!>\033[0m $1\n" >&2 ; exit 1; }
 
-if ! [ -f /.dockerenv ]; then
-  printf "Not inside Docker, run anyway? [y/N] "
+if [[ ! -f /.dockerenv && ! -f /run/.containerenv ]]; then
+  printf "Not inside a container, run anyway? [y/N] "
   read ans
   [ "$ans" = y ] || exit 1
 fi
@@ -50,3 +50,6 @@ for entry in ${DB[@]}; do
 
   i=$((i+1))
 done
+
+# Clean up sockets
+rm -f /nass/.gnupg/S.*

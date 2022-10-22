@@ -5,10 +5,10 @@ IMAGE=nass-dev
 die(){ printf "$1\n" >&2 ; exit 1; }
 
 build_image(){
-  docker images --format '{{.Repository}}'|rg -q "^nass$" ||
+  docker images --format '{{.Repository}}'|rg -q "^(localhost/)?nass$" ||
     docker build --rm --tag=nass .
 
-  docker images --format '{{.Repository}}'|rg -q "^${IMAGE}$" ||
+  docker images --format '{{.Repository}}'|rg -q "^(localhost/)?${IMAGE}$" ||
     docker build -f Dockerfile.dev --rm --tag=${IMAGE} .
 }
 
@@ -51,7 +51,9 @@ find . \
 "
 }
 
-pgrep docker &> /dev/null || die "Docker daemon is not running"
+if ! which podman &> /dev/null; then
+  pgrep docker &> /dev/null || die "Docker daemon is not running"
+fi
 
 case "$1" in
   *clean)

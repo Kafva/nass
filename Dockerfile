@@ -1,4 +1,4 @@
-FROM golang:alpine3.16 as builder
+FROM docker.io/golang:alpine3.16 as builder
 
 # Build dependencies
 RUN apk add -U git npm
@@ -14,7 +14,7 @@ RUN pnpm i
 RUN vite build
 
 #============================================================================#
-FROM alpine:3.16 as nass
+FROM docker.io/alpine:3.16 as nass
 
 # `ARG` values are only available during the actual build
 ENV CONF="conf/nass.yml"
@@ -34,7 +34,6 @@ COPY --from=builder --chown=nass /nass .
 
 RUN mkdir -m 700 /nass/.gnupg
 RUN cp /nass/conf/gpg-agent.conf /nass/.gnupg
-
 
 # Using the `[]` format will not expand environment variables
 ENTRYPOINT ./nass -c "${CONF}" -u "${USERS}"
