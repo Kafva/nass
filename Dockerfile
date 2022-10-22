@@ -35,5 +35,10 @@ COPY --from=builder --chown=nass /nass .
 RUN mkdir -m 700 /nass/.gnupg
 RUN cp /nass/conf/gpg-agent.conf /nass/.gnupg
 
+# Create git repository for history tracking
+RUN cp /nass/conf/gitconfig /nass/.gitconfig
+RUN mkdir -m 700 /nass/.password-store
+RUN pass git init
+
 # Using the `[]` format will not expand environment variables
 ENTRYPOINT ./nass -c "${CONF}" -u "${USERS}"

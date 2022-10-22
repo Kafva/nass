@@ -74,24 +74,27 @@ cleanup(){
 
 #==============================================================================#
 
-if ! which podman &> /dev/null; then
+if which podman &> /dev/null; then
+  podman_opts=(--external)
+else
   pgrep docker &> /dev/null || die "Docker daemon is not running"
 fi
 
 case "$1" in
   *clean)
-    containers=$(docker ps -a --format "{{.Image}} {{.Names}}" |
-                 rg "^nass(-dev)* "|cut -f2 -d' ')
+    containers=$(docker ps -a ${podman_opts[@]} \
+      --format "{{.Image}} {{.Names}}" |
+      rg "^(localhost/)?nass(-dev)* "|cut -f2 -d' ')
 
-    docker rm ${containers} 2> /dev/null
-    docker rmi ${IMAGE} 2> /dev/null
-    [ "$1" = fullclean ] &&
-      docker rmi nass 2> /dev/null
+    docker rm -f ${containers} 2> /dev/null
+    docker rmi ${IMAGE}
+
+    [ "$1" = fullclean ] && docker rmi nass
     build_image
   ;;
   enter)
     build_image
-    docker exec -it $CONTAINER /bin/bash
+    docker exec -it $CONTAINER ${2:-/bin/bash}
   ;;
   logs)
     docker ps --format "{{.Names}}"|grep -q "^$CONTAINER$" ||

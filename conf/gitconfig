@@ -1,0 +1,6 @@
+# vi: ft=gitconfig
+[user]
+  name = nass
+  email = nass@kafva.one
+[init]
+  defaultBranch = main
