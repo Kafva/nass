@@ -9,6 +9,7 @@ pnpm i && vite build
 ```
 
 ## Server
+The container configurations should work with both Docker and Podman.
 
 ```bash
 # Release
@@ -24,7 +25,7 @@ docker run -p 5678:5678 -d nass
 ./scripts/docker_dev.sh logs
 
 # Test endpoints, e.g.
-curl -d "pass=xd" -X POST 'localhost:5678/get?path=Wallets/btc/main'
+curl -d "pass=xd" -X POST 'http://localhost:5678/get?path=Wallets/btc/main'
 
 ```
 

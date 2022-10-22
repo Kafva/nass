@@ -15,8 +15,20 @@ build_image(){
 watch_src(){
 # [-t] is required to avoid immediate exit with [-d]
 build_image
-docker ps --format "{{.Names}}"|rg -q "^${CONTAINER}$" ||
-  docker run -p 5678:5678 --name $CONTAINER -d -t ${IMAGE}
+
+local container_args=(
+  -p 5678:5678 --name $CONTAINER -d -t ${IMAGE}
+)
+
+if ! docker ps --format "{{.Names}}"|rg -q "^${CONTAINER}$"; then
+  if which podman &> /dev/null; then
+    # For source IPs to be preserved in incoming requests we need an
+    # extra option in podman
+    podman run --net slirp4netns:port_handler=slirp4netns ${container_args[@]}
+  else
+    docker run ${container_args[@]}
+  fi
+fi
 
 # We copy over files (instead of using a [-v] volume) for several reasons:
 #   * Single files cannot be mounted and updated from the main host
