@@ -59,20 +59,19 @@ func GetPass(res http.ResponseWriter, req *http.Request) {
   output := strings.TrimSpace(string(bytes))
 
   if err != nil && output == GPG_FAIL_STRING {
-    // We need a nil check on 'err' in case that someone sets
+    // We need a nil check on 'err' in case someone were to set
     // 'GPG_FAIL_STRING' as their password
     if req.Method == http.MethodGet {
       WriteResponse(res, StatusRetry, 
                     "Retry with PIN entry in POST request", "")
     } else {
-      // POST: Invalid PIN entry
       ErrorResponse(res, "Incorrect PIN entry", http.StatusBadRequest)
     }
   } else if err == nil {
     // Reply with decrypted password
     WriteResponse(res, StatusSuccess, "", output)
   } else {
-    // Fallback for other errors
+    // Fallback for errors other than 'GPG_FAIL_STRING'
     Err(err)
     ErrorResponse(res, output, http.StatusBadRequest)
   }
@@ -81,7 +80,7 @@ func GetPass(res http.ResponseWriter, req *http.Request) {
 /*
  POST /add?path=Service/web
    pass=[********]
-   generate=false
+   generate=[true|false]
 */
 func AddPass(res http.ResponseWriter, req *http.Request) {
   res.Header().Set("Content-Type", "application/json")
@@ -121,7 +120,8 @@ func AddPass(res http.ResponseWriter, req *http.Request) {
     }
     err = cmd.Start()
     if err != nil {
-      ErrorResponse(res, "Failed to start pass", http.StatusInternalServerError)
+      ErrorResponse(res, "Failed to run "+CONFIG.PassBinary, 
+                    http.StatusInternalServerError)
       return
     }
 
@@ -184,7 +184,8 @@ func DelPass(res http.ResponseWriter, req *http.Request) {
 // unless the `SingleUser` mode is active.
 // '.' is not allowed as a prefix or suffix
 // Sequences of '.' are not allowed
-func validatePath(res http.ResponseWriter, req *http.Request, user *User) string {
+func validatePath(res http.ResponseWriter, 
+                  req *http.Request, user *User) string {
   passPath := req.URL.Query().Get("path")
 
   if ! CONFIG.SingleUser {
@@ -210,8 +211,7 @@ func validatePath(res http.ResponseWriter, req *http.Request, user *User) string
 }
 
 // There is a built-in password generation option in `pass` but
-// we would like the output to be alpha-numerics + certain symbols (not any
-// ASCII symbol).
+// we use a custom function for detailed control over the allowed characters.
 func genPass() string {
   password := ""
   for len(password) < GEN_PASS_LEN {
