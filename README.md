@@ -3,6 +3,8 @@
 </h1>
 
 ## Client
+The client uses Svelte which is somewhat overkill, plain Typescript would likely 
+have worked as well if not better.
 ```bash
 npm i -g vite pnpm
 pnpm i && vite build

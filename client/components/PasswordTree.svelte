@@ -2,20 +2,30 @@
 import type PassEntry from '../ts/PassEntry'
 export let entry: PassEntry;
 
+import {queryString} from '../ts/store'
+let currentQuery = ""
+
+queryString.subscribe( (value: string) => {
+  currentQuery = value.toLowerCase();
+})
+
 </script>
 
-<div class="{entry.subitems.length > 0 ? 'dir' : '' }">
-{#if entry.name.length != 0 }
-<span>{entry.name}</span>
+{#if entry.matchesQuery(currentQuery)}
+  <div class="{entry.subitems.length > 0 ? 'dir' : '' }">
+  {#if entry.name.length != 0 }
+  <span>{entry.name}</span>
+  {/if}
+
+  {#if entry.subitems.length != 0 }
+    {#each entry.subitems as subitem}
+      <!-- Create a new entry recursively for each child -->
+      <svelte:self entry={subitem}/>
+    {/each}
+  {/if}
+  </div>
 {/if}
 
-{#if entry.subitems.length != 0 }
-  {#each entry.subitems as subitem}
-    <!-- Create a new entry recursively for each child -->
-    <svelte:self entry={subitem}/>
-  {/each}
-{/if}
-</div>
 
 
 <style lang="scss">

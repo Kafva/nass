@@ -11,28 +11,22 @@
   // copy to clipboard
 
   import {GetHTMLElement} from '../ts/util'
-  import {queryString} from '../ts/store'
   import PassEntry from '../ts/PassEntry'
 
   import Search from './Search.svelte'
   import PasswordTree from './PasswordTree.svelte'
 
   const tmpl = GetHTMLElement<HTMLDivElement>("#tmpl")
-  const rootEntry = new PassEntry("", [])
-  let prunedTree = new PassEntry("", [])
+  const rootEntry = new PassEntry("", [], [], [])
 
-  // Load the full inital tree
-  rootEntry.loadFromDOM(tmpl)
-
-  // Prune the tree towards the current query
-  queryString.subscribe((value:string) =>
-    prunedTree = rootEntry.pruneToQuery(value)
-  )
-
+  // Load the full tree and compile a list of subpaths for each
+  // node (used for matching each node agianst a query string)
+  rootEntry.loadFromDOM(tmpl, [])
+  rootEntry.updateSubpaths()
 </script>
 
 <Search/>
-<PasswordTree entry={prunedTree}/>
+<PasswordTree entry={rootEntry}/>
 
 <style lang="css" global>
 :root {
