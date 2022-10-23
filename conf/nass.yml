@@ -5,5 +5,5 @@ password_store: ~/.password-store
 debug: true
 color: true
 
-single_user: false
+single_user: true
 tls_enabled: false

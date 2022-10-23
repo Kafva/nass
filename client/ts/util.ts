@@ -16,7 +16,7 @@ import type {PassEntry} from './types'
  *  </div>  
  * ...
  */  
- const PassEntryFromDOM = (current: HTMLDivElement, entry: PassEntry): PassEntry  =>  {
+const PassEntryFromDOM = (current: HTMLDivElement, entry: PassEntry): PassEntry  =>  {
   const subitems = current.querySelectorAll(":scope > div")
 
   subitems.forEach( (div: HTMLDivElement) => {
@@ -41,4 +41,15 @@ function GetHTMLElement<Type extends Element>(selector:string): Type {
   return el
 }
 
-export {PassEntryFromDOM, GetHTMLElement}
+/** Prune away branches in a `PassEntry` tree that do not contain 
+ * a node that matches a `queryString`.
+ */
+const PrunePassEntryTree = (rootEntry: PassEntry, queryString: string): PassEntry => {
+  // Create an array of flat paths
+  // Remove the entries that do not match the query
+  // Recreate the tree and render the DOM
+
+  return rootEntry
+}
+
+export {PassEntryFromDOM, PrunePassEntryTree, GetHTMLElement}

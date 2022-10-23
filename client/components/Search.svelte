@@ -1,10 +1,10 @@
 <script lang="ts">
-export let queryString: string
+import {queryString} from '../ts/store'
 
 </script>
 
-<input type="text" placeholder="Search..." value={queryString}/>
-
+<!-- '$' is used to pass a store as writable -->
+<input type="text" placeholder="Search..." bind:value={$queryString}/>
 
 <style lang="scss">
 input {
