@@ -1,68 +1,67 @@
-import type {PassEntry} from '../ts/types'
 
-/**
- * Collect the elements under #tmpl into a tree of `PassEntry` objects
- * Expected HTML format:
- *  <div title="folder1">
- *    <div title="entry1"></div>
- *    <div title="entry1"></div>
- *    ...
- *    <div title="folder2">
- *      ...
- *    </div>
- *  </div>
- *  <div title="folder2">
- *    ...
- *  </div>
- * ...
- */
-const PassEntryFromDOM = (entry: PassEntry, current: HTMLDivElement): PassEntry  =>  {
-  const subitems = current.querySelectorAll(":scope > div")
+export default class PassEntry {
+  constructor(
+    public name: string,
+    public subitems: PassEntry[]
+  ){}
 
-  subitems.forEach( (div: HTMLDivElement) => {
-    // Leaf items have no children, folders have one or more <div/> children
-    const subentry = {name: div.title, subitems: []} as PassEntry
-    if (div.children.length == 0) {
-      entry.subitems.push(subentry)
-    } else {
-      entry.subitems.push(PassEntryFromDOM(subentry, div))
-    }
-  })
+  /**
+   * Collect the elements under #tmpl into a tree of `PassEntry` objects
+   * Expected HTML format:
+   *  <div title="folder1">
+   *    <div title="entry1"></div>
+   *    <div title="entry1"></div>
+   *    ...
+   *    <div title="folder2">
+   *      ...
+   *    </div>
+   *  </div>
+   *  <div title="folder2">
+   *    ...
+   *  </div>
+   * ...
+   */
+  loadFromDOM(current: HTMLDivElement): PassEntry {
+    const divs = current.querySelectorAll(":scope > div")
 
-  return entry
-}
+    divs.forEach( (div: HTMLDivElement) => {
+      // Leaf items have no children, folders have one or more <div/> children
+      const subentry = new PassEntry(div.title, [])
+      if (div.children.length == 0) {
+        this.subitems.push(subentry)
+      } else {
+        this.subitems.push(subentry.loadFromDOM(div))
+      }
+    })
 
-const PassEntryFlatten = (entry: PassEntry, currentPath: string): any[] => {
-  // Walk downwards until a leaf is reached, saving the current path
-  currentPath = currentPath == "" ? entry.name : `${currentPath}/${entry.name}`
-
-  if (entry.subitems.length == 0){
-    return [currentPath]
+    return this
   }
 
-  let flatPaths = []
-  entry.subitems.forEach( (subentry: PassEntry) => {
-    flatPaths.push( PassEntryFlatten(subentry, currentPath) )
-  })
+  /** Prune away branches in a `PassEntry` tree that do not contain
+   * a node that matches a `queryString`.
+   */
+  pruneToQuery(queryString: string): PassEntry {
+    let x = this.flatten(this.name)
+    console.log(queryString, x)
+    // Remove the entries that do not match the query
+    // Recreate the tree and render the DOM
+    return this
+  }
 
-  return flatPaths.flat()
+  /** Compile a flat array of all the paths in the tree */
+  private flatten(currentPath: string): any[] {
+    currentPath = currentPath == "" ? this.name : `${currentPath}/${this.name}`
+
+    if (this.subitems.length == 0){
+      return [currentPath]
+    }
+
+    let paths = []
+    this.subitems.forEach( (subentry: PassEntry) => {
+      paths.push(subentry.flatten(currentPath))
+    })
+
+    return paths.flat()
+  }
+
 }
-
-/** Prune away branches in a `PassEntry` tree that do not contain
- * a node that matches a `queryString`.
- */
-const PassEntryPruneTree = (rootEntry: PassEntry, queryString: string): PassEntry => {
-  let x = PassEntryFlatten(rootEntry, "") 
-  console.log("x", x)
-
-
-  // Remove the entries that do not match the query
-  // Recreate the tree and render the DOM
-
-
-  return rootEntry
-}
-
-
-export {PassEntryFromDOM, PassEntryPruneTree}
-

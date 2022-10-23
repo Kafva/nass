@@ -10,17 +10,18 @@
   // After one entry, any item can be pressed to reveal text or
   // copy to clipboard
 
-  import type {PassEntry} from '../ts/types'
-  import {PassEntryFromDOM, PassEntryPruneTree} from '../ts/PassEntry'
   import {GetHTMLElement} from '../ts/util'
+  import PassEntry from '../ts/PassEntry'
 
   import Search from './Search.svelte'
   import PasswordTree from './PasswordTree.svelte'
 
   const tmpl = GetHTMLElement<HTMLDivElement>("#tmpl")
-  const rootEntry = PassEntryFromDOM({name: "", subitems:[]} as PassEntry, tmpl)
+  const rootEntry = new PassEntry("", [])
 
-  PassEntryPruneTree(rootEntry, "")
+  rootEntry.loadFromDOM(tmpl)
+  rootEntry.pruneToQuery("wow")
+
 </script>
 
 <Search/>
