@@ -1,4 +1,6 @@
 <script lang="ts">
+import Config from '../ts/config';
+
 import type PassEntry from '../ts/PassEntry'
 export let entry: PassEntry;
 
@@ -9,12 +11,20 @@ queryString.subscribe( (value: string) => {
   currentQuery = value.toLowerCase();
 })
 
+// Each directory entry needs to have collapsed indicator
+// Each file needs a view/clipboard button
+
+
+
 </script>
 
 {#if entry.matchesQuery(currentQuery)}
-  <div class="{entry.subitems.length > 0 ? 'dir' : '' }">
+  <div class:dir="{entry.subitems.length > 0 && entry.name != ''}">
+
+  <!-- The root entry has an empty name-->
   {#if entry.name.length != 0 }
-  <span>{entry.name}</span>
+    <span class="{entry.subitems.length != 0 ? Config.dropdownOpen : ''}"/>
+    <span class="name">{entry.name}</span>
   {/if}
 
   {#if entry.subitems.length != 0 }
@@ -35,14 +45,21 @@ div {
   width: 50vw;
 
   &.dir {
-    padding-top: 20px;
+    padding: 20px 0 20px 0;
+    margin: 20px 0 20px 0;
+    border: solid 1px;
+    border-color: var(--white);
 
-    & > span {
-      display: block;
-      width: 50vw;
-
-      border-bottom: solid 1px;
-      border-bottom-color: var(--white);
+    span {
+      display: inline;
+      width: fit-content;
+      &.name {
+        width: 50vw;
+      }
+      &.nf {
+        font-size: 22px;
+        margin-right: 10px;
+      }
     }
   }
 }

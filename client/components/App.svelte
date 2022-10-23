@@ -1,15 +1,4 @@
 <script lang="ts">
-  // Search bar
-  // Settings item
-  //  Server location
-  //  PSK
-  //
-  // Collapsable list-items
-  //
-  // Password dialog (popup based on server response)
-  // After one entry, any item can be pressed to reveal text or
-  // copy to clipboard
-
   import {GetHTMLElement} from '../ts/util'
   import PassEntry from '../ts/PassEntry'
 
@@ -29,15 +18,21 @@
 <PasswordTree entry={rootEntry}/>
 
 <style lang="css" global>
+
+@font-face {
+  font-family: "Meslo";
+  src: url("meslo-nerd-fonts.ttf");
+}
+
 :root {
-  --bg: #23283d;
+  --bg: #232845;
   --white: #f5e4f3;
 }
 
 html, body {
-  font-family: Arial;
+  font-family: Meslo, Arial;
   height: 100%;
-  background-image: linear-gradient(to right, var(--bg), #1f1f47);
+  background-color: var(--bg);
   color: var(--white);
   text-align: center;
 }

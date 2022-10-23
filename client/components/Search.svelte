@@ -1,6 +1,5 @@
 <script lang="ts">
 import {queryString} from '../ts/store'
-
 </script>
 
 <!-- '$' is used to pass a store as writable -->
@@ -18,6 +17,4 @@ input {
   outline: 0;
   border-radius: 5%;
 }
-
-
 </style>
