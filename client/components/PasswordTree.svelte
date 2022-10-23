@@ -58,6 +58,7 @@ let open = false
 @use "../scss/vars";
 
 div {
+  @include vars.fade-in();
   text-align: left;
   display: block;
   width: 50vw;
@@ -70,6 +71,8 @@ div {
     font-size: vars.$font_large;
     padding: 8px 0 8px 0;
     margin: 5px 0 10px 0;
+    border-color: vars.$white;
+    border-bottom: solid 1px;
     background-color: vars.$folder;
     span {
       display: inline;

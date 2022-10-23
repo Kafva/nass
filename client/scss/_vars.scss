@@ -22,3 +22,10 @@ $white: #f5e4f3;
   }
 }
 
+@mixin fade-in($sec: 1.0s) {
+  @keyframes _fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  animation: _fade-in $sec;
+}

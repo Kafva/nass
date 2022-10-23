@@ -18,7 +18,5 @@
 <PasswordTree entry={rootEntry}/>
 
 <style lang="scss">
-
 @import "../scss/global";
-
 </style>
