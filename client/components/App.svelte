@@ -11,6 +11,7 @@
   // copy to clipboard
 
   import {GetHTMLElement} from '../ts/util'
+  import {queryString} from '../ts/store'
   import PassEntry from '../ts/PassEntry'
 
   import Search from './Search.svelte'
@@ -20,12 +21,17 @@
   const rootEntry = new PassEntry("", [])
 
   rootEntry.loadFromDOM(tmpl)
-  rootEntry.pruneToQuery("wow")
+
+  let prunedTree = new PassEntry("", [])
+
+  queryString.subscribe((value:string) =>
+    prunedTree = rootEntry.pruneToQuery(value)
+  )
 
 </script>
 
 <Search/>
-<PasswordTree entry={rootEntry}/>
+<PasswordTree entry={prunedTree}/>
 
 <style lang="css" global>
 :root {
