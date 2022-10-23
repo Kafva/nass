@@ -32,7 +32,10 @@ let open = false
     >
       <!-- Linter mad... -->
       {#if isLeaf}
-        <span style:margin-left={margin_left}/>
+        <span 
+          class="nf nf-fa-lock"
+          style:margin-left={margin_left}
+        />
       {:else}
         <span
           class="{open ? Config.dropdownOpen : Config.dropdownClosed}"
@@ -57,6 +60,17 @@ let open = false
 <style lang="scss">
 @use "../scss/vars";
 
+%shared {
+  font-size: vars.$font_medium;
+  padding: 4px 0 4px 0;
+  margin: 2px 0 5px 0;
+
+  &:hover {
+    border-bottom: solid 1px;
+    border-color: vars.$accent;
+  }
+}
+
 div {
   @include vars.fade-in();
   text-align: left;
@@ -67,13 +81,9 @@ div {
     cursor: pointer;
   }
 
+
   &.dir {
-    font-size: vars.$font_large;
-    padding: 8px 0 8px 0;
-    margin: 5px 0 10px 0;
-    border-color: vars.$white;
-    border-bottom: solid 1px;
-    background-color: vars.$folder;
+    @extend %shared;
     span {
       display: inline;
       width: fit-content;
@@ -85,10 +95,7 @@ div {
   }
 
   &.pw {
-    font-size: vars.$font_medium;
-    padding: 4px 0 4px 0;
-    margin: 2px 0 5px 0;
-    background-color: vars.$bg;
+    @extend %shared;
   }
 }
 </style>
