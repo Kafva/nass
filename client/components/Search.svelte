@@ -12,7 +12,7 @@ input {
   margin: 1vh 0 1vh 0;
   padding: 15px 0 15px 0;
   color: var(--white);
-  background-color: rgba(47, 52, 63, 0.5);
+  background-color: var(--grey);
   border: 0;
   outline: 0;
   border-radius: 5%;

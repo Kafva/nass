@@ -14,17 +14,23 @@ queryString.subscribe( (value: string) => {
 // Each directory entry needs to have collapsed indicator
 // Each file needs a view/clipboard button
 
-
+// Increase the left-justifaction as we go to deeper levels
+let margin_left = `${(entry.parents.length+1) * 50}px`
 
 </script>
 
 {#if entry.matchesQuery(currentQuery)}
-  <div class:dir="{entry.subitems.length > 0 && entry.name != ''}">
+  <div class:pw="{entry.subitems.length == 0 && entry.name != ''}">
 
   <!-- The root entry has an empty name-->
   {#if entry.name.length != 0 }
-    <span class="{entry.subitems.length != 0 ? Config.dropdownOpen : ''}"/>
-    <span class="name">{entry.name}</span>
+    <div class:dir="{entry.subitems.length > 0 && entry.name != ''}">
+      <span
+        class="{entry.subitems.length != 0 ? Config.dropdownOpen : ''}"
+        style:margin-left={margin_left}
+      />
+      <span class="name">{entry.name}</span>
+    </div>
   {/if}
 
   {#if entry.subitems.length != 0 }
@@ -40,27 +46,29 @@ queryString.subscribe( (value: string) => {
 
 <style lang="scss">
 div {
+  text-align: left;
   display: block;
   padding: 5px 0 5px 0;
   width: 50vw;
 
   &.dir {
-    padding: 20px 0 20px 0;
-    margin: 20px 0 20px 0;
-    border: solid 1px;
-    border-color: var(--white);
+    font-size: 22px;
+    padding: 8px 0 8px 0;
+    margin: 5px 0 10px 0;
+    background-color: var(--folder);
 
     span {
       display: inline;
       width: fit-content;
+
       &.name {
         width: 50vw;
       }
-      &.nf {
-        font-size: 22px;
-        margin-right: 10px;
-      }
     }
+  }
+
+  &.pw {
+    background-color: var(--bg);
   }
 }
 </style>

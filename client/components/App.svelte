@@ -24,8 +24,11 @@
   src: url("meslo-nerd-fonts.ttf");
 }
 
+/*--folder: #21253a;*/
 :root {
   --bg: #232845;
+  --folder: #232845;
+  --grey: rgba(47, 52, 63, 0.5);
   --white: #f5e4f3;
 }
 
