@@ -1,3 +1,4 @@
+import {GetHTMLElements} from './util'
 
 export default class PassEntry {
   constructor(
@@ -22,7 +23,7 @@ export default class PassEntry {
    * ...
    */
   loadFromDOM(current: HTMLDivElement): PassEntry {
-    const divs = current.querySelectorAll(":scope > div")
+    const divs = GetHTMLElements<HTMLDivElement>(":scope > div", current)
 
     divs.forEach( (div: HTMLDivElement) => {
       // Leaf items have no children, folders have one or more <div/> children
@@ -58,14 +59,14 @@ export default class PassEntry {
   }
 
   /** Compile a flat array of all the paths in the tree */
-  private flatten(currentPath: string): any[] {
+  private flatten(currentPath: string): string[] {
     currentPath = currentPath == "" ? this.name : `${currentPath}/${this.name}`
 
     if (this.subitems.length == 0){
       return [currentPath]
     }
 
-    const paths = []
+    const paths: string[][] = []
     this.subitems.forEach( (subentry: PassEntry) => {
       paths.push(subentry.flatten(currentPath))
     })
@@ -80,7 +81,7 @@ export default class PassEntry {
    * This method is meant to be used on an empty tree.
    * */
   private loadFromNodeList(nodeList: string[][]): PassEntry {
-    const handled_prefixes = []
+    const handled_prefixes: string[] = []
 
     nodeList.forEach( (nodes: string[]) => {
       const currentPrefix = nodes[0]
