@@ -17,30 +17,8 @@
 <Search/>
 <PasswordTree entry={rootEntry}/>
 
-<style lang="css" global>
+<style lang="scss">
 
-@font-face {
-  font-family: "Meslo";
-  src: url("meslo-nerd-fonts.ttf");
-}
+@import "../scss/global";
 
-/*--folder: #21253a;*/
-:root {
-  --bg: #232845;
-  --folder: #232845;
-  --grey: rgba(47, 52, 63, 0.5);
-  --white: #f5e4f3;
-}
-
-html, body {
-  font-family: Meslo, Arial;
-  height: 100%;
-  background-color: var(--bg);
-  color: var(--white);
-  text-align: center;
-}
-
-#root {
-  display: inline-block;
-}
 </style>

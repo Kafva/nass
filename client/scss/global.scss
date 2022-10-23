@@ -1,0 +1,21 @@
+@use "vars";
+
+@font-face {
+  font-family: "Meslo";
+  src: url("meslo-nerd-fonts.ttf");
+}
+
+:global(html), :global(body) {
+  font-family: Meslo, Arial;
+  height: 100%;
+  background-color: vars.$bg;
+  color: vars.$white;
+  text-align: center;
+
+}
+
+:global(div#root) {
+  display: inline-block;
+}
+
+
