@@ -11,15 +11,16 @@
   // copy to clipboard
 
   import type {PassEntry} from '../ts/types'
-  import {GetHTMLElement, PassEntryFromDOM, PrunePassEntryTree} from '../ts/util'
+  import {PassEntryFromDOM, PassEntryPruneTree} from '../ts/PassEntry'
+  import {GetHTMLElement} from '../ts/util'
 
   import Search from './Search.svelte'
   import PasswordTree from './PasswordTree.svelte'
 
   const tmpl = GetHTMLElement<HTMLDivElement>("#tmpl")
-  const rootEntry = PassEntryFromDOM(tmpl, {name: "", subitems:[]} as PassEntry)
+  const rootEntry = PassEntryFromDOM({name: "", subitems:[]} as PassEntry, tmpl)
 
-  PrunePassEntryTree(rootEntry, "")
+  PassEntryPruneTree(rootEntry, "")
 </script>
 
 <Search/>
