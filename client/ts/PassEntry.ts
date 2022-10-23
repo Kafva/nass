@@ -43,14 +43,15 @@ export default class PassEntry {
    */
   pruneToQuery(queryString: string): PassEntry {
     // Extract a list of flat paths that match the query
-    let flatPaths = this.flatten(this.name)
-    const queryMatches = flatPaths // Case-insensitive matching
-      .filter( (path:string) => path.toLowerCase()
-                                    .includes(queryString.toLowerCase())
-      )
+    const flatPaths = this.flatten(this.name)
+    // Case-insensitive matching
+    const queryMatches = flatPaths.filter( (path:string) =>
+      path.toLowerCase()
+        .includes(queryString.toLowerCase()))
 
     // Re-create the tree using the matched items
-    queryMatches.sort()
+    // The entries should already be sorted
+    //  queryMatches.sort()
     const nodeList = queryMatches.map( (path:string) => path.split('/') )
     const pruned = new PassEntry("", [])
     return pruned.loadFromNodeList(nodeList)
@@ -64,7 +65,7 @@ export default class PassEntry {
       return [currentPath]
     }
 
-    let paths = []
+    const paths = []
     this.subitems.forEach( (subentry: PassEntry) => {
       paths.push(subentry.flatten(currentPath))
     })

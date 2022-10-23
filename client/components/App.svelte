@@ -19,11 +19,12 @@
 
   const tmpl = GetHTMLElement<HTMLDivElement>("#tmpl")
   const rootEntry = new PassEntry("", [])
-
-  rootEntry.loadFromDOM(tmpl)
-
   let prunedTree = new PassEntry("", [])
 
+  // Load the full inital tree
+                                  rootEntry.loadFromDOM(tmpl)
+
+  // Prune the tree towards the current query
   queryString.subscribe((value:string) =>
     prunedTree = rootEntry.pruneToQuery(value)
   )
