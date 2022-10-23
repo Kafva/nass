@@ -8,15 +8,8 @@ package main
 // Authentication is indirectly handled by the fact that the wireguard
 // server knows the pubkey and expected origin of every user.
 //
-// Just for fun, we could add an application specific key that needs
-// to be passed with all requests (configured just like the moat key, shared
-// between all users)
-//
 // The server will _not_ create keys, a GPG key should be created separately
 // for each user.
-//
-// To avoid name conflicts each user should have their own subfolder under
-// .password-store
 
 import (
 	"flag"

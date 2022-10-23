@@ -10,8 +10,9 @@
   height: 100%;
   background-color: vars.$bg;
   color: vars.$white;
-  text-align: center;
 
+  text-align: center;
+  @include vars.mobile { text-align: left; }
 }
 
 :global(div#root) {

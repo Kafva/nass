@@ -11,16 +11,12 @@ queryString.subscribe( (value: string) => {
   currentQuery = value.toLowerCase();
 })
 
-// Each directory entry needs to have collapsed indicator
-// Each file needs a view/clipboard button
-
 // Increase the left-justifaction as we go to deeper levels
 let margin_left = `${(entry.parents.length+1) * 50}px`
 
 let isRoot = entry.name == ""
 let isLeaf = entry.subitems.length == 0
 let open = false
-
 </script>
 
 {#if entry.matchesQuery(currentQuery)}
@@ -71,7 +67,7 @@ div {
   }
 
   &.dir {
-    font-size: 22px;
+    font-size: vars.$font_large;
     padding: 8px 0 8px 0;
     margin: 5px 0 10px 0;
     background-color: vars.$folder;
@@ -86,7 +82,7 @@ div {
   }
 
   &.pw {
-    font-size: 18px;
+    font-size: vars.$font_medium;
     padding: 4px 0 4px 0;
     margin: 2px 0 5px 0;
     background-color: vars.$bg;

@@ -9,7 +9,7 @@ import {queryString} from '../ts/store'
 @use "../scss/vars";
 
 input {
-  font-size: 22px;
+  font-size: vars.$font_large;
   text-align: center;
   margin: 1vh 0 1vh 0;
   padding: 15px 0 15px 0;
