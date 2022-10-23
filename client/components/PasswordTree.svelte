@@ -22,7 +22,7 @@ let open = false
 {#if entry.matchesQuery(currentQuery)}
   <div class:pw="{isLeaf && !isRoot}">
 
-  <!-- The root entry has an empty name-->
+  <!-- The root entry has an empty name -->
   {#if !isRoot }
     <div 
       class:dir="{!isLeaf}"
