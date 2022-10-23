@@ -21,8 +21,10 @@ export let entry: PassEntry;
 
 import {queryString} from '../ts/store'
 
+// Update the local `currentSearch` whenver the 
+// global `queryString` store changes
 let currentSearch = ""
-queryString.subscribe( (value:string) => currentSearch = value )
+queryString.subscribe((value:string) => currentSearch = value)
 
 </script>
 
