@@ -6,6 +6,9 @@
 ```bash
 npm i -g vite pnpm
 pnpm i && vite build
+
+# Linting
+pnpm run lint
 ```
 
 ## Server
