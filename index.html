@@ -22,6 +22,13 @@
   <noscript>You need to enable JavaScript to run this app.</noscript>
   <script src="/client/ts/main.ts" type="module"></script>
 
+  <!-- 
+    Svelte does not (yet) have a native portal component that allows
+    for elements to be mounted at root so this <div> is manually inserted.
+    https://github.com/sveltejs/svelte/issues/1133
+  -->
+  <div hidden id="modalCover"></div>
+
   <div id="root"></div>
   <div hidden id="tmpl">{{ template "passfolder" . }}</div>
 </body>

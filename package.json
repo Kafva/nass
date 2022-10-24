@@ -6,7 +6,7 @@
   "scripts": {
     "build": "vite build",
     "check": "svelte-check --tsconfig ./tsconfig.json",
-    "lint": "eslint client/**"
+    "lint": "eslint client/{ts,components}"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^1.0.2",

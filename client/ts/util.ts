@@ -17,5 +17,16 @@ function GetHTMLElements<Type extends Element>(selector:string, root: Element):
   return el
 }
 
+function ToggleDialog(dialog: HTMLDialogElement, modalCover: HTMLDivElement,
+  closeOnly = false) {
+  modalCover.hidden = closeOnly ? true : !modalCover.hidden
+  if (dialog.open){
+    dialog.close()
+  } else {
+    dialog.show();
+  }
+}
 
-export {GetHTMLElement, GetHTMLElements}
+
+
+export {GetHTMLElement, GetHTMLElements, ToggleDialog}

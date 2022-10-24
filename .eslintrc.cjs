@@ -33,7 +33,6 @@ module.exports = {
   ignorePatterns: [
     "node_modules",
     "dist",
-    "vite.config.ts",
-    "public"
+    "vite.config.ts"
   ]
 }

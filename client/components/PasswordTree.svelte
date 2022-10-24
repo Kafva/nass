@@ -12,10 +12,10 @@ queryString.subscribe( (value: string) => {
 })
 
 // Increase the left-justifaction as we go to deeper levels
-let margin_left = `${(entry.parents.length+1) * 50}px`
+const marginLeft = `${(entry.parents.length+1) * 50}px`
 
-let isRoot = entry.name == ""
-let isLeaf = entry.subitems.length == 0
+const isRoot = entry.name == ""
+const isLeaf = entry.subitems.length == 0
 let open = false
 </script>
 
@@ -33,12 +33,12 @@ let open = false
       {#if isLeaf}
         <span 
           class="nf nf-fa-lock"
-          style:margin-left={margin_left}
+          style:margin-left={marginLeft}
         />
       {:else}
         <span
           class="{open ? Config.dropdownOpen : Config.dropdownClosed}"
-          style:margin-left={margin_left}
+          style:margin-left={marginLeft}
         />
       {/if}
       <span class="name">{entry.name}</span>

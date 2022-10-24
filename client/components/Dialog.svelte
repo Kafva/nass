@@ -1,38 +1,47 @@
 <script lang="ts">
-// The dialog needs to support:
+import Config from "../ts/config";
+import { GetHTMLElement, ToggleDialog } from "../ts/util";
+
 //  ____________________________
-//  | Path: [....]              | 
-//  | Generate: [x]             | 
-//  | Password: [****]          | 
-//  | Confirm: [****]           | 
-//  |_____________________[OK]__|
-//  
-//  ____________________________
-//  | Password entry:           | 
-//  | [*************]           | 
+//  | Password entry:           |
+//  | [*************]           |
 //  |_____________________[OK]__|
 //
 // Generate needs to relay a second message back
 //  ____________________________
-//  | Generated passsword:      | 
-//  | [.............]           | 
+//  | Generated passsword:      |
+//  | [.............]           |
 //  |_____________________[OK]__|
 
+import AddPass from "./AddPass.svelte";
+
+
+// This element is mounted outside the svelte #root
+const cover = GetHTMLElement<HTMLDivElement>(`#${Config.modalCoverId}`)
 let dialog: HTMLDialogElement;
+
+const handleKeyDown = (event: KeyboardEvent) => {
+  switch (event.key) {
+  case "Escape":
+    ToggleDialog(dialog, cover, true)
+    break;
+  }
+}
+
 </script>
 
+<svelte:window on:keydown="{(e) => handleKeyDown(e)}"/>
+
 <dialog bind:this="{dialog}">
-  <form method="dialog">
-    <h1>hey</h1>
-    <div>
-      <button value="cancel">Cancel</button>
-      <button id="confirmBtn" value="default">Confirm</button>
-    </div>
-  </form>
+  <AddPass dialog="{dialog}" cover={cover}/>
 </dialog>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<span role="button" class="nf nf-fa-plus" on:click="{ () => dialog.showModal() }"></span>
+<!--
+    svelte-ignore a11y-click-events-have-key-events
+    Elements lack intractability with Vimium if we use .showModal()
+-->
+<span role="button" class="nf nf-fa-plus"
+      on:click="{() => ToggleDialog(dialog, cover)}"></span>
 
 
 <style lang="scss">
@@ -43,16 +52,11 @@ span.nf {
 }
 
 dialog {
+  z-index: vars.$dialog_z;
   background-color: vars.$grey;
   color: vars.$white;
   border-color: vars.$accent;
   border-radius: 5%;
-
-  button {
-    border: 0;
-    outline: 0;
-  }
-
 }
 
 </style>
