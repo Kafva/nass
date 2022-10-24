@@ -4,6 +4,7 @@
 
   import Search from './Search.svelte'
   import PasswordTree from './PasswordTree.svelte'
+  import Dialog from './Dialog.svelte';
 
   const tmpl = GetHTMLElement<HTMLDivElement>("#tmpl")
   const rootEntry = new PassEntry("", [], [], [])
@@ -15,6 +16,7 @@
 </script>
 
 <Search/>
+<Dialog/>
 <PasswordTree entry={rootEntry}/>
 
 <style lang="scss">

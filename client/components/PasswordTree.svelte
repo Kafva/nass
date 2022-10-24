@@ -24,13 +24,12 @@ let open = false
 
   <!-- The root entry has an empty name -->
   {#if !isRoot }
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div 
       class:dir="{!isLeaf}"
       role="button"
       on:click="{() => open = !open }"
-      on:keydown="{()=>null}"
     >
-      <!-- Linter mad... -->
       {#if isLeaf}
         <span 
           class="nf nf-fa-lock"
@@ -76,11 +75,6 @@ div {
   text-align: left;
   display: block;
   width: 50vw;
-
-  &[role="button"] {
-    cursor: pointer;
-  }
-
 
   &.dir {
     @extend %shared;
