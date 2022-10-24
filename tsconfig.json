@@ -1,6 +1,7 @@
 {
   "extends": "@tsconfig/svelte/tsconfig.json",
   "compilerOptions": {
+    "composite": true,
     "target": "ESNext",
     "useDefineForClassFields": true,
     "module": "ESNext",
@@ -11,6 +12,5 @@
     "isolatedModules": true,
     "strict": true
   },
-  "include": ["client/**/*.d.ts", "client/**/*.ts", "client/**/*.js", "client/**/*.svelte"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "include": ["client/**/*.d.ts", "client/**/*.ts", "client/**/*.js", "client/**/*.svelte", "vite.config.ts"]
 }
