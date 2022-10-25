@@ -9,14 +9,10 @@ import {queryString} from '../ts/store'
 @use "../scss/vars";
 
 input {
+  @include vars.input-style;
   font-size: vars.$font_large;
   text-align: center;
   margin: 1vh 0 1vh 0;
   padding: 15px 0 15px 0;
-  color: vars.$white;
-  background-color: vars.$grey;
-  border: 0;
-  outline: 0;
-  border-radius: 5%;
 }
 </style>

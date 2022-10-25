@@ -38,3 +38,13 @@ $cover_z: 9;
   }
   animation: _fade-in $sec;
 }
+
+// Shared style for input elements
+@mixin input-style() {
+  color: $white;
+  background-color: $grey;
+  border: 0;
+  outline: 0;
+  border-radius: 5%;
+}
+

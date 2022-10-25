@@ -11,29 +11,32 @@ import { ToggleDialog } from "../ts/util";
 export let cover: HTMLDivElement;
 export let dialog: HTMLDialogElement;
 
+let generatePass = true
 </script>
 
   <form method="dialog">
       <div>
-        <label for="path">Path: </label>
+        <label for="path">Path:</label>
         <input type="text" name="path" required>
 
-        <label for="generate">Generate? </label>
-        <input type="checkbox" name="generate">
+        <label for="generate">Generate:</label>
+        <input type="checkbox" name="generate" bind:checked={generatePass}>
 
-        <label for="pass">Password: </label>
-        <input type="password" name="pass" required>
+        {#if !generatePass}
+          <label for="pass">Password:</label>
+          <input type="password" name="pass" required>
 
-        <label for="verify">Verify: </label>
-        <input type="password" name="verify" required>
+          <label for="verify">Verify:</label>
+          <input type="password" name="verify" required>
+        {/if}
       </div>
 
       <div>
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <button class="nf nf-fa-close"
+        <button class="nf nf-mdi-keyboard_return"
                 on:click="{() => ToggleDialog(dialog, cover, true)}" ></button>
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <button class="nf nf-fa-arrow_right"
+        <button class="nf nf-mdi-key_plus"
                 on:click="{() => ToggleDialog(dialog, cover, true)}" ></button>
       </div>
   </form>
@@ -51,6 +54,10 @@ form {
     label,input {
       margin-top: 10px;
     }
+    input {
+      font-size: vars.$font_medium;
+      @include vars.input-style;
+    }
   }
 
   & > div:nth-child(2) {
@@ -62,12 +69,17 @@ form {
     font-size: vars.$font_large;
     color: vars.$white;
 
-    // width: fit-content;
-    //padding: 10px 20px 10px 20px;
-    //margin: 20px 30px 10px 30px;
-    padding: 10px 0px 10px 0px;
-
-    // todo margin right for left only and vice versa
+    padding: 5px 0px 5px 0px;
+    margin: 40px 0 10px 0;
+    border-radius: 5%;
+    
+    // Spacing of buttons
+    &:first-child {
+      margin-right: 60%;
+    }
+    &:last-child {
+      margin-left: 60%;
+    }
 
     outline: 0;
     border: solid 2px;
