@@ -41,7 +41,7 @@ const handleKeyDown = (event: KeyboardEvent) => {
     Elements lack intractability with Vimium if we use .showModal()
 -->
 <span role="button" class="nf nf-fa-plus"
-      on:click="{() => ToggleDialog(dialog, cover)}"></span>
+      on:click="{() => ToggleDialog(dialog, cover, false)}"></span>
 
 
 <style lang="scss">
@@ -52,9 +52,11 @@ span.nf {
 }
 
 dialog {
+  position: fixed;
   z-index: vars.$dialog_z;
   background-color: vars.$grey;
   color: vars.$white;
+  opacity: 1.0;
   border-color: vars.$accent;
   border-radius: 5%;
 }

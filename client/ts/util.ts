@@ -18,9 +18,9 @@ function GetHTMLElements<Type extends Element>(selector:string, root: Element):
 }
 
 function ToggleDialog(dialog: HTMLDialogElement, modalCover: HTMLDivElement,
-  closeOnly = false) {
-  modalCover.hidden = closeOnly ? true : !modalCover.hidden
-  if (dialog.open){
+  hide: boolean) {
+  modalCover.hidden = hide
+  if (hide){
     dialog.close()
   } else {
     dialog.show();

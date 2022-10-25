@@ -28,12 +28,14 @@ export let dialog: HTMLDialogElement;
         <input type="password" name="verify" required>
       </div>
 
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <button class="nf nf-fa-close"
-              on:click="{() => ToggleDialog(dialog, cover, true)}" ></button>
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <button class="nf nf-fa-arrow_right"
-              on:click="{() => ToggleDialog(dialog, cover, true)}" ></button>
+      <div>
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <button class="nf nf-fa-close"
+                on:click="{() => ToggleDialog(dialog, cover, true)}" ></button>
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <button class="nf nf-fa-arrow_right"
+                on:click="{() => ToggleDialog(dialog, cover, true)}" ></button>
+      </div>
   </form>
 
 
@@ -42,6 +44,7 @@ export let dialog: HTMLDialogElement;
 
 form {
 
+  // Grid container
   div {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -50,23 +53,30 @@ form {
     }
   }
 
+  & > div:nth-child(2) {
+    grid-column-gap: 75px;
+  }
+
 
   button {
     font-size: vars.$font_large;
     color: vars.$white;
-    //width: 30px;
-    //height: 30px;
 
-    margin-top: 10px;
+    // width: fit-content;
     //padding: 10px 20px 10px 20px;
-    outline: 0;
-    border: 0;
+    //margin: 20px 30px 10px 30px;
+    padding: 10px 0px 10px 0px;
 
-    &.nf-fa-close {
-      background-color: vars.$red;
-    }
-    &.nf-fa-arrow_right {
-      background-color: vars.$green;
+    // todo margin right for left only and vice versa
+
+    outline: 0;
+    border: solid 2px;
+    border-color: rgba(0,0,0,0.0);
+
+    background-color: #404795;
+
+    &:hover {
+      border-color: vars.$pink;
     }
 
   }

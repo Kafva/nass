@@ -64,8 +64,12 @@ let open = false
   padding: 4px 0 4px 0;
   margin: 2px 0 5px 0;
 
+  // Always show the border (translucently)
+  // to avoid geometry changes on :hover()
+  border-bottom: solid 1px;
+  border-color: rgba(0,0,0,0.0);
+
   &:hover {
-    border-bottom: solid 1px;
     border-color: vars.$accent;
   }
 }
