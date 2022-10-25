@@ -70,7 +70,7 @@ let open = false
   border-color: rgba(0,0,0,0.0);
 
   &:hover {
-    border-color: vars.$accent;
+    border-color: vars.$lilac;
   }
 }
 

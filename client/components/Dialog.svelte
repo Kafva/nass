@@ -57,7 +57,7 @@ dialog {
   background-color: vars.$grey;
   color: vars.$white;
   opacity: 1.0;
-  border-color: vars.$accent;
+  border-color: vars.$lilac;
   border-radius: 5%;
 }
 

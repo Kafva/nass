@@ -12,9 +12,16 @@ export let cover: HTMLDivElement;
 export let dialog: HTMLDialogElement;
 
 let generatePass = true
+
 </script>
 
   <form method="dialog">
+      <!--
+      <ul>
+        <li>The path name can be 1-255 characters from the set: [-_.@/a-zA-Z0-9]</li>
+        <li>'/' can be used to create folders</li>
+      </ul>
+      -->
       <div>
         <label for="path">Path:</label>
         <input type="text" name="path" required>
@@ -31,14 +38,9 @@ let generatePass = true
         {/if}
       </div>
 
-      <div>
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <button class="nf nf-mdi-keyboard_return"
-                on:click="{() => ToggleDialog(dialog, cover, true)}" ></button>
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <button class="nf nf-mdi-key_plus"
-                on:click="{() => ToggleDialog(dialog, cover, true)}" ></button>
-      </div>
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
+      <button class="nf nf-mdi-key_plus"
+              on:click="{() => ToggleDialog(dialog, cover, true)}" ></button>
   </form>
 
 
@@ -46,6 +48,7 @@ let generatePass = true
 @use "../scss/vars";
 
 form {
+  text-align: center;
 
   // Grid container
   div {
@@ -56,14 +59,10 @@ form {
     }
     input {
       font-size: vars.$font_medium;
+      padding: 5px 2px 5px 2px;
       @include vars.input-style;
     }
   }
-
-  & > div:nth-child(2) {
-    grid-column-gap: 75px;
-  }
-
 
   button {
     font-size: vars.$font_large;
@@ -72,19 +71,11 @@ form {
     padding: 5px 0px 5px 0px;
     margin: 40px 0 10px 0;
     border-radius: 5%;
+    width: 80px;
     
-    // Spacing of buttons
-    &:first-child {
-      margin-right: 60%;
-    }
-    &:last-child {
-      margin-left: 60%;
-    }
-
     outline: 0;
     border: solid 2px;
     border-color: rgba(0,0,0,0.0);
-
     background-color: #404795;
 
     &:hover {
