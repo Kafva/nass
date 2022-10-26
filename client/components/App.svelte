@@ -17,10 +17,22 @@
   rootEntry.loadFromDOM(tmpl, [])
   rootEntry.updateSubpaths()
 
-
   // The 'modalCover' is mounted outside of the svelte #root
   const cover = GetHTMLElement<HTMLDivElement>(`#${Config.modalCoverId}`)
+
+  function HandleClick(event: MouseEvent) {
+    // Hide any open dialog when the modalCover is clicked
+    if ((event.target as HTMLElement).id == Config.modalCoverId) {
+      cover.hidden = true;
+      document.querySelectorAll('dialog').forEach( (dialog: HTMLDialogElement) => {
+        dialog.hidden = true;
+      })
+    }
+  }
+
 </script>
+
+<svelte:window on:click={HandleClick}/>
 
 <Search/>
 

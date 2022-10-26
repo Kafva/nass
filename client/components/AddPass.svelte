@@ -1,6 +1,6 @@
 <script lang="ts">
 import { ToggleDialog } from "../ts/util";
-//  ____________________________
+//   ___________________________
 //  | Path: [....]              |
 //  | Generate: [x]             |
 //  | Password: [****]          |
