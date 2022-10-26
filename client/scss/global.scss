@@ -11,8 +11,8 @@
   background-color: vars.$bg;
   color: vars.$white;
 
-  text-align: center;
-  @include vars.mobile { text-align: left; }
+  text-align: left;
+  margin-left: 50px;
 }
 
 

@@ -24,10 +24,11 @@ const handleKeyDown = (event: KeyboardEvent) => {
   <svelte:component this={component} dialog={dialog} cover={cover}/>
 </dialog>
 
-<!-- Include a button to open the corresponding component -->
+{#if btnClass != ""}
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <span role="button" class="{'nf '+ btnClass}"
       on:click="{() => ToggleDialog(dialog, cover, false)}"></span>
+{/if}
 
 <style lang="scss">
 @use "../scss/vars";
@@ -47,8 +48,8 @@ span.nf {
 
   // Help button
   &.nf-mdi-help {
-    float: left;
-    margin: 10px 0 0 10px;
+    // float: left;
+    margin: 0px 0 0 10px;
   }
 }
 

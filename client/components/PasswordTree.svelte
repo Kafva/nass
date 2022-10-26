@@ -76,10 +76,10 @@ let open = false
 
 div {
   @include vars.fade-in();
-  text-align: left;
-  display: block;
-  width: 50vw;
-  margin-left: 22vw;
+  //text-align: left;
+  //display: block;
+  //width: 50vw;
+  // margin-left: 1vw;
 
   &.dir {
     @extend %shared;

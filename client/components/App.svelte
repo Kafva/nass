@@ -1,13 +1,14 @@
 <script lang="ts">
   import {GetHTMLElement } from '../ts/util'
   import PassEntry from '../ts/PassEntry'
+  import Config from '../ts/config';
 
   import Search from './Search.svelte'
   import PasswordTree from './PasswordTree.svelte'
   import Dialog from './Dialog.svelte';
   import AddPass from './AddPass.svelte';
   import Help from './Help.svelte';
-  import Config from '../ts/config';
+  import Auth from './Auth.svelte';
 
   const tmpl = GetHTMLElement<HTMLDivElement>("#tmpl")
   const rootEntry = new PassEntry("", [], [], [])
@@ -38,11 +39,10 @@
 
 <Dialog component={AddPass} cover={cover} btnClass="nf-fa-plus"/>
 <Dialog component={Help}    cover={cover} btnClass="nf-mdi-help"/>
+<Dialog component={Auth}    cover={cover} btnClass=""/>
 
 <PasswordTree entry={rootEntry}/>
 
 <style lang="scss">
 @import "../scss/global";
-
-
 </style>
