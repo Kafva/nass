@@ -20,9 +20,11 @@ function GetHTMLElements<Type extends Element>(selector:string, root: Element):
 function ToggleDialog(dialog: HTMLDialogElement, modalCover: HTMLDivElement,
   hide: boolean) {
   modalCover.hidden = hide
-  if (hide){
+
+  if (hide) {
     dialog.close()
   } else {
+    // Elements lack intractability with Vimium if we use .showModal()
     dialog.show();
   }
 }

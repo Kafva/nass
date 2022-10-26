@@ -1,55 +1,36 @@
 <script lang="ts">
-import Config from "../ts/config";
-import { GetHTMLElement, ToggleDialog } from "../ts/util";
+import type { SvelteComponent } from "svelte";
+import { ToggleDialog } from "../ts/util";
 
-//  ____________________________
-//  | Password entry:           |
-//  | [*************]           |
-//  |_____________________[OK]__|
-//
-// Generate needs to relay a second message back
-//  ____________________________
-//  | Generated passsword:      |
-//  | [.............]           |
-//  |_____________________[OK]__|
-
-import AddPass from "./AddPass.svelte";
-
-
-// This element is mounted outside the svelte #root
-const cover = GetHTMLElement<HTMLDivElement>(`#${Config.modalCoverId}`)
+// The component to render inside of the dialog
+export let component: typeof SvelteComponent;
+export let cover: HTMLDivElement;
+export let btnClass: string;
 let dialog: HTMLDialogElement;
+
 
 const handleKeyDown = (event: KeyboardEvent) => {
   switch (event.key) {
   case "Escape":
-    ToggleDialog(dialog, cover, true)
-    break;
+        ToggleDialog(dialog, cover, true)
+        break;
   }
 }
-
 </script>
 
 <svelte:window on:keydown="{(e) => handleKeyDown(e)}"/>
 
-<dialog bind:this="{dialog}">
-  <AddPass dialog="{dialog}" cover={cover}/>
+<dialog bind:this={dialog}>
+  <svelte:component this={component} dialog={dialog} cover={cover}/>
 </dialog>
 
-<!--
-    svelte-ignore a11y-click-events-have-key-events
-    Elements lack intractability with Vimium if we use .showModal()
--->
-<span role="button" class="nf nf-fa-plus"
+<!-- Include a button to open the corresponding component -->
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<span role="button" class="{'nf '+ btnClass}"
       on:click="{() => ToggleDialog(dialog, cover, false)}"></span>
-
 
 <style lang="scss">
 @use "../scss/vars";
-
-span.nf {
-  font-size: vars.$font_large;
-}
 
 dialog {
   position: fixed;
@@ -59,6 +40,10 @@ dialog {
   opacity: 1.0;
   border-color: vars.$lilac;
   border-radius: 5%;
+}
+
+span.nf {
+  font-size: vars.$font_large;
 }
 
 </style>
