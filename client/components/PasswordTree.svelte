@@ -79,6 +79,7 @@ div {
   text-align: left;
   display: block;
   width: 50vw;
+  margin-left: 22vw;
 
   &.dir {
     @extend %shared;

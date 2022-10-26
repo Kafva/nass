@@ -18,10 +18,6 @@
     display: inline-block;
     width: 20vw;
     text-align: left;
-    background-color: vars.$black;
-    border-radius: 0%;
-    border: 1px dotted;
-    border-color: vars.$white;
     padding: 10px;
     li {
       margin-left: 20px;

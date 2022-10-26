@@ -15,9 +15,6 @@
   @include vars.mobile { text-align: left; }
 }
 
-:global(div#root) {
-  display: inline-block;
-}
 
 :global([role="button"]), :global(button) {
   cursor: pointer;

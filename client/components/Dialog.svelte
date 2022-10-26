@@ -44,6 +44,12 @@ dialog {
 
 span.nf {
   font-size: vars.$font_large;
+
+  // Help button
+  &.nf-mdi-help {
+    float: left;
+    margin: 10px 0 0 10px;
+  }
 }
 
 </style>

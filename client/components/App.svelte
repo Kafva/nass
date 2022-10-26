@@ -25,7 +25,7 @@
     if ((event.target as HTMLElement).id == Config.modalCoverId) {
       cover.hidden = true;
       document.querySelectorAll('dialog').forEach( (dialog: HTMLDialogElement) => {
-        dialog.hidden = true;
+        dialog.close()
       })
     }
   }
