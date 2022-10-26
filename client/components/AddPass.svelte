@@ -12,8 +12,8 @@ export let cover: HTMLDivElement;
 export let dialog: HTMLDialogElement;
 
 let generatePass = true
-let passInput: HTMLInputElement;
-let verifyInput: HTMLInputElement;
+let passInput: string;
+let verifyInput: string;
 
 </script>
 
@@ -32,16 +32,15 @@ let verifyInput: HTMLInputElement;
 
         {#if !generatePass}
           <label for="pass">Password:</label>
-          <input type="password" bind:this={passInput} name="pass" required>
+          <input type="password" bind:value={passInput} name="pass" required>
 
           <label for="verify">Verify:</label>
-          <input type="password" bind:this={verifyInput} name="verify" required>
-          {#if passInput && verifyInput && 
-              passInput.value == verifyInput.value && passInput.value != "" }
-            <span class="nf nf-fa-check"/>
-          {:else}
-            <span class="nf nf-fa-close"/>
-          {/if}
+          <input type="password" bind:value={verifyInput} 
+                 name="verify" 
+                 style:border-color="{
+                   passInput == verifyInput && passInput != '' ? 'green' : 'red'
+                 }" 
+                 required>
         {/if}
       </div>
 
@@ -64,7 +63,6 @@ form {
     width: 20vw;
     text-align: left;
     background-color: vars.$black;
-    opacity: 0.9;
     border-radius: 0%;
     border: 1px dotted;
     border-color: vars.$white;
@@ -78,23 +76,22 @@ form {
   div {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    label,input,span {
+    label,input {
       margin-top: 10px;
       // Fade-in for explicit password entry
       &:not(first-child) {
         @include vars.fade-in;
       }
     }
-    span {
-      display: inline-block;
-      &.nf-fa-close {
-        color: vars.$red;
-      }
-    }
     input {
       font-size: vars.$font_medium;
       padding: 5px 2px 5px 2px;
       @include vars.input-style;
+
+      &[name="verify"] {
+          border-bottom: 2px solid;
+          border-color: transparent;
+      }
     }
     
   }
