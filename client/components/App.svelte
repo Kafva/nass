@@ -37,8 +37,8 @@
 
 <Search/>
 
-<Dialog component={AddPass} cover={cover} btnClass="nf-fa-plus"/>
 <Dialog component={Help}    cover={cover} btnClass="nf-mdi-help"/>
+<Dialog component={AddPass} cover={cover} btnClass="nf-fa-plus"/>
 <Dialog component={Auth}    cover={cover} btnClass=""/>
 
 <PasswordTree entry={rootEntry}/>

@@ -76,10 +76,14 @@ let open = false
 
 div {
   @include vars.fade-in();
-  //text-align: left;
-  //display: block;
-  //width: 50vw;
-  // margin-left: 1vw;
+
+  width: 360px;
+  @include vars.mobile { width: 50vw; }
+
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+
 
   &.dir {
     @extend %shared;

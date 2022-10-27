@@ -12,7 +12,8 @@
   color: vars.$white;
 
   text-align: left;
-  margin-left: 50px;
+  margin-left: 25%; // centering on desktop
+  @include vars.mobile{ margin-left: 2%; }
 }
 
 

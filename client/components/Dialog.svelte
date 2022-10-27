@@ -24,10 +24,11 @@ const handleKeyDown = (event: KeyboardEvent) => {
   <svelte:component this={component} dialog={dialog} cover={cover}/>
 </dialog>
 
+<!-- Some dialogs (like the password prompt) do  not need activation button -->
 {#if btnClass != ""}
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<span role="button" class="{'nf '+ btnClass}"
-      on:click="{() => ToggleDialog(dialog, cover, false)}"></span>
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
+  <span role="button" class="{'nf '+ btnClass}"
+        on:click="{() => ToggleDialog(dialog, cover, false)}"></span>
 {/if}
 
 <style lang="scss">
@@ -36,20 +37,21 @@ const handleKeyDown = (event: KeyboardEvent) => {
 dialog {
   position: fixed;
   z-index: vars.$dialog_z;
-  background-color: vars.$grey;
+  background-color: #20252c;
   color: vars.$white;
   opacity: 1.0;
   border-color: vars.$lilac;
   border-radius: 5%;
 }
 
+// Buttons float to the corner
 span.nf {
   font-size: vars.$font_large;
+  float: right;
+  margin: 5px 15px 0 0;
 
-  // Help button
-  &.nf-mdi-help {
-    // float: left;
-    margin: 0px 0 0 10px;
+  &:hover {
+    color: vars.$lilac;
   }
 }
 
