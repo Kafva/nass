@@ -19,18 +19,19 @@ let verifyInput: string;
 <form>
   <div>
     <label for="path">Path:</label>
-    <input spellcheck="false" type="text" name="path">
+    <input spellcheck="false" autocomplete="off" type="text" name="path">
 
     <label for="generate">Generate:</label>
     <input type="checkbox" name="generate" bind:checked={generatePass}>
 
     {#if !generatePass}
       <label for="pass">Password:</label>
-      <input type="password" bind:value={passInput} name="pass">
+      <input type="password" bind:value={passInput} autocomplete="off" name="pass">
 
       <label for="verify">Verify:</label>
       <input type="password" bind:value={verifyInput}
              name="verify"
+             autocomplete="off"
              style:border-color="{
                passInput == verifyInput && passInput != '' ? 'green' : 'red'
              }"

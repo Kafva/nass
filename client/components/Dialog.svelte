@@ -44,6 +44,8 @@ div {
   padding: 15px;
   border: 1px solid vars.$lilac;
   border-radius: 5%;
+
+  @include vars.slide-in;
 }
 
 // Buttons float to the corner

@@ -49,3 +49,25 @@ $cover_z: 9;
   border-radius: 5%;
 }
 
+
+
+@mixin slide-in {
+  @keyframes _slide-in {
+    100% { transform: translateY(15vh); }
+  }
+  top: -5vh;
+  animation: _slide-in 0.5s forwards;
+}
+
+//@mixin slide-out {
+//  @keyframes _slide-out {
+//    100% { transform: translateY(-20vh); }
+//  }
+//  animation: _slide-out 0.5s ease-out;
+//}
+//
+//:global(dialog.closing) {
+//  @include slide-out();
+//  color: red;
+//}
+
