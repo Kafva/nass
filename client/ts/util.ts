@@ -17,18 +17,4 @@ function GetHTMLElements<Type extends Element>(selector:string, root: Element):
   return el
 }
 
-function ToggleDialog(dialog: HTMLDialogElement, modalCover: HTMLDivElement,
-  hide: boolean) {
-  modalCover.hidden = hide
-
-  if (hide) {
-    dialog.close()
-  } else {
-    // Elements lack intractability with Vimium if we use .showModal()
-    dialog.show();
-  }
-}
-
-
-
-export {GetHTMLElement, GetHTMLElements, ToggleDialog}
+export {GetHTMLElement, GetHTMLElements}

@@ -1,5 +1,4 @@
 <script lang="ts">
-import { ToggleDialog } from "../ts/util";
 //   ___________________________
 //  | Path: [....]              |
 //  | Generate: [x]             |
@@ -8,8 +7,8 @@ import { ToggleDialog } from "../ts/util";
 //  |_____________________[OK]__|
 //
 
+export let visible: boolean;
 export let cover: HTMLDivElement;
-export let dialog: HTMLDialogElement;
 
 let generatePass = true
 let passInput: string;
@@ -17,17 +16,17 @@ let verifyInput: string;
 
 </script>
 
-<form method="dialog">
+<form>
   <div>
     <label for="path">Path:</label>
-    <input spellcheck="false" type="text" name="path" required>
+    <input spellcheck="false" type="text" name="path">
 
     <label for="generate">Generate:</label>
     <input type="checkbox" name="generate" bind:checked={generatePass}>
 
     {#if !generatePass}
       <label for="pass">Password:</label>
-      <input type="password" bind:value={passInput} name="pass" required>
+      <input type="password" bind:value={passInput} name="pass">
 
       <label for="verify">Verify:</label>
       <input type="password" bind:value={verifyInput}
@@ -35,13 +34,13 @@ let verifyInput: string;
              style:border-color="{
                passInput == verifyInput && passInput != '' ? 'green' : 'red'
              }"
-             required>
+      >
     {/if}
   </div>
 
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <button class="nf nf-mdi-key_plus"
-          on:click="{() => ToggleDialog(dialog, cover, true)}" ></button>
+          on:click="{() => { visible = false; cover.hidden = true; } }" ></button>
 </form>
 
 <style lang="scss">

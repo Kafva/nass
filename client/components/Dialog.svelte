@@ -1,18 +1,17 @@
 <script lang="ts">
 import type { SvelteComponent } from "svelte";
-import { ToggleDialog } from "../ts/util";
 
-// The component to render inside of the dialog
+// The component to render inside of the modal
 export let component: typeof SvelteComponent;
 export let cover: HTMLDivElement;
 export let btnClass: string;
-let dialog: HTMLDialogElement;
-
+let visible = false;
 
 const handleKeyDown = (event: KeyboardEvent) => {
   switch (event.key) {
   case "Escape":
-        ToggleDialog(dialog, cover, true)
+        visible = false;
+        cover.hidden = true;
         break;
   }
 }
@@ -20,27 +19,30 @@ const handleKeyDown = (event: KeyboardEvent) => {
 
 <svelte:window on:keydown="{(e) => handleKeyDown(e)}"/>
 
-<dialog bind:this={dialog}>
-  <svelte:component this={component} dialog={dialog} cover={cover}/>
-</dialog>
+{#if visible}
+  <div>
+    <svelte:component this={component} visible={visible} cover={cover}/>
+  </div>
+{/if}
 
 <!-- Some dialogs (like the password prompt) do  not need activation button -->
 {#if btnClass != ""}
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <span role="button" class="{'nf '+ btnClass}"
-        on:click="{() => ToggleDialog(dialog, cover, false)}"></span>
+        on:click="{() => { visible = true; cover.hidden = false; } }"></span>
 {/if}
 
 <style lang="scss">
 @use "../scss/vars";
 
-dialog {
+div {
   position: fixed;
   z-index: vars.$dialog_z;
   background-color: #20252c;
   color: vars.$white;
   opacity: 1.0;
-  border-color: vars.$lilac;
+  padding: 15px;
+  border: 1px solid vars.$lilac;
   border-radius: 5%;
 }
 
@@ -48,7 +50,7 @@ dialog {
 span.nf {
   font-size: vars.$font_large;
   float: right;
-  margin: 5px 15px 0 0;
+  margin: 10px 15px 0 0;
 
   &:hover {
     color: vars.$lilac;
