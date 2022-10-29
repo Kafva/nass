@@ -63,7 +63,7 @@ div#dialog {
   // animation will move it into place.
   top: -5vh;
 
-  @include vars.fixed-centering(300px, 15px);
+  @include vars.fixed-centering(vars.$dialog_width, 15px);
 }
 
 // Buttons float to the corner

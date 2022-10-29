@@ -23,7 +23,9 @@ $font_medium: 18px;
 $font_small: 14px;
 
 $tree_width: 400px;
-$tree_width_mobile: 300px;
+$tree_width_mobile: 310px;
+
+$dialog_width: 290px;
 
 $msg_width: 290px;
 
@@ -61,3 +63,15 @@ $cover_z: 9;
   outline: 0;
   border-radius: 5%;
 }
+
+// This fading function is preferable for the password tree
+// (compared to the svelte JS-based approach) since it is triggered a
+// lot during searches
+@mixin fade-in($sec: 1.0s) {
+  @keyframes _fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  animation: _fade-in $sec;
+}
+

@@ -14,7 +14,7 @@
     list-style-type: disc;
     font-size: vars.$font_small;
     display: inline-block;
-    width: 20vw;
+    width: calc(vars.$dialog_width - 10px);
     text-align: left;
     padding: 10px;
     li {

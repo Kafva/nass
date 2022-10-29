@@ -30,7 +30,6 @@ let open = false
       class:dir="{!isLeaf}"
       role="button"
       on:click="{() => open = !open }"
-      transition:fade="{{ limit: 1.0, duration: 200 }}"
     >
       {#if isLeaf}
         <span
@@ -81,6 +80,7 @@ div {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+  @include vars.fade-in(0.5s);
 
   &.dir {
     @extend %shared;
