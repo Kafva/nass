@@ -23,11 +23,12 @@ const MAX_PASS_DEPTH = 6
 // The expected output if PIN entry is required to fetch a secret
 const GPG_FAIL_STRING = "gpg: decryption failed: No secret key"
 
-// Only allow content from the current domain
-// to be loaded by the client
-var CSP_VALUES = [...]string{
-  "default-src 'self';",
-}
+// FIXME
+// Svelte's fly animations rely on creating an empty stylesheet, this 
+// infers that either 'unsafe-inline' or a nonce for the empty string needs to 
+// present as a 'style-src'.
+//  https://github.com/sveltejs/svelte/issues/6662
+var CSP_VALUE = "default-src 'self'; style-src 'self' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=';"
 
 // Server configuration object
 type Config struct {

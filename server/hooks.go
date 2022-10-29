@@ -62,9 +62,7 @@ func TemplateHook(next http.Handler) http.Handler {
       })
 
       // Only allow resources to be loaded from whitelisted domains
-      for _,value := range CSP_VALUES {
-        res.Header().Add("Content-Security-Policy", value)
-      }
+      res.Header().Add("Content-Security-Policy", CSP_VALUE)
 
       tmpl.Execute(res, passTree)
     } else {

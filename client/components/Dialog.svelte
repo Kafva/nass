@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { SvelteComponent } from "svelte";
+import { fly } from 'svelte/transition';
 
 // The component to render inside of the modal
 export let component: typeof SvelteComponent;
@@ -10,19 +11,8 @@ let visible = false;
 const handleKeyDown = (event: KeyboardEvent) => {
   switch (event.key) {
   case "Escape":
-        const modal = document.querySelector("div.modal")!
-        const events = 'animationend webkitAnimationEnd'
-
-        const hideFun = () => {
-          console.log("CLOSING!!!")
-          visible = false;
-          cover.hidden = true;
-          modal.removeEventListener(events, hideFun)
-        }
-
-        modal.addEventListener(events, () => hideFun, true)
-        modal.classList.add("closing")
-        // modal.style.display = 'none';
+        visible = false
+        cover.hidden = true;
         break;
   }
 }
@@ -31,7 +21,7 @@ const handleKeyDown = (event: KeyboardEvent) => {
 <svelte:window on:keydown="{(e) => handleKeyDown(e)}"/>
 
 {#if visible}
-  <div class="modal">
+  <div in:fly="{{ y: -300, duration: 1000 }}" out:fly="{{ y: -300, duration: 1000 }}">
     <svelte:component this={component} visible={visible} cover={cover}/>
   </div>
 {/if}
@@ -46,7 +36,7 @@ const handleKeyDown = (event: KeyboardEvent) => {
 <style lang="scss">
 @use "../scss/vars";
 
-div.modal {
+div {
   position: fixed;
   z-index: vars.$dialog_z;
   background-color: #20252c;
@@ -55,11 +45,6 @@ div.modal {
   padding: 15px;
   border: 1px solid vars.$lilac;
   border-radius: 5%;
-
-  // @include vars.slide-in;
-  &:not(.closing) {
-    @include vars.slide-in;
-  }
 }
 
 // Buttons float to the corner
