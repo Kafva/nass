@@ -1,7 +1,7 @@
 <script lang="ts">
   import {GetHTMLElement } from '../ts/util'
   import PassEntry from '../ts/PassEntry'
-  import Config from '../ts/config';
+
   import { MessageText } from '../ts/types';
   import { msgText } from '../ts/store';
 
@@ -21,34 +21,18 @@
   rootEntry.loadFromDOM(tmpl, [])
   rootEntry.updateSubpaths()
 
-  // The 'modalCover' is mounted outside of the svelte #root
-  const cover = GetHTMLElement<HTMLDivElement>(`#${Config.modalCoverId}`)
-
-  function HandleClick(event: MouseEvent) {
-    // Hide any open dialog when the modalCover is clicked
-    if ((event.target as HTMLElement).id == Config.modalCoverId) {
-      cover.hidden = true;
-      document.querySelectorAll('dialog').forEach( (dialog: HTMLDialogElement) => {
-        dialog.close()
-      })
-    }
-  }
-
   //setTimeout(()=>msgText.set(["xDDD",""]) , 2000)
   setTimeout(()=>msgText.set([MessageText.added.toString(),"new_password"]) , 1000)
   //setTimeout(()=>msgText.set([MessageText.deleted.toString(),"very/long/path/to_some/password"]) , 4000)
   //setTimeout(()=>msgText.set([MessageText.clipboard.toString(),""]) , 5000)
-
 </script>
-
-<svelte:window on:click={HandleClick}/>
 
 <Msg/>
 <Search/>
 
-<Dialog component={Help}    cover={cover} btnClass="nf-mdi-help"/>
-<Dialog component={AddPass} cover={cover} btnClass="nf-fa-plus"/>
-<Dialog component={Auth}    cover={cover} btnClass=""/>
+<Dialog component={Help}    btnClass="nf-mdi-help"/>
+<Dialog component={AddPass} btnClass="nf-fa-plus"/>
+<Dialog component={Auth}    btnClass=""/>
 
 <PasswordTree entry={rootEntry}/>
 

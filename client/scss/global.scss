@@ -20,15 +20,3 @@
 :global([role="button"]), :global(button) {
   cursor: pointer;
 }
-
-:global(#modalCover) {
-  z-index: vars.$cover_z;
-  position: fixed;
-  left:0;
-  top:0;
-  width: 100vw;
-  height: 100vh;
-  background-color: vars.$black;
-  opacity: 0.5;
-}
-

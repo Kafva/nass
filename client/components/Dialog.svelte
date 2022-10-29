@@ -1,10 +1,9 @@
 <script lang="ts">
 import type { SvelteComponent } from "svelte";
-import { fly } from '../ts/util';
+import { fly, fade } from '../ts/util';
 
 // The component to render inside of the modal
 export let component: typeof SvelteComponent;
-export let cover: HTMLDivElement;
 export let btnClass: string;
 let visible = false;
 
@@ -12,19 +11,22 @@ const handleKeyDown = (event: KeyboardEvent) => {
   switch (event.key) {
   case "Escape":
     visible = false
-    cover.hidden = true;
     break;
   }
 }
+
 </script>
 
-<svelte:window on:keydown="{(e) => handleKeyDown(e)}"/>
+<svelte:window on:keydown="{handleKeyDown}"/>
 
 {#if visible}
-  <div transition:fly="{{ vh: 10, duration: 400 }}">
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
+  <div id="modalCover" transition:fade="{{ limit: 0.5, duration: 400 }}"/>
+
+  <div id="dialog" transition:fly="{{ vh: 10, duration: 400 }}">
     <!-- bind: is used to have the parent react to any changes that
     the child makes to 'visible' -->
-    <svelte:component this={component} bind:visible={visible} cover={cover}/>
+    <svelte:component this={component} bind:visible={visible}/>
   </div>
 {/if}
 
@@ -32,13 +34,23 @@ const handleKeyDown = (event: KeyboardEvent) => {
 {#if btnClass != ""}
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <span role="button" class="{'nf '+ btnClass}"
-        on:click="{() => { visible = true; cover.hidden = false; } }"></span>
+        on:click="{() => visible = true }"></span>
 {/if}
 
 <style lang="scss">
 @use "../scss/vars";
 
-div {
+div#modalCover {
+  z-index: vars.$cover_z;
+  position: fixed;
+  left:0;
+  top:0;
+  width: 100vw;
+  height: 100vh;
+  background-color: vars.$black;
+}
+
+div#dialog {
   position: fixed;
   z-index: vars.$dialog_z;
   background-color: vars.$dialog_bg;

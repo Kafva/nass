@@ -24,6 +24,17 @@ const fly = function(node: HTMLElement, { vh = 30, delay = 0, duration = 1000 })
   }
 }
 
+/** Fade an element in/out up to the provided opacity limit. */
+const fade = function(node: HTMLElement, { limit = 0.5, delay = 0, duration = 1000 }) {
+  return {
+    delay,
+    duration,
+    tick: (t: number) => {
+      node.style.setProperty("opacity", `${t*limit}`)
+    }
+  }
+} 
+
 /** Generic getter for DOM elements */
 const GetHTMLElement = function<Type extends Element>(selector:string): Type {
   const el = document.querySelector(selector) as Type;
@@ -43,4 +54,4 @@ const GetHTMLElements = function<Type extends Element>(selector:string, root: El
   return el
 }
 
-export {GetHTMLElement, GetHTMLElements, fly}
+export {GetHTMLElement, GetHTMLElements, fly, fade}
