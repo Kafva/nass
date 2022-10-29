@@ -15,12 +15,16 @@ DB=(
   john/Wallets/eth/main
   john/Github/James0x1
   john/Github/James0x2
+  john/visa
+  john/mastercard
 
   jane/Wallets/xmr/main
   jane/Wallets/xmr/frozen
   jane/Wallets/eth/main
   jane/Github/Jane0x1
   jane/Github/Jane0x2
+  jane/visa
+  jane/mastercard
 )
 
 

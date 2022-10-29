@@ -116,7 +116,7 @@ case "$1" in
   watch)
     watch_src
   ;;
-  *) die "usage: $(basename $0) <clean|enter|logs|watch>"
+  *) die "usage: $(basename $0) <fullclean|clean|enter|logs|watch>"
   ;;
 esac
 
