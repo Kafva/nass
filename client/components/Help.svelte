@@ -2,8 +2,6 @@
 
 </script>
 
-
-
 <ul>
   <li>Latin alphanumerics and <code>[-_.@/]</code> are allowed in path names.</li>
   <li><code>'/'</code> can be used to create folders.</li>

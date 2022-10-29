@@ -1,4 +1,3 @@
-
 /**
  * Custom fly transition to avoid a CSP hack with the current Svelte
  * implementation.

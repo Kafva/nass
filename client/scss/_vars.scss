@@ -9,16 +9,19 @@ $font_small: 14px;
 
 // Colors
 $lilac:      #6e85d3;
-$bg:         #232845;
-$folder:     #232845;
 $white:      #f5e4f3;
-$grey:       rgba(47, 52, 63, 0.5);
 $red:        #a8323e;
 $green:      #32a852;
 $black:      #1a1c1f;
 $pink:       #de95c3;
 
+$input_bg:   rgba(47, 52, 63, 0.5);
+$dialog_bg:  #20252c;
+$body_bg:    #232845;
+
+
 // Z-indices
+$msg_z: 11;
 $dialog_z: 10;
 $cover_z: 9;
 
@@ -43,7 +46,7 @@ $cover_z: 9;
 // Shared style for input elements
 @mixin input-style() {
   color: $white;
-  background-color: $grey;
+  background-color: $input_bg;
   border: 0;
   outline: 0;
   border-radius: 5%;

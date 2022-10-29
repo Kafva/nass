@@ -16,7 +16,7 @@ let verifyInput: string;
 
 </script>
 
-<form>
+<form method="dialog">
   <div>
     <label for="path">Path:</label>
     <input spellcheck="false" autocomplete="off" type="text" name="path">
@@ -43,7 +43,7 @@ let verifyInput: string;
 
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <button class="nf nf-mdi-key_plus"
-          on:click="{() => { visible = false; cover.hidden = true; } }" ></button>
+          on:click="{() => { visible = false; cover.hidden = true; } }"></button>
 </form>
 
 <style lang="scss">

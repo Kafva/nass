@@ -22,7 +22,9 @@ const handleKeyDown = (event: KeyboardEvent) => {
 
 {#if visible}
   <div transition:fly="{{ vh: 10, duration: 400 }}">
-    <svelte:component this={component} visible={visible} cover={cover}/>
+    <!-- bind: is used to have the parent react to any changes that
+    the child makes to 'visible' -->
+    <svelte:component this={component} bind:visible={visible} cover={cover}/>
   </div>
 {/if}
 
@@ -39,9 +41,8 @@ const handleKeyDown = (event: KeyboardEvent) => {
 div {
   position: fixed;
   z-index: vars.$dialog_z;
-  background-color: #20252c;
+  background-color: vars.$dialog_bg;
   color: vars.$white;
-  opacity: 1.0;
   padding: 15px;
   border: 1px solid vars.$lilac;
   border-radius: 5%;
