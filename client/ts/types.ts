@@ -1,8 +1,8 @@
 // Predefined <Msg/> messages
 enum MessageText {
   clipboard = "Copied to clipboard",
-  added = "Added ",
-  deleted = "Deleted ",
+  added = "Added",
+  deleted = "Deleted",
 }
 
 // Predefined icon mappings for messages:

@@ -21,10 +21,10 @@
   rootEntry.loadFromDOM(tmpl, [])
   rootEntry.updateSubpaths()
 
-  //setTimeout(()=>msgText.set(["xDDD",""]) , 2000)
-  setTimeout(()=>msgText.set([MessageText.added.toString(),"new_password"]) , 1000)
-  //setTimeout(()=>msgText.set([MessageText.deleted.toString(),"very/long/path/to_some/password"]) , 4000)
-  //setTimeout(()=>msgText.set([MessageText.clipboard.toString(),""]) , 5000)
+  //setTimeout(()=>msgText.set(["xDDD",""]) , 1000)
+  //setTimeout(()=>msgText.set([MessageText.added.toString(),"new_password"]) , 1000)
+  setTimeout(()=>msgText.set([MessageText.deleted.toString(),"very/long/path/to_some/password"]) , 1000)
+  //setTimeout(()=>msgText.set([MessageText.clipboard.toString(),""]) , 1000)
 </script>
 
 <Msg/>

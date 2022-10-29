@@ -9,7 +9,7 @@ let iconClass = ""
 let timeoutID: any = null
 
 msgText.subscribe( (value:[string,string]) => {
-  message = value[0] + value[1];
+  message = value[1] == "" ? value[0] : `${value[0]} '${value[1]}'`
   iconClass = MessageIcons[value[0]] || ""
 
   // Cancel the current timeout if one is already in progress
@@ -27,7 +27,7 @@ msgText.subscribe( (value:[string,string]) => {
 
 {#if message.length != 0}
   <div transition:fly="{{ vh: 2, duration: 200 }}">
-    <p>{message} <span class="{'nf '+ iconClass}"/></p>
+    <p><span class="{'nf '+ iconClass}"/> {message} </p>
   </div>
 {/if}
 
@@ -47,8 +47,14 @@ div {
     font-size: vars.$font_small;
     font-weight: bold;
     margin: 16px 20px 16px 20px;
+
+    width: 220px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+
     span {
-      margin-left: 5px;
+      margin-right: 10px;
       font-size: vars.$font_medium;
     }
   }

@@ -84,7 +84,6 @@ div {
   overflow: hidden;
   white-space: nowrap;
 
-
   &.dir {
     @extend %shared;
     span {
