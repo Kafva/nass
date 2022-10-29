@@ -3,16 +3,29 @@ enum MessageText {
   clipboard = "Copied to clipboard",
   added = "Added",
   deleted = "Deleted",
+  err = "Error"
 }
 
 // Predefined icon mappings for messages:
-//    Copied to clipboard!
-//    Entry added
-//    Entry deleted
 const MessageIcons: { [id: string]: string } = {
   [MessageText.clipboard]: "nf-mdi-clipboard_check",
   [MessageText.added]: "nf-mdi-key_plus",
   [MessageText.deleted]: "nf-mdi-key_minus",
+  [MessageText.err]: "nf-oct-issue_opened",
 }
 
-export { MessageText, MessageIcons }
+
+enum ApiStatusResponse {
+  retry = "retry",
+  success = "success",
+  error = "error"
+}
+
+interface ApiResponse {
+  status: ApiStatusResponse
+  desc: string
+  value: string
+}
+
+export type { ApiResponse }
+export { MessageText, MessageIcons, ApiStatusResponse }

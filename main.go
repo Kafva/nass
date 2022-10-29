@@ -94,9 +94,11 @@ func main(){
   }
 }
 
-func redirect_to_app(w http.ResponseWriter, r *http.Request) {
-    if r.URL.Path == "/" {
-      http.Redirect(w, r, "/app/index.html", 301)
+func redirect_to_app(res http.ResponseWriter, req *http.Request) {
+    if req.URL.Path == "/" {
+      http.Redirect(res, req, "/app/index.html", 301)
+    } else {
+      http.NotFound(res, req)
     }
 }
 

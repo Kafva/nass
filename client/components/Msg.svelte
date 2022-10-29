@@ -9,7 +9,7 @@ let iconClass = ""
 let timeoutID: any = null
 
 msgText.subscribe( (value:[string,string]) => {
-  message = value[1] == "" ? value[0] : `${value[0]} '${value[1]}'`
+  message = value[1] == "" ? value[0] : value[0] + " " + value[1]
   iconClass = MessageIcons[value[0]] || ""
 
   // Cancel the current timeout if one is already in progress
@@ -45,6 +45,11 @@ div {
 
   width: vars.$msg_width;
   @include vars.fixed-centering(vars.$msg_width, 20px);
+
+  @include vars.mobile{
+    width: vars.$msg_width_mobile;
+    @include vars.fixed-centering(vars.$msg_width_mobile, 20px);
+  }
 
   p {
     font-size: vars.$font_small;

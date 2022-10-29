@@ -9,32 +9,36 @@ export default class PassEntry {
      * list of the complete paths beneath each entry.
      */
     public subpaths: string[],
-    /** Each child needs to be able to determine if one of 
+    /** Each child needs to be able to determine if one of
      * its ancestors match the current query.
      */
     public parents: string[],
     public subitems: PassEntry[]
   ){}
 
+  path(): string {
+    return this.parents.join('/') + '/' + this.name
+  }
+
   /** Returns true if there is case-insensitive match with the current `.name`,
    * within the `.subpaths` or `.parents` arrays.
-   * NOTE: The `queryString` needs to be given in lowercase. 
+   * NOTE: The `queryString` needs to be given in lowercase.
    * Returns true for empty queries and for the root node (which lacks a name)
    * */
   matchesQuery(queryString: string): boolean {
-    return queryString == "" || this.name == "" || 
+    return queryString == "" || this.name == "" ||
       this.name.toLowerCase().includes(queryString) ||
-      this.subpaths.some( (subpath: string) => 
+      this.subpaths.some( (subpath: string) =>
         subpath.toLowerCase().includes(queryString)
       ) ||
-      this.parents.some( (node: string) => 
+      this.parents.some( (node: string) =>
         node.toLowerCase().includes(queryString)
       )
   }
 
   /**
    * Update the list of all complete paths beneath the current entry.
-   * The root entry is skipped (searches do not need to know if they match  
+   * The root entry is skipped (searches do not need to know if they match
    * the root path) and will always have an empty `subpaths` attribute.
    */
   updateSubpaths(){
