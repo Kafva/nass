@@ -17,7 +17,7 @@ msgText.subscribe( (value:[string,string]) => {
     clearTimeout(timeoutID)
   }
 
-  timeoutID = setTimeout(() => { 
+  timeoutID = setTimeout(() => {
     msgText.set(["",""])
     timeoutID = null
   }, Config.messageTimeout)
@@ -43,12 +43,15 @@ div {
   background-color: vars.$dialog_bg;
   border: 2px dotted vars.$lilac;
 
+  width: vars.$msg_width;
+  @include vars.fixed-centering(vars.$msg_width, 20px);
+
   p {
     font-size: vars.$font_small;
     font-weight: bold;
     margin: 16px 20px 16px 20px;
 
-    width: 220px;
+    width: calc(vars.$msg_width - 40px);
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;

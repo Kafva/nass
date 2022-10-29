@@ -28,6 +28,7 @@
 </script>
 
 <Msg/>
+
 <Search/>
 
 <Dialog component={Help}    btnClass="nf-mdi-help"/>

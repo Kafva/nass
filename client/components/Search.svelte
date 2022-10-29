@@ -12,7 +12,8 @@ input {
   @include vars.input-style;
   font-size: vars.$font_large;
   text-align: center;
-  margin: 1vh 0 1vh 0;
+  margin-top: 1vh;
+  margin-bottom: 1vh;
   padding: 15px 0 15px 0;
 }
 </style>

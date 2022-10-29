@@ -1,4 +1,5 @@
 <script lang="ts">
+import { fade } from '../ts/util';
 //   ___________________________
 //  | Path: [....]              |
 //  | Generate: [x]             |
@@ -8,7 +9,6 @@
 //
 
 export let visible: boolean;
-export let cover: HTMLDivElement;
 
 let generatePass = true
 let passInput: string;
@@ -17,33 +17,35 @@ let verifyInput: string;
 </script>
 
 <form method="dialog">
-  <div>
+  <div class="form-item">
     <label for="path">Path:</label>
     <input spellcheck="false" autocomplete="off" type="text" name="path">
 
     <label for="generate">Generate:</label>
     <input type="checkbox" name="generate" bind:checked={generatePass}>
-
-    {#if !generatePass}
-      <label for="pass">Password:</label>
-      <input type="password" bind:value={passInput} autocomplete="off" name="pass">
-
-      <label for="verify">Verify:</label>
-      <input type="password" bind:value={verifyInput}
-             name="verify"
-             autocomplete="off"
-             style:border-color="{
-                verifyInput ?
-                  (passInput == verifyInput && passInput != '' ? 'green' : 'red') :
-                  'transparent'
-             }"
-      >
-    {/if}
   </div>
+
+  {#if !generatePass}
+  <div class="form-item" transition:fade="{{ limit: 1.0, duration: 400 }}">
+    <label for="pass">Password:</label>
+    <input type="password" bind:value={passInput} autocomplete="off" name="pass">
+
+    <label for="verify">Verify:</label>
+    <input type="password" bind:value={verifyInput}
+           name="verify"
+           autocomplete="off"
+           style:border-color="{
+              verifyInput ?
+                (passInput == verifyInput && passInput != '' ? 'green' : 'red') :
+                'transparent'
+           }"
+    >
+  </div>
+  {/if}
 
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <button class="nf nf-mdi-key_plus"
-          on:click="{() => { visible = false; cover.hidden = true; } }"></button>
+          on:click="{() => { visible = false } }"></button>
 </form>
 
 <style lang="scss">
@@ -52,18 +54,14 @@ let verifyInput: string;
 form {
   text-align: center;
 
-  div {
+  div.form-item {
+    font-size: vars.$font_small;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 0.5fr 1fr;
     label,input {
       margin-top: 10px;
-      // Fade-in for explicit password entry
-      &:not(first-child) {
-        @include vars.fade-in;
-      }
     }
     input {
-      font-size: vars.$font_medium;
       padding: 5px 2px 5px 2px;
       @include vars.input-style;
 
@@ -87,7 +85,7 @@ form {
     outline: 0;
     border: solid 2px;
     border-color: rgba(0,0,0,0.0);
-    background-color: #404795;
+    background-color: vars.$button_bg;
 
     &:hover {
       border-color: vars.$pink;

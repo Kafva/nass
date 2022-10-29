@@ -33,7 +33,7 @@ const fade = function(node: HTMLElement, { limit = 0.5, delay = 0, duration = 10
       node.style.setProperty("opacity", `${t*limit}`)
     }
   }
-} 
+}
 
 /** Generic getter for DOM elements */
 const GetHTMLElement = function<Type extends Element>(selector:string): Type {

@@ -62,6 +62,8 @@ div#dialog {
   // Position the dialog off-screen by default, the `fly`
   // animation will move it into place.
   top: -5vh;
+
+  @include vars.fixed-centering(300px, 15px);
 }
 
 // Buttons float to the corner

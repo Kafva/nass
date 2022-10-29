@@ -3,10 +3,6 @@ $mobile_min_width: 320px;
 $mobile_max_width: 480px;
 $widescreen_min_width: 1400px;
 
-$font_large: 22px;
-$font_medium: 18px;
-$font_small: 14px;
-
 // Colors
 $lilac:      #6e85d3;
 $white:      #f5e4f3;
@@ -18,13 +14,23 @@ $pink:       #de95c3;
 $input_bg:   rgba(47, 52, 63, 0.5);
 $dialog_bg:  #20252c;
 $body_bg:    #232845;
+$button_bg:  #404795;
 
+
+// Dimensions
+$font_large: 22px;
+$font_medium: 18px;
+$font_small: 14px;
+
+$tree_width: 400px;
+$tree_width_mobile: 300px;
+
+$msg_width: 290px;
 
 // Z-indices
 $msg_z: 11;
 $dialog_z: 10;
 $cover_z: 9;
-
 
 //== Mixins ==//
 @mixin mobile() {
@@ -35,12 +41,16 @@ $cover_z: 9;
   }
 }
 
-@mixin fade-in($sec: 1.0s) {
-  @keyframes _fade-in {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-  }
-  animation: _fade-in $sec;
+// Centering of items without fixed positioning
+@mixin centering($width) {
+  width: $width;
+  margin-left: calc(50vw - $width/2);
+}
+
+// Centering of items with a fixed position
+@mixin fixed-centering($width, $padding) {
+  width: $width;
+  left: calc(50vw - ($width - 2*$padding)/2);
 }
 
 // Shared style for input elements

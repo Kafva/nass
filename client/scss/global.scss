@@ -10,13 +10,20 @@
   height: 100%;
   background-color: vars.$body_bg;
   color: vars.$white;
-
-  text-align: left;
-  margin-left: 25%; // centering on desktop
-  @include vars.mobile{ margin-left: 2%; }
 }
-
 
 :global([role="button"]), :global(button) {
   cursor: pointer;
+}
+
+:global(div#root) {
+  // Centering within main container
+  @include vars.centering(vars.$tree_width);
+
+  @include vars.mobile{  
+    @include vars.centering(vars.$tree_width_mobile);
+  }
+
+  height: 100%;
+  text-align: left;
 }

@@ -1,5 +1,6 @@
 <script lang="ts">
 import Config from '../ts/config';
+import { fade } from '../ts/util';
 
 import type PassEntry from '../ts/PassEntry'
 export let entry: PassEntry;
@@ -25,14 +26,15 @@ let open = false
   <!-- The root entry has an empty name -->
   {#if !isRoot }
     <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <div 
+    <div
       class:dir="{!isLeaf}"
       role="button"
       on:click="{() => open = !open }"
+      transition:fade="{{ limit: 1.0, duration: 200 }}"
     >
       {#if isLeaf}
-        <span 
-          class="nf nf-fa-lock"
+        <span
+          class={Config.passwordIcon}
           style:margin-left={marginLeft}
         />
       {:else}
@@ -69,17 +71,13 @@ let open = false
   border-bottom: solid 1px;
   border-color: rgba(0,0,0,0.0);
 
+
   &:hover {
     border-color: vars.$lilac;
   }
 }
 
 div {
-  @include vars.fade-in();
-
-  width: 360px;
-  @include vars.mobile { width: 50vw; }
-
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
@@ -98,6 +96,9 @@ div {
 
   &.pw {
     @extend %shared;
+    span.nf {
+      margin-right: 7px;
+    }
   }
 }
 </style>
