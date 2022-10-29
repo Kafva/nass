@@ -26,7 +26,7 @@ msgText.subscribe( (value:[string,string]) => {
 </script>
 
 {#if message.length != 0}
-  <div transition:fly="{{ vh: 2, duration: 200 }}">
+  <div transition:fly="{{ from: 'bottom', vh: 8, duration: 200 }}">
     <p><span class="{'nf '+ iconClass}"/> {message} </p>
   </div>
 {/if}
@@ -62,7 +62,9 @@ div {
     }
   }
 
-  top: -1vh;
+  // Messages appear at the bottom of the screen so that they
+  // do not overlap with the search bar
+  top: 100vh;
 }
 
 </style>

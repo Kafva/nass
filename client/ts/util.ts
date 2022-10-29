@@ -2,23 +2,24 @@
  * Custom fly transition to avoid a CSP hack with the current Svelte
  * implementation.
  * https://github.com/sveltejs/svelte/issues/6662
+ * This method expects the element in question to be off-screen by default.
  */
-const fly = function(node: HTMLElement, { vh = 30, delay = 0, duration = 1000 }) {
-  // These parameters are defined for Svelte transitions (in-, out-, transition- etc.)
+const fly = function(node: HTMLElement, {
+  from = 'top', vh = 30, delay = 0, duration = 1000
+}) {
   return {
     delay,
     duration,
-    // 't' goes from 0 to 1 for 'in-' animations and 1 to 0 for 'out-' animations.
-    //
     // Using 'css' here gives better performance than 'tick' but requires a
     // nonce for an empty stylesheet to be provided as a CSP exception.
     tick: (t: number) => {
-      // In- animation will start with opacity: 0 and translate(-0.0%)
-      // This assumes that the dialog is off-screen by default.
+      // 't' goes from 0 to 1 for 'in-' and 1 to 0 for 'out-' animations.
       //
-      // At the end of the 'in-' animation we will have translate(100%)
-      // which moves the element DOWN.
-      node.style.setProperty("transform", `translateY(${t * vh}vh)`)
+      // In- animation will start with translate(0.0%) and move towards either
+      //   100% (downwards): element should start above the top of the viewport
+      //  -100% (downwards): element should start below the bottom of the viewport
+      //
+      node.style.setProperty("transform", `translateY(${from == 'top' ? '' : '-'}${t * vh}vh)`)
       node.style.setProperty("opacity", `${t}`)
     }
   }
