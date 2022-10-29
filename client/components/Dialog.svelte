@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { SvelteComponent } from "svelte";
-import { fly } from 'svelte/transition';
+import { fly } from '../ts/util';
 
 // The component to render inside of the modal
 export let component: typeof SvelteComponent;
@@ -11,9 +11,9 @@ let visible = false;
 const handleKeyDown = (event: KeyboardEvent) => {
   switch (event.key) {
   case "Escape":
-        visible = false
-        cover.hidden = true;
-        break;
+    visible = false
+    cover.hidden = true;
+    break;
   }
 }
 </script>
@@ -21,7 +21,7 @@ const handleKeyDown = (event: KeyboardEvent) => {
 <svelte:window on:keydown="{(e) => handleKeyDown(e)}"/>
 
 {#if visible}
-  <div in:fly="{{ y: -300, duration: 1000 }}" out:fly="{{ y: -300, duration: 1000 }}">
+  <div transition:fly="{{ vh: 10, duration: 400 }}">
     <svelte:component this={component} visible={visible} cover={cover}/>
   </div>
 {/if}
@@ -45,6 +45,10 @@ div {
   padding: 15px;
   border: 1px solid vars.$lilac;
   border-radius: 5%;
+
+  // Position the dialog off-screen by default, the `fly`
+  // animation will move it into place.
+  top: -5vh;
 }
 
 // Buttons float to the corner
@@ -59,4 +63,3 @@ span.nf {
 }
 
 </style>
-
