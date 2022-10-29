@@ -33,7 +33,9 @@ let verifyInput: string;
              name="verify"
              autocomplete="off"
              style:border-color="{
-               passInput == verifyInput && passInput != '' ? 'green' : 'red'
+                verifyInput ?
+                  (passInput == verifyInput && passInput != '' ? 'green' : 'red') :
+                  'transparent'
              }"
       >
     {/if}

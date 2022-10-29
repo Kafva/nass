@@ -25,8 +25,8 @@ $cover_z: 9;
 
 //== Mixins ==//
 @mixin mobile() {
-  @media 
-    (min-width: $mobile_min_width) and 
+  @media
+    (min-width: $mobile_min_width) and
     (max-width: $mobile_max_width) {
     @content;
   }
@@ -59,15 +59,18 @@ $cover_z: 9;
   animation: _slide-in 0.5s forwards;
 }
 
-//@mixin slide-out {
-//  @keyframes _slide-out {
-//    100% { transform: translateY(-20vh); }
-//  }
-//  animation: _slide-out 0.5s ease-out;
-//}
-//
-//:global(dialog.closing) {
-//  @include slide-out();
-//  color: red;
-//}
+@mixin slide-out {
+  @keyframes _slide-out {
+    100% { transform: translateY(-20vh); }
+  }
+  //top: 10vh;
+
+  animation: _slide-out 2s forwards;
+  animation-fill-mode: forwards;
+}
+
+:global(div.modal.closing) {
+  color: red;
+  @include slide-out();
+}
 

@@ -10,8 +10,19 @@ let visible = false;
 const handleKeyDown = (event: KeyboardEvent) => {
   switch (event.key) {
   case "Escape":
-        visible = false;
-        cover.hidden = true;
+        const modal = document.querySelector("div.modal")!
+        const events = 'animationend webkitAnimationEnd'
+
+        const hideFun = () => {
+          console.log("CLOSING!!!")
+          visible = false;
+          cover.hidden = true;
+          modal.removeEventListener(events, hideFun)
+        }
+
+        modal.addEventListener(events, () => hideFun, true)
+        modal.classList.add("closing")
+        // modal.style.display = 'none';
         break;
   }
 }
@@ -20,7 +31,7 @@ const handleKeyDown = (event: KeyboardEvent) => {
 <svelte:window on:keydown="{(e) => handleKeyDown(e)}"/>
 
 {#if visible}
-  <div>
+  <div class="modal">
     <svelte:component this={component} visible={visible} cover={cover}/>
   </div>
 {/if}
@@ -35,7 +46,7 @@ const handleKeyDown = (event: KeyboardEvent) => {
 <style lang="scss">
 @use "../scss/vars";
 
-div {
+div.modal {
   position: fixed;
   z-index: vars.$dialog_z;
   background-color: #20252c;
@@ -45,7 +56,10 @@ div {
   border: 1px solid vars.$lilac;
   border-radius: 5%;
 
-  @include vars.slide-in;
+  // @include vars.slide-in;
+  &:not(.closing) {
+    @include vars.slide-in;
+  }
 }
 
 // Buttons float to the corner
