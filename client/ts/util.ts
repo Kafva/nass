@@ -1,3 +1,6 @@
+import { msgText } from "./store"
+import { MessageText } from "./types"
+
 /** Regex based UA platform check */
 const IS_MOBILE = ( (): boolean => {
   return navigator.userAgent.match(/iPhone|iPad|Android|webOS/i) != null
@@ -61,4 +64,15 @@ const GetHTMLElements = function<Type extends Element>(selector:string, root: El
   return el
 }
 
-export {IS_MOBILE, GetHTMLElement, GetHTMLElements, fly, fade}
+/** Overwrite the clipbaord and create a message alert */
+const CopyToClipboard = async (value: string) => {
+  try {
+    await navigator.clipboard.writeText(value)
+    msgText.set([MessageText.clipboard, ""])
+  } catch (err) {
+    msgText.set([MessageText.err, "failed to access clipboard"])
+    console.error(err)
+  }
+}
+
+export {IS_MOBILE, fly, fade, GetHTMLElement, GetHTMLElements, CopyToClipboard }

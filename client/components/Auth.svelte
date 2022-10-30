@@ -3,6 +3,7 @@
   import { authDialogForPath, msgText } from "../ts/store";
   import { MessageText, ApiStatusResponse } from '../ts/types';
   import type { ApiResponse } from '../ts/types';
+  import { CopyToClipboard } from "../ts/util";
   
   export let path: string;
   let passInput: string;
@@ -21,13 +22,7 @@
   
         switch (apiRes.status) {
         case ApiStatusResponse.success:
-          try {
-            await navigator.clipboard.writeText(apiRes.value)
-            msgText.set([MessageText.clipboard, ""])
-          } catch (err) {
-            msgText.set([MessageText.err, "failed to access clipboard"])
-            console.error(err)
-          }
+          await CopyToClipboard(apiRes.value) 
           break;
         default:
           msgText.set([MessageText.err,`${res.status}: '${apiRes.desc}'`])

@@ -5,6 +5,7 @@
   import type PassEntry from '../ts/PassEntry'
   import { ApiStatusResponse, MessageText } from '../ts/types';
   import { msgText, queryString, authDialogForPath } from '../ts/store'
+  import { CopyToClipboard } from '../ts/util';
 
   const SWIPE_MARGIN = 40
   export let entry: PassEntry;
@@ -16,9 +17,8 @@
     currentQuery = value.toLowerCase();
   })
 
-  const fetchPassword = async (path: string) => {
+  const fetchPassword = async (path: string, echoToClipboard: boolean) => {
     try {
-      // const res = await fetch(`/get?path=`)
       const res = await fetch(`/get?path=${path.slice(1)}`)
       try {
         const apiRes = (await res.json()) as ApiResponse
@@ -31,10 +31,12 @@
           authDialogForPath.set(path)
           break;
         case ApiStatusResponse.success:
-          // TODO display password
-          //   1. Copy to clipbard and create notification
-          //   2. Have seperate button for show (this should give a dialog popup similar to Help)
           console.log("Already authenticated", apiRes)
+          if (echoToClipboard) {
+            CopyToClipboard(apiRes.value) 
+          } else {
+            // This requires a new Dialog that holds ShowPass
+          }
           break;
         }
       } catch (err) {
@@ -125,7 +127,7 @@
       role="button"
       on:click="{() => {
         if (isLeaf) {
-          fetchPassword(entry.path())
+          fetchPassword(entry.path(), true)
         } else {
           open = !open
         }
