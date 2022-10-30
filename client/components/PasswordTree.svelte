@@ -1,5 +1,6 @@
 <script lang="ts">
   import Config from '../ts/config';
+  // import { IS_MOBILE } from '../ts/util';
   import type { ApiResponse } from '../ts/types';
   import type PassEntry from '../ts/PassEntry'
   import { ApiStatusResponse, MessageText } from '../ts/types';
@@ -7,6 +8,8 @@
 
   export let entry: PassEntry;
   let currentQuery = ""
+  let deleteButton: HTMLSpanElement;
+  let showButton: HTMLSpanElement|null = null;
 
   queryString.subscribe( (value: string) => {
     currentQuery = value.toLowerCase();
@@ -43,11 +46,51 @@
     }
   }
 
-  // Increase the left-justifaction as we go to deeper levels
+  const SWIPE_MARGIN = 40
+  
+  const startTouch = (event: TouchEvent) => {
+    const touch = event.touches.item(0)
+    if (touch) {
+      deleteButton.style.display     = "inline-block";
+      deleteButton.style.opacity     = "0.0"
+
+      if (showButton) {
+        showButton.style.display     = "inline-block";
+        showButton.style.marginLeft  = `${SWIPE_MARGIN}px`
+        showButton.style.opacity     = "0.0"
+      } else {
+        deleteButton.style.marginLeft = `${SWIPE_MARGIN}px`
+      }
+    }
+
+  }
+
+  const swipe = (event: TouchEvent) => {
+    const touch = event.touches.item(0)
+    if (touch) {
+      // 0.0: Far left
+      // 1.0: Far right
+      const x = touch.pageX/window.innerWidth
+
+      // The margin starts from `SWIPE_MARGIN` on a new swipe
+      // (far of to the right) and magnitude is decreased incrementally
+      deleteButton.style.opacity     = `${1.0 - x}`
+
+      if (showButton) {
+        showButton.style.marginLeft  = `${SWIPE_MARGIN*x}px`
+        showButton.style.opacity     = `${1.0 - x}`
+      } else {
+        deleteButton.style.marginLeft = `${SWIPE_MARGIN*x}px`
+      }
+    }
+  }
+
+  // Increase the left-justification as we go to deeper levels
   const marginLeft = `${(entry.parents.length+1) * 50}px`
   const isRoot = entry.name == ""
   const isLeaf = entry.subitems.length == 0
   let open = false
+
 </script>
 
 {#if entry.matchesQuery(currentQuery)}
@@ -64,6 +107,8 @@
           open = !open
         }
       }}"
+      on:touchstart="{startTouch}"
+      on:touchmove="{swipe}"
     >
       {#if isLeaf}
         <span
@@ -79,9 +124,9 @@
       <span class="name">{entry.name}</span>
 
       {#if isLeaf}
-        <span role="button" class="{Config.showPassword}"/>
+        <span bind:this={showButton} role="button" class="{Config.showPassword}"/>
       {/if}
-      <span role="button" class="{Config.deleteIcon}"/>
+      <span bind:this={deleteButton} role="button" class="{Config.deleteIcon}"/>
 
     </div>
   {/if}

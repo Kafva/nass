@@ -1,3 +1,8 @@
+/** Regex based UA platform check */
+const IS_MOBILE = ( (): boolean => {
+  return navigator.userAgent.match(/iPhone|iPad|Android|webOS/i) != null
+})()
+
 /**
  * Custom fly transition to avoid a CSP hack with the current Svelte
  * implementation.
@@ -56,4 +61,4 @@ const GetHTMLElements = function<Type extends Element>(selector:string, root: El
   return el
 }
 
-export {GetHTMLElement, GetHTMLElements, fly, fade}
+export {IS_MOBILE, GetHTMLElement, GetHTMLElements, fly, fade}

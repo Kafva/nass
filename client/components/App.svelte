@@ -1,5 +1,5 @@
 <script lang="ts">
-  import {GetHTMLElement } from '../ts/util'
+  import { GetHTMLElement } from '../ts/util'
   import { authDialogForPath, msgText } from '../ts/store';
   import { MessageText } from '../ts/types';
   import PassEntry from '../ts/PassEntry'
@@ -10,19 +10,19 @@
   import Help from './Help.svelte';
   import Auth from './Auth.svelte';
   import Msg from './Msg.svelte';
-  
+
   const tmpl = GetHTMLElement<HTMLDivElement>("#tmpl")
   const rootEntry = new PassEntry("", [], [], [])
-  
+
   // Load the full tree and compile a list of subpaths for each
   // node (used for matching each node against a query string)
   rootEntry.loadFromDOM(tmpl, [])
   rootEntry.updateSubpaths()
-  
+
   let needAuthForPath = ""
   authDialogForPath.subscribe((value: string) => needAuthForPath = value)
-  
-  
+
+
   if (!Object.keys(navigator).includes('clipboard')) {
     // Wait a short time before printing the error to ensure
     // that the <Msg/> is loaded
