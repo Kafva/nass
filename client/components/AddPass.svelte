@@ -1,13 +1,5 @@
 <script lang="ts">
 import { fade } from '../ts/util';
-//   ___________________________
-//  | Path: [....]              |
-//  | Generate: [x]             |
-//  | Password: [****]          |
-//  | Confirm: [****]           |
-//  |_____________________[OK]__|
-//
-
 export let visible: boolean;
 
 let generatePass = true
@@ -16,10 +8,10 @@ let verifyInput: string;
 
 </script>
 
-<form method="dialog">
+<form method="dialog" autocomplete="off">
   <div class="form-item">
     <label for="path">Path:</label>
-    <input spellcheck="false" autocomplete="off" type="text" name="path">
+    <input spellcheck="false" type="text" name="path">
 
     <label for="generate">Generate:</label>
     <input type="checkbox" name="generate" bind:checked={generatePass}>
@@ -28,12 +20,11 @@ let verifyInput: string;
   {#if !generatePass}
   <div class="form-item" transition:fade="{{ limit: 1.0, duration: 400 }}">
     <label for="pass">Password:</label>
-    <input type="password" bind:value={passInput} autocomplete="off" name="pass">
+    <input type="password" bind:value={passInput} name="pass">
 
     <label for="verify">Verify:</label>
     <input type="password" bind:value={verifyInput}
            name="verify"
-           autocomplete="off"
            style:border-color="{
               verifyInput ?
                 (passInput == verifyInput && passInput != '' ? 'green' : 'red') :
@@ -70,7 +61,6 @@ form {
           border-color: transparent;
       }
     }
-
   }
 
   button {

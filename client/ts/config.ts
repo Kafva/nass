@@ -2,7 +2,8 @@ export default class Config {
   static readonly dropdownClosed = 'nf nf-fa-angle_right'
   static readonly dropdownOpen = 'nf nf-fa-angle_down'
   static readonly passwordIcon = 'nf nf-mdi-key'
-  // This value includes the time for the transition
+  static readonly passwordPrompt = 'nf nf-fa-angle_double_right'
+  /** This value includes the time for the transition */
   static readonly messageTimeout = 4000;
   /** !! Hardcodeed in index.html !! */
   static readonly modalCoverId = 'modalCover'

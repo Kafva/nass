@@ -7,7 +7,7 @@ import Config from '../ts/config';
 import type PassEntry from '../ts/PassEntry'
 export let entry: PassEntry;
 
-import {msgText, queryString} from '../ts/store'
+import {msgText, queryString, authDialogForPath} from '../ts/store'
 let currentQuery = ""
 
 queryString.subscribe( (value: string) => {
@@ -16,8 +16,8 @@ queryString.subscribe( (value: string) => {
 
 const fetchPassword = async (path: string) => {
   try {
-    const res = await fetch(`/get?path=`)
-    //const res = await fetch(`/get?path=${path}`)
+    // const res = await fetch(`/get?path=`)
+    const res = await fetch(`/get?path=${path.slice(1)}`)
     try {
       const apiRes = (await res.json()) as ApiResponse
 
@@ -26,10 +26,13 @@ const fetchPassword = async (path: string) => {
           msgText.set(["Error",`${res.status}: '${apiRes.desc}'`])
           break;
         case ApiStatusResponse.retry:
-          // TODO display auth dialog
+          authDialogForPath.set(path)
           break;
         case ApiStatusResponse.success:
           // TODO display password
+          //   1. Copy to clipbard and create notification
+          //   2. Have seperate button for show (this should give a dialog popup similar to Help)
+          console.log("Already authenticated", apiRes)
           break;
       }
     } catch (err) {
