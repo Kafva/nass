@@ -1,12 +1,12 @@
-// Predefined <Msg/> messages
+/** Predefined <Msg/> messages */
 enum MessageText {
   clipboard = "Copied to clipboard",
   added = "Added",
   deleted = "Deleted",
-  err = "Error"
+  err = "Error:"
 }
 
-// Predefined icon mappings for messages:
+/** Predefined icon mappings for messages: */
 const MessageIcons: { [id: string]: string } = {
   [MessageText.clipboard]: "nf-mdi-clipboard_check",
   [MessageText.added]: "nf-mdi-key_plus",
@@ -14,6 +14,16 @@ const MessageIcons: { [id: string]: string } = {
   [MessageText.err]: "nf-oct-issue_opened",
 }
 
+/**
+ * Predefined timeout values (including transistion time) for noitications
+ * negative values indicate no timeout.
+ */
+const MessageTimeouts: { [id: string]: number } = {
+  [MessageText.clipboard]: 4000,
+  [MessageText.added]: 4000,
+  [MessageText.deleted]: 4000,
+  [MessageText.err]: -1,
+}
 
 enum ApiStatusResponse {
   retry = "retry",
@@ -28,4 +38,4 @@ interface ApiResponse {
 }
 
 export type { ApiResponse }
-export { MessageText, MessageIcons, ApiStatusResponse }
+export { MessageText, MessageIcons, ApiStatusResponse, MessageTimeouts }

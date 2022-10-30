@@ -1,8 +1,8 @@
 <script lang="ts">
 import Config from "../ts/config";
 import { authDialogForPath, msgText } from "../ts/store";
+import { MessageText, ApiStatusResponse } from '../ts/types';
 import type { ApiResponse } from '../ts/types';
-import { ApiStatusResponse } from '../ts/types';
 
 export let path: string;
 let passInput: string;
@@ -20,19 +20,24 @@ const authRequest = async (path: string) => {
       const apiRes = (await res.json()) as ApiResponse
 
       switch (apiRes.status) {
-        case ApiStatusResponse.success:
-          // TODO display password
-          console.log(apiRes)
-          break;
-        default:
-          msgText.set(["Error",`${res.status}: '${apiRes.desc}'`])
+      case ApiStatusResponse.success:
+        try {
+          await navigator.clipboard.writeText(apiRes.value)
+          msgText.set([MessageText.clipboard, ""])
+        } catch (err) {
+          msgText.set([MessageText.err, "failed to access clipboard"])
+          console.error(err)
+        }
+        break;
+      default:
+        msgText.set([MessageText.err,`${res.status}: '${apiRes.desc}'`])
       }
     } catch (err) {
-      msgText.set(["Error", "parsing response"])
+      msgText.set([MessageText.err, "parsing response"])
       console.error(err)
     }
   } catch (err) {
-    msgText.set(["Error",`fetching '${path}'`])
+    msgText.set([MessageText.err,`fetching '${path}'`])
     console.error(err)
   }
 }

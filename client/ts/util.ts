@@ -36,6 +36,7 @@ const fade = function(node: HTMLElement, { limit = 0.5, delay = 0, duration = 10
   }
 }
 
+
 /** Generic getter for DOM elements */
 const GetHTMLElement = function<Type extends Element>(selector:string): Type {
   const el = document.querySelector(selector) as Type;

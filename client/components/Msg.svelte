@@ -1,7 +1,6 @@
 <script lang="ts">
-import Config from "../ts/config";
 import { msgText } from "../ts/store";
-import { MessageIcons } from "../ts/types";
+import { MessageIcons, MessageTimeouts } from "../ts/types";
 import { fly } from "../ts/util";
 
 let message = ""
@@ -9,6 +8,7 @@ let iconClass = ""
 let timeoutID: any = null
 
 msgText.subscribe( (value:[string,string]) => {
+  const timeout = MessageTimeouts[value[0]] || -1
   message = value[1] == "" ? value[0] : value[0] + " " + value[1]
   iconClass = MessageIcons[value[0]] || ""
 
@@ -17,17 +17,20 @@ msgText.subscribe( (value:[string,string]) => {
     clearTimeout(timeoutID)
   }
 
-  timeoutID = setTimeout(() => {
-    msgText.set(["",""])
-    timeoutID = null
-  }, Config.messageTimeout)
-
+  if (timeout > 0) {
+    timeoutID = setTimeout(() => {
+      msgText.set(["",""])
+      timeoutID = null
+    }, timeout)
+  }
 })
 </script>
 
 {#if message.length != 0}
-  <div transition:fly="{{ from: 'bottom', vh: 8, duration: 200 }}">
-    <p><span class="{'nf '+ iconClass}"/> {message} </p>
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
+  <div role="button" transition:fly="{{ from: 'bottom', vh: 8, duration: 200 }}" 
+       on:click="{()=> msgText.set(['','']) }">
+       <p><span class="{'nf '+ iconClass}"/> {message} </p>
   </div>
 {/if}
 

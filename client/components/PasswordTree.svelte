@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { ApiResponse } from '../ts/types';
-import { ApiStatusResponse } from '../ts/types';
+import { ApiStatusResponse, MessageText } from '../ts/types';
 
 import Config from '../ts/config';
 
@@ -22,25 +22,25 @@ const fetchPassword = async (path: string) => {
       const apiRes = (await res.json()) as ApiResponse
 
       switch (apiRes.status) {
-        case ApiStatusResponse.error:
-          msgText.set(["Error",`${res.status}: '${apiRes.desc}'`])
-          break;
-        case ApiStatusResponse.retry:
-          authDialogForPath.set(path)
-          break;
-        case ApiStatusResponse.success:
-          // TODO display password
-          //   1. Copy to clipbard and create notification
-          //   2. Have seperate button for show (this should give a dialog popup similar to Help)
-          console.log("Already authenticated", apiRes)
-          break;
+      case ApiStatusResponse.error:
+        msgText.set([MessageText.err, `${res.status}: '${apiRes.desc}'`])
+        break;
+      case ApiStatusResponse.retry:
+        authDialogForPath.set(path)
+        break;
+      case ApiStatusResponse.success:
+        // TODO display password
+        //   1. Copy to clipbard and create notification
+        //   2. Have seperate button for show (this should give a dialog popup similar to Help)
+        console.log("Already authenticated", apiRes)
+        break;
       }
     } catch (err) {
-      msgText.set(["Error", "parsing response"])
+      msgText.set([MessageText.err, "parsing response"])
       console.error(err)
     }
   } catch (err) {
-    msgText.set(["Error",`fetching '${path}'`])
+    msgText.set([MessageText.err,`fetching '${path}'`])
     console.error(err)
   }
 }

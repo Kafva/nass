@@ -6,7 +6,7 @@ import { authDialogForPath } from '../ts/store';
 // The component to render inside of the modal
 export let component: typeof SvelteComponent;
 export let btnClass: string;
-export let path: string = ""; // Optional prop, only used by <Auth/>
+export let path = ""; // Optional prop, only used by <Auth/>
 let visible = false;
 
 const handleKeyDown = (event: KeyboardEvent) => {
