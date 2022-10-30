@@ -97,7 +97,14 @@
 <style lang="scss">
   @use "../scss/vars";
 
-  %shared {
+  div {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    @include vars.fade-in(0.5s);
+
+
+
     font-size: vars.$font_medium;
     padding: 4px 0 4px 0;
     margin: 2px 0 5px 0;
@@ -122,27 +129,16 @@
       margin: 0 7px 0 7px;
 
       &:not(:first-child) {
+        display: none;
+
         &:hover {
           color: vars.$lilac;
         }
       }
     }
 
-  }
-
-  div {
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-    @include vars.fade-in(0.5s);
-
-    span.nf:not(:first-child) {
-      display: none;
-    }
 
     &.dir {
-      @extend %shared;
-
       span {
         display: inline;
         width: fit-content;
@@ -155,8 +151,6 @@
     }
 
     &:not(.dir) {
-      @extend %shared;
-
       // Display buttons when the parent element is hovered
       &:hover {
         span.nf:not(:first-child) {
