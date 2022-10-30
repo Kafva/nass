@@ -76,3 +76,17 @@ $cover_z: 9;
   animation: _fade-in $sec;
 }
 
+@mixin show-on-hover($childToShow, $color: $white) {
+  // Displays the given $child element (using transparent -> new color)
+  // when the parent element is hovered
+  #{$childToShow} {
+    display: none;
+  }
+
+  & > :hover {
+    #{$childToShow} {
+      display: inline-block;
+    }
+  }
+}
+

@@ -4,21 +4,21 @@
   import type PassEntry from '../ts/PassEntry'
   import { ApiStatusResponse, MessageText } from '../ts/types';
   import { msgText, queryString, authDialogForPath } from '../ts/store'
-  
+
   export let entry: PassEntry;
   let currentQuery = ""
-  
+
   queryString.subscribe( (value: string) => {
     currentQuery = value.toLowerCase();
   })
-  
+
   const fetchPassword = async (path: string) => {
     try {
       // const res = await fetch(`/get?path=`)
       const res = await fetch(`/get?path=${path.slice(1)}`)
       try {
         const apiRes = (await res.json()) as ApiResponse
-  
+
         switch (apiRes.status) {
         case ApiStatusResponse.error:
           msgText.set([MessageText.err, `${res.status}: '${apiRes.desc}'`])
@@ -42,7 +42,7 @@
       console.error(err)
     }
   }
-  
+
   // Increase the left-justifaction as we go to deeper levels
   const marginLeft = `${(entry.parents.length+1) * 50}px`
   const isRoot = entry.name == ""
@@ -80,7 +80,10 @@
       {/if}
       <span class="name">{entry.name}</span>
 
-      <span role="button">  </span>
+      {#if isLeaf}
+        <span role="button" class="{Config.showPassword}"/>
+      {/if}
+      <span role="button" class="{Config.deleteIcon}"/>
 
     </div>
   {/if}
@@ -96,49 +99,70 @@
 
 <style lang="scss">
   @use "../scss/vars";
-  
+
   %shared {
     font-size: vars.$font_medium;
     padding: 4px 0 4px 0;
     margin: 2px 0 5px 0;
-  
+
     // Always show the border (translucently)
     // to avoid geometry changes on :hover()
     border-bottom: solid 1px;
     border-color: rgba(0,0,0,0.0);
-  
-  
+
     &:hover {
       border-color: vars.$lilac;
+
+      & > span.nf:not(:first-child) {
+        display: inline-block;
+      }
+
     }
+
+    span.nf {
+      margin: 0 7px 0 7px;
+
+      &:not(:first-child) {
+        &:hover {
+          color: vars.$lilac;
+        }
+      }
+    }
+
   }
-  
+
   div {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
     @include vars.fade-in(0.5s);
-  
+
+    span.nf:not(:first-child) {
+      display: none;
+    }
+
     &.dir {
       @extend %shared;
       span {
         display: inline;
         width: fit-content;
-  
+
         &.name {
           width: 50vw;
         }
       }
     }
-  
+
     &.pw {
       @extend %shared;
-      span.nf:first-child {
-        margin-right: 7px;
+
+      // Display buttons when the parent element is hovered
+      &:hover {
+        span.nf:not(:first-child) {
+          display: inline-block;
+        }
       }
-      span.nf:not(:first-child) {
-        margin-left: 7px;
-      }
+
     }
   }
 </style>
