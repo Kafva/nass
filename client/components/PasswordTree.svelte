@@ -1,55 +1,53 @@
 <script lang="ts">
-import type { ApiResponse } from '../ts/types';
-import { ApiStatusResponse, MessageText } from '../ts/types';
-
-import Config from '../ts/config';
-
-import type PassEntry from '../ts/PassEntry'
-export let entry: PassEntry;
-
-import {msgText, queryString, authDialogForPath} from '../ts/store'
-let currentQuery = ""
-
-queryString.subscribe( (value: string) => {
-  currentQuery = value.toLowerCase();
-})
-
-const fetchPassword = async (path: string) => {
-  try {
-    // const res = await fetch(`/get?path=`)
-    const res = await fetch(`/get?path=${path.slice(1)}`)
+  import Config from '../ts/config';
+  import type { ApiResponse } from '../ts/types';
+  import type PassEntry from '../ts/PassEntry'
+  import { ApiStatusResponse, MessageText } from '../ts/types';
+  import { msgText, queryString, authDialogForPath } from '../ts/store'
+  
+  export let entry: PassEntry;
+  let currentQuery = ""
+  
+  queryString.subscribe( (value: string) => {
+    currentQuery = value.toLowerCase();
+  })
+  
+  const fetchPassword = async (path: string) => {
     try {
-      const apiRes = (await res.json()) as ApiResponse
-
-      switch (apiRes.status) {
-      case ApiStatusResponse.error:
-        msgText.set([MessageText.err, `${res.status}: '${apiRes.desc}'`])
-        break;
-      case ApiStatusResponse.retry:
-        authDialogForPath.set(path)
-        break;
-      case ApiStatusResponse.success:
-        // TODO display password
-        //   1. Copy to clipbard and create notification
-        //   2. Have seperate button for show (this should give a dialog popup similar to Help)
-        console.log("Already authenticated", apiRes)
-        break;
+      // const res = await fetch(`/get?path=`)
+      const res = await fetch(`/get?path=${path.slice(1)}`)
+      try {
+        const apiRes = (await res.json()) as ApiResponse
+  
+        switch (apiRes.status) {
+        case ApiStatusResponse.error:
+          msgText.set([MessageText.err, `${res.status}: '${apiRes.desc}'`])
+          break;
+        case ApiStatusResponse.retry:
+          authDialogForPath.set(path)
+          break;
+        case ApiStatusResponse.success:
+          // TODO display password
+          //   1. Copy to clipbard and create notification
+          //   2. Have seperate button for show (this should give a dialog popup similar to Help)
+          console.log("Already authenticated", apiRes)
+          break;
+        }
+      } catch (err) {
+        msgText.set([MessageText.err, "parsing response"])
+        console.error(err)
       }
     } catch (err) {
-      msgText.set([MessageText.err, "parsing response"])
+      msgText.set([MessageText.err,`fetching '${path}'`])
       console.error(err)
     }
-  } catch (err) {
-    msgText.set([MessageText.err,`fetching '${path}'`])
-    console.error(err)
   }
-}
-
-// Increase the left-justifaction as we go to deeper levels
-const marginLeft = `${(entry.parents.length+1) * 50}px`
-const isRoot = entry.name == ""
-const isLeaf = entry.subitems.length == 0
-let open = false
+  
+  // Increase the left-justifaction as we go to deeper levels
+  const marginLeft = `${(entry.parents.length+1) * 50}px`
+  const isRoot = entry.name == ""
+  const isLeaf = entry.subitems.length == 0
+  let open = false
 </script>
 
 {#if entry.matchesQuery(currentQuery)}
@@ -81,6 +79,9 @@ let open = false
         />
       {/if}
       <span class="name">{entry.name}</span>
+
+      <span role="button">  </span>
+
     </div>
   {/if}
 
@@ -93,50 +94,51 @@ let open = false
   </div>
 {/if}
 
-
-
 <style lang="scss">
-@use "../scss/vars";
-
-%shared {
-  font-size: vars.$font_medium;
-  padding: 4px 0 4px 0;
-  margin: 2px 0 5px 0;
-
-  // Always show the border (translucently)
-  // to avoid geometry changes on :hover()
-  border-bottom: solid 1px;
-  border-color: rgba(0,0,0,0.0);
-
-
-  &:hover {
-    border-color: vars.$lilac;
+  @use "../scss/vars";
+  
+  %shared {
+    font-size: vars.$font_medium;
+    padding: 4px 0 4px 0;
+    margin: 2px 0 5px 0;
+  
+    // Always show the border (translucently)
+    // to avoid geometry changes on :hover()
+    border-bottom: solid 1px;
+    border-color: rgba(0,0,0,0.0);
+  
+  
+    &:hover {
+      border-color: vars.$lilac;
+    }
   }
-}
-
-div {
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-  @include vars.fade-in(0.5s);
-
-  &.dir {
-    @extend %shared;
-    span {
-      display: inline;
-      width: fit-content;
-
-      &.name {
-        width: 50vw;
+  
+  div {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    @include vars.fade-in(0.5s);
+  
+    &.dir {
+      @extend %shared;
+      span {
+        display: inline;
+        width: fit-content;
+  
+        &.name {
+          width: 50vw;
+        }
+      }
+    }
+  
+    &.pw {
+      @extend %shared;
+      span.nf:first-child {
+        margin-right: 7px;
+      }
+      span.nf:not(:first-child) {
+        margin-left: 7px;
       }
     }
   }
-
-  &.pw {
-    @extend %shared;
-    span.nf {
-      margin-right: 7px;
-    }
-  }
-}
 </style>

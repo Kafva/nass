@@ -1,23 +1,22 @@
 <script lang="ts">
-import type { SvelteComponent } from "svelte";
-import { fly, fade } from '../ts/util';
-import { authDialogForPath } from '../ts/store';
-
-// The component to render inside of the modal
-export let component: typeof SvelteComponent;
-export let btnClass: string;
-export let path = ""; // Optional prop, only used by <Auth/>
-let visible = false;
-
-const handleKeyDown = (event: KeyboardEvent) => {
-  switch (event.key) {
-  case "Escape":
-    visible = false
-    authDialogForPath.set("")
-    break;
+  import type { SvelteComponent } from "svelte";
+  import { fly, fade } from '../ts/util';
+  import { authDialogForPath } from '../ts/store';
+  
+  // The component to render inside of the modal
+  export let component: typeof SvelteComponent;
+  export let btnClass: string;
+  export let path = ""; // Optional prop, only used by <Auth/>
+  let visible = false;
+  
+  const handleKeyDown = (event: KeyboardEvent) => {
+    switch (event.key) {
+    case "Escape":
+      visible = false
+      authDialogForPath.set("")
+      break;
+    }
   }
-}
-
 </script>
 
 <svelte:window on:keydown="{handleKeyDown}"/>
@@ -42,43 +41,42 @@ const handleKeyDown = (event: KeyboardEvent) => {
 {/if}
 
 <style lang="scss">
-@use "../scss/vars";
-
-div#modalCover {
-  z-index: vars.$cover_z;
-  position: fixed;
-  left:0;
-  top:0;
-  width: 100vw;
-  height: 100vh;
-  background-color: vars.$black;
-}
-
-div#dialog {
-  position: fixed;
-  z-index: vars.$dialog_z;
-  background-color: vars.$dialog_bg;
-  color: vars.$white;
-  padding: 15px;
-  border: 1px solid vars.$lilac;
-  border-radius: 5%;
-
-  // Position the dialog off-screen by default, the `fly`
-  // animation will move it into place.
-  top: -5vh;
-
-  @include vars.fixed-centering(vars.$dialog_width, 15px);
-}
-
-// Buttons float to the corner
-span.nf {
-  font-size: vars.$font_large;
-  float: right;
-  margin: 10px 15px 0 0;
-
-  &:hover {
-    color: vars.$lilac;
+  @use "../scss/vars";
+  
+  div#modalCover {
+    z-index: vars.$cover_z;
+    position: fixed;
+    left:0;
+    top:0;
+    width: 100vw;
+    height: 100vh;
+    background-color: vars.$black;
   }
-}
-
+  
+  div#dialog {
+    position: fixed;
+    z-index: vars.$dialog_z;
+    background-color: vars.$dialog_bg;
+    color: vars.$white;
+    padding: 15px;
+    border: 1px solid vars.$lilac;
+    border-radius: 5%;
+  
+    // Position the dialog off-screen by default, the `fly`
+    // animation will move it into place.
+    top: -5vh;
+  
+    @include vars.fixed-centering(vars.$dialog_width, 15px);
+  }
+  
+  // Buttons float to the corner
+  span.nf {
+    font-size: vars.$font_large;
+    float: right;
+    margin: 10px 15px 0 0;
+  
+    &:hover {
+      color: vars.$lilac;
+    }
+  }
 </style>

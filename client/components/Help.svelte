@@ -1,5 +1,4 @@
 <script lang="ts">
-
 </script>
 
 <ul>
@@ -8,7 +7,7 @@
 </ul>
 
 <style lang="scss">
-@use "../scss/vars";
+  @use "../scss/vars";
 
   ul {
     list-style-type: disc;
