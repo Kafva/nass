@@ -103,8 +103,6 @@
     white-space: nowrap;
     @include vars.fade-in(0.5s);
 
-
-
     font-size: vars.$font_medium;
     padding: 4px 0 4px 0;
     margin: 2px 0 5px 0;
@@ -122,7 +120,6 @@
       & > span.nf:not(:first-child) {
         display: inline-block;
       }
-
     }
 
     span.nf {
@@ -137,7 +134,6 @@
       }
     }
 
-
     &.dir {
       span {
         display: inline;
@@ -147,17 +143,6 @@
           width: 50vw;
         }
       }
-
-    }
-
-    &:not(.dir) {
-      // Display buttons when the parent element is hovered
-      &:hover {
-        span.nf:not(:first-child) {
-          display: inline-block;
-        }
-      }
-
     }
   }
 </style>
