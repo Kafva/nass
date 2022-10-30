@@ -21,7 +21,7 @@ The container configurations should work with both Docker and Podman.
 docker build --rm --tag=nass .
 docker run -p 5678:5678 -d nass
 
-# Development
+#== Development ==#
 
 # Start `watch` rebuild in Docker
 ./scripts/docker_dev.sh fullclean
@@ -32,6 +32,13 @@ docker run -p 5678:5678 -d nass
 # Test endpoints, e.g.
 curl -X POST -d "pass=jane" -L 'http://10.0.1.6:5678/get?path=Wallets/eth/main'|jq
 curl -X GET -L 'http://10.0.1.6:5678/get?path=Wallets/eth/main'|jq
+
+#== Remote development ==#
+# Yes, it is a bit overcomplicated...
+(local)  ./scripts/remote.sh
+(remote) ./scripts/docker_dev.sh watch
+  (container) ./scripts/live.sh
+(remote) ./scripts/docker_dev.sh logs
 
 
 # Run server tests

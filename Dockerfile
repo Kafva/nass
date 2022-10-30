@@ -17,7 +17,7 @@ RUN vite build
 FROM docker.io/alpine:3.16 as nass
 
 # `ARG` values are only available during the actual build
-ENV CONF="conf/nass.yml"
+ENV CONF="conf/docker.yml"
 ENV USERS="conf/users.yml"
 
 RUN adduser \
