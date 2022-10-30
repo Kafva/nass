@@ -6,6 +6,7 @@
   import { ApiStatusResponse, MessageText } from '../ts/types';
   import { msgText, queryString, authDialogForPath } from '../ts/store'
 
+  const SWIPE_MARGIN = 40
   export let entry: PassEntry;
   let currentQuery = ""
   let deleteButton: HTMLSpanElement;
@@ -46,8 +47,6 @@
     }
   }
 
-  const SWIPE_MARGIN = 40
-  
   const startTouch = (event: TouchEvent) => {
     const touch = event.touches.item(0)
     if (touch) {
@@ -62,7 +61,6 @@
         deleteButton.style.marginLeft = `${SWIPE_MARGIN}px`
       }
     }
-
   }
 
   const swipe = (event: TouchEvent) => {
@@ -81,6 +79,31 @@
         showButton.style.opacity     = `${1.0 - x}`
       } else {
         deleteButton.style.marginLeft = `${SWIPE_MARGIN*x}px`
+      }
+    }
+  }
+
+  const endTouch = (event: TouchEvent) => {
+    const touch = event.changedTouches.item(0)
+    if (touch) {
+      const x = touch.pageX/window.innerWidth
+      if (x > 0.5) { // Hide the buttons if the swipe ends far to the right
+        deleteButton.style.display     = "none"
+        deleteButton.style.opacity     = "0.0"
+        if (showButton) {
+          showButton.style.display     = "none";
+          showButton.style.opacity     = "0.0"
+        }
+      } else { // Let them remain visible if the swipe ends to the left
+        deleteButton.style.display     = "inline-block";
+        deleteButton.style.opacity     = "1.0"
+        if (showButton) {
+          showButton.style.display     = "inline-block";
+          showButton.style.marginLeft  = "0px"
+          showButton.style.opacity     = "1.0"
+        } else {
+          deleteButton.style.marginLeft = "0px" 
+        }
       }
     }
   }
@@ -109,6 +132,7 @@
       }}"
       on:touchstart="{startTouch}"
       on:touchmove="{swipe}"
+      on:touchend="{endTouch}"
     >
       {#if isLeaf}
         <span
