@@ -51,8 +51,6 @@
 </script>
 
 {#if entry.matchesQuery(currentQuery)}
-  <div class:pw="{isLeaf && !isRoot}">
-
   <!-- The root entry has an empty name -->
   {#if !isRoot }
     <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -94,7 +92,6 @@
       <svelte:self entry={subitem}/>
     {/each}
   {/if}
-  </div>
 {/if}
 
 <style lang="scss">
@@ -113,6 +110,8 @@
     &:hover {
       border-color: vars.$lilac;
 
+      // Display buttons on the direct child
+      // when the parent element is hovered
       & > span.nf:not(:first-child) {
         display: inline-block;
       }
@@ -143,6 +142,7 @@
 
     &.dir {
       @extend %shared;
+
       span {
         display: inline;
         width: fit-content;
@@ -151,9 +151,10 @@
           width: 50vw;
         }
       }
+
     }
 
-    &.pw {
+    &:not(.dir) {
       @extend %shared;
 
       // Display buttons when the parent element is hovered
