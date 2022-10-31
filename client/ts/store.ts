@@ -18,3 +18,11 @@ export const msgText = writable<[string,string]>(["",""])
  * be decrypted or an empty string if the dialog should be hidden.
  */
 export const authDialogForPath = writable("")
+
+/**
+ * Determines if the modal with a [path,password] should be shown.
+ * It might seem like a bad idea to have sensitive data in a store
+ * but I do not think this makes the GC (notably) less likely to delete the
+ * string from memory.
+ */
+export const showPassValues = writable<[string,string]>(["",""])

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { GetHTMLElement } from '../ts/util'
-  import { authDialogForPath, msgText } from '../ts/store';
+  import { authDialogForPath, msgText, showPassValues } from '../ts/store';
   import { MessageText } from '../ts/types';
   import PassEntry from '../ts/PassEntry'
   import Search from './Search.svelte'
@@ -10,6 +10,7 @@
   import Help from './Help.svelte';
   import Auth from './Auth.svelte';
   import Msg from './Msg.svelte';
+  import ShowPass from './ShowPass.svelte';
 
   const tmpl = GetHTMLElement<HTMLDivElement>("#tmpl")
   const rootEntry = new PassEntry("", [], [], [])
@@ -20,7 +21,13 @@
   rootEntry.updateSubpaths()
 
   let needAuthForPath = ""
+  let showPassForPath = ""
+  let passForPath = ""
   authDialogForPath.subscribe((value: string) => needAuthForPath = value)
+  showPassValues.subscribe( (value: [string,string]) => {
+    showPassForPath   = value[0]
+    passForPath       = value[1]
+  })
 
 
   if (!Object.keys(navigator).includes('clipboard')) {
@@ -42,6 +49,9 @@
 <Dialog component={AddPass} btnClass="nf-fa-plus"/>
 {#if needAuthForPath != ""}
   <Dialog component={Auth}  btnClass="" path={needAuthForPath}/>
+{/if}
+{#if showPassForPath != ""}
+  <Dialog component={ShowPass} btnClass="" path={showPassForPath} password={passForPath}/>
 {/if}
 
 <PasswordTree entry={rootEntry}/>

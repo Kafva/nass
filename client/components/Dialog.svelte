@@ -6,7 +6,10 @@
   // The component to render inside of the modal
   export let component: typeof SvelteComponent;
   export let btnClass: string;
-  export let path = ""; // Optional prop, only used by <Auth/>
+  // Optional props
+  export let path = "";
+  export let password = "";
+
   let visible = false;
   
   const handleKeyDown = (event: KeyboardEvent) => {
@@ -17,6 +20,9 @@
       break;
     }
   }
+
+  // TODO trigger destructor
+
 </script>
 
 <svelte:window on:keydown="{handleKeyDown}"/>
@@ -24,12 +30,13 @@
 <!-- The <App/> controls if dialogs without a button should be visible -->
 {#if visible || btnClass == ""}
   <!-- svelte-ignore a11y-click-events-have-key-events -->
-  <div id="modalCover" transition:fade="{{ limit: 0.5, duration: 400 }}"/>
+  <div id="modalCover" transition:fade="{{ limit: 0.5, duration: 400 }}"
+       on:click="{() => { visible = false; authDialogForPath.set('') } }" />
 
   <div id="dialog" transition:fly="{{ vh: 10, duration: 400 }}">
     <!-- bind: is used to have the parent react to any changes that
     the child makes to 'visible' -->
-    <svelte:component this={component} bind:visible={visible} path={path}/>
+    <svelte:component this={component} bind:visible={visible} path={path} password={password}/>
   </div>
 {/if}
 

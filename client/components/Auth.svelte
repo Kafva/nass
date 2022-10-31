@@ -20,6 +20,7 @@
         if (apiRes.status == ApiStatusResponse.success ) {
           // We need to know if the initial keypress targeted the 'eye'
           // button or the clipboard
+          // TODO
           console.log("Now authenticated: ", apiRes.value)
           authDialogForPath.set("")
         } else {

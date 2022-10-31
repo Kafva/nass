@@ -2,7 +2,7 @@
   import Config from '../ts/config';
   import ApiRequest from '../ts/ApiRequest';
   import type PassEntry from '../ts/PassEntry'
-  import { authDialogForPath, queryString } from '../ts/store'
+  import { authDialogForPath, queryString, showPassValues } from '../ts/store'
   import { CopyToClipboard } from '../ts/util';
   import type { ApiResponse } from '../ts/types';
   import { ApiStatusResponse } from '../ts/types';
@@ -79,16 +79,25 @@
     }
   }
 
-  const handleGetPass = () => {
+
+  const handleDelPass = () => {
+  }
+
+  const handleGetPass = (useClipboard: boolean) => {
     if (isLeaf) {
-      api.getPass(entry.path(), "").then((apiRes: ApiResponse) => {
+      const path = entry.path()
+      api.getPass(path, "").then((apiRes: ApiResponse) => {
          switch (apiRes.status) {
          case ApiStatusResponse.success:
-           // TODO decide if clipboard or show
            console.log("Already authenticated", apiRes)
+           if (useClipboard) {
+              CopyToClipboard(apiRes.value)
+           } else {
+              showPassValues.set([path,apiRes.value])
+           }
            break;
          case ApiStatusResponse.retry:
-           authDialogForPath.set(entry.path())
+           authDialogForPath.set(path)
            break;
          default:
           /* errors are handled internally by `api` */
@@ -113,7 +122,7 @@
     <div
       class:dir="{!isLeaf}"
       role="button"
-      on:click="{handleGetPass}"
+      on:click="{() => handleGetPass(true)}"
       on:touchstart="{startTouch}"
       on:touchmove="{swipe}"
       on:touchend="{endTouch}"
@@ -132,9 +141,11 @@
       <span class="name">{entry.name}</span>
 
       {#if isLeaf}
-        <span bind:this={showButton} role="button" class="{Config.showPassword}"/>
+        <span role="button" class="{Config.showPassword}"
+              bind:this={showButton} on:click="{() => handleGetPass(false)}"/>
       {/if}
-      <span bind:this={deleteButton} role="button" class="{Config.deleteIcon}"/>
+      <span role="button" class="{Config.deleteIcon}"
+            bind:this={deleteButton} on:click="{() => handleDelPass()}" />
 
     </div>
   {/if}
