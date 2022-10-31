@@ -1,8 +1,9 @@
 <script lang="ts">
   import Config from "../ts/config";
   import ApiRequest from "../ts/ApiRequest";
+  import { ApiStatusResponse } from "../ts/types";
+  import type { ApiResponse } from '../ts/types';
   import { authDialogForPath } from "../ts/store";
-  import { CopyToClipboard } from "../ts/util";
 
   export let path: string;
   let passInput: string;
@@ -15,11 +16,15 @@
   const handleKeyDown = (event: KeyboardEvent) => {
     switch (event.key) {
     case "Enter":
-      api.getPasswordWithAuth(path, passInput).then( (value:string) => {
-        if (value != "") {
-          CopyToClipboard(value)
+      api.getPass(path, passInput).then( (apiRes: ApiResponse) => {
+        if (apiRes.status == ApiStatusResponse.success ) {
+          // We need to know if the initial keypress targeted the 'eye'
+          // button or the clipboard
+          console.log("Now authenticated: ", apiRes.value)
+          authDialogForPath.set("")
+        } else {
+          console.error("Error", apiRes.desc)
         }
-        authDialogForPath.set("")
       })
       break;
     }

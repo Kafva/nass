@@ -1,9 +1,11 @@
 <script lang="ts">
   import Config from '../ts/config';
-  import ApiRequest from 'client/ts/ApiRequest';
+  import ApiRequest from '../ts/ApiRequest';
   import type PassEntry from '../ts/PassEntry'
-  import { queryString } from '../ts/store'
+  import { authDialogForPath, queryString } from '../ts/store'
   import { CopyToClipboard } from '../ts/util';
+  import type { ApiResponse } from '../ts/types';
+  import { ApiStatusResponse } from '../ts/types';
 
   const SWIPE_MARGIN = 40
   export let entry: PassEntry;
@@ -77,12 +79,31 @@
     }
   }
 
+  const handleGetPass = () => {
+    if (isLeaf) {
+      api.getPass(entry.path(), "").then((apiRes: ApiResponse) => {
+         switch (apiRes.status) {
+         case ApiStatusResponse.success:
+           // TODO decide if clipboard or show
+           console.log("Already authenticated", apiRes)
+           break;
+         case ApiStatusResponse.retry:
+           authDialogForPath.set(entry.path())
+           break;
+         default:
+          /* errors are handled internally by `api` */
+         }
+      })
+    } else {
+      open = !open
+    }
+  }
+
   // Increase the left-justification as we go to deeper levels
   const marginLeft = `${(entry.parents.length+1) * 50}px`
   const isRoot = entry.name == ""
   const isLeaf = entry.subitems.length == 0
   let open = false
-
 </script>
 
 {#if entry.matchesQuery(currentQuery)}
@@ -92,17 +113,7 @@
     <div
       class:dir="{!isLeaf}"
       role="button"
-      on:click="{() => {
-        if (isLeaf) {
-          api.getPassword(entry.path()).then((value) => {
-            if (value != '') {
-              CopyToClipboard(value)
-            }
-          })
-        } else {
-          open = !open
-        }
-      }}"
+      on:click="{handleGetPass}"
       on:touchstart="{startTouch}"
       on:touchmove="{swipe}"
       on:touchend="{endTouch}"
