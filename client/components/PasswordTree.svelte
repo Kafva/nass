@@ -1,10 +1,8 @@
 <script lang="ts">
   import Config from '../ts/config';
-  // import { IS_MOBILE } from '../ts/util';
-  import type { ApiResponse } from '../ts/types';
+  import ApiRequest from 'client/ts/ApiRequest';
   import type PassEntry from '../ts/PassEntry'
-  import { ApiStatusResponse, MessageText } from '../ts/types';
-  import { msgText, queryString, authDialogForPath } from '../ts/store'
+  import { queryString } from '../ts/store'
   import { CopyToClipboard } from '../ts/util';
 
   const SWIPE_MARGIN = 40
@@ -12,42 +10,11 @@
   let currentQuery = ""
   let deleteButton: HTMLSpanElement;
   let showButton: HTMLSpanElement|null = null;
+  const api = new ApiRequest()
 
   queryString.subscribe( (value: string) => {
     currentQuery = value.toLowerCase();
   })
-
-  const fetchPassword = async (path: string, echoToClipboard: boolean) => {
-    try {
-      const res = await fetch(`/get?path=${path.slice(1)}`)
-      try {
-        const apiRes = (await res.json()) as ApiResponse
-
-        switch (apiRes.status) {
-        case ApiStatusResponse.error:
-          msgText.set([MessageText.err, `${res.status}: '${apiRes.desc}'`])
-          break;
-        case ApiStatusResponse.retry:
-          authDialogForPath.set(path)
-          break;
-        case ApiStatusResponse.success:
-          console.log("Already authenticated", apiRes)
-          if (echoToClipboard) {
-            CopyToClipboard(apiRes.value) 
-          } else {
-            // This requires a new Dialog that holds ShowPass
-          }
-          break;
-        }
-      } catch (err) {
-        msgText.set([MessageText.err, "parsing response"])
-        console.error(err)
-      }
-    } catch (err) {
-      msgText.set([MessageText.err,`fetching '${path}'`])
-      console.error(err)
-    }
-  }
 
   const startTouch = (event: TouchEvent) => {
     const touch = event.touches.item(0)
@@ -104,7 +71,7 @@
           showButton.style.marginLeft  = "0px"
           showButton.style.opacity     = "1.0"
         } else {
-          deleteButton.style.marginLeft = "0px" 
+          deleteButton.style.marginLeft = "0px"
         }
       }
     }
@@ -127,7 +94,11 @@
       role="button"
       on:click="{() => {
         if (isLeaf) {
-          fetchPassword(entry.path(), true)
+          api.getPassword(entry.path()).then((value) => {
+            if (value != '') {
+              CopyToClipboard(value)
+            }
+          })
         } else {
           open = !open
         }
