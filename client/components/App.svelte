@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { GetHTMLElement } from '../ts/util'
-  import { authDialogForPath, msgText, showPassValues } from '../ts/store';
+  import { GetHTMLElement, Err } from '../ts/util'
+  import { authInfoStore, msgTextStore, showPassStore } from '../ts/store';
   import { MessageText } from '../ts/types';
   import PassEntry from '../ts/PassEntry'
   import Search from './Search.svelte'
@@ -20,22 +20,13 @@
   rootEntry.loadFromDOM(tmpl, [])
   rootEntry.updateSubpaths()
 
-  let needAuthForPath = ""
-  let showPassForPath = ""
-  let passForPath = ""
-  authDialogForPath.subscribe((value: string) => needAuthForPath = value)
-  showPassValues.subscribe( (value: [string,string]) => {
-    showPassForPath   = value[0]
-    passForPath       = value[1]
-  })
-
 
   if (!Object.keys(navigator).includes('clipboard')) {
     // Wait a short time before printing the error to ensure
     // that the <Msg/> is loaded
     setTimeout(()=>{
-      msgText.set([MessageText.err, "Clipboard is inaccessible"])
-      console.error(
+      msgTextStore.set([MessageText.err, "Clipboard is inaccessible"])
+      Err(
         "Clipboard is inaccessible, the site origin needs to be over https:// or localhost"
       )
     }, 2000)
@@ -47,11 +38,13 @@
 
 <Dialog component={Help}    btnClass="nf-mdi-help"/>
 <Dialog component={AddPass} btnClass="nf-fa-plus"/>
-{#if needAuthForPath != ""}
-  <Dialog component={Auth}  btnClass="" path={needAuthForPath}/>
+
+{#if $authInfoStore.path != ""}
+  <Dialog component={Auth}     btnClass=""/>
 {/if}
-{#if showPassForPath != ""}
-  <Dialog component={ShowPass} btnClass="" path={showPassForPath} password={passForPath}/>
+
+{#if $showPassStore.path != ""}
+  <Dialog component={ShowPass} btnClass=""/>
 {/if}
 
 <PasswordTree entry={rootEntry}/>

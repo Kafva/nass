@@ -16,12 +16,12 @@ export default class PassEntry {
     public subitems: PassEntry[]
   ){}
 
-  /** Returns the path to the current item with a leading slash */
+  /** Returns the path to the current item _without_ a leading slash */
   path(): string {
     const parent_path = this.parents.join('/')
     return parent_path == "" ? 
-      "/" + this.name : 
-      "/" + parent_path + "/" + this.name
+      this.name : 
+      parent_path + "/" + this.name
   }
 
   /** Returns true if there is case-insensitive match with the current `.name`,

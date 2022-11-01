@@ -2,9 +2,9 @@
   import Config from '../ts/config';
   import ApiRequest from '../ts/ApiRequest';
   import type PassEntry from '../ts/PassEntry'
-  import { authDialogForPath, queryString, showPassValues } from '../ts/store'
-  import { CopyToClipboard } from '../ts/util';
-  import type { ApiResponse } from '../ts/types';
+  import { queryStringStore, authInfoStore, showPassStore } from '../ts/store'
+  import { CopyToClipboard, Debug } from '../ts/util';
+  import type { ApiResponse, AuthInfo, PassItem } from '../ts/types';
   import { ApiStatusResponse } from '../ts/types';
 
   const SWIPE_MARGIN = 40
@@ -14,7 +14,7 @@
   let showButton: HTMLSpanElement|null = null;
   const api = new ApiRequest()
 
-  queryString.subscribe( (value: string) => {
+  queryStringStore.subscribe( (value: string) => {
     currentQuery = value.toLowerCase();
   })
 
@@ -87,21 +87,29 @@
     if (isLeaf) {
       const path = entry.path()
       api.getPass(path, "").then((apiRes: ApiResponse) => {
-         switch (apiRes.status) {
-         case ApiStatusResponse.success:
-           console.log("Already authenticated", apiRes)
-           if (useClipboard) {
-              CopyToClipboard(apiRes.value)
-           } else {
-              showPassValues.set([path,apiRes.value])
-           }
-           break;
-         case ApiStatusResponse.retry:
-           authDialogForPath.set(path)
-           break;
-         default:
-          /* errors are handled internally by `api` */
-         }
+        switch (apiRes.status) {
+        case ApiStatusResponse.success:
+          Debug("Already authenticated", apiRes)
+          if (useClipboard) {
+            CopyToClipboard(apiRes.value)
+          } else {
+            showPassStore.set({
+              path: path, 
+              password: apiRes.value
+            } as PassItem)
+          }
+          break;
+        case ApiStatusResponse.retry:
+          // The authentication dialog is open as long
+          // as a non-empty path is set togheter with an empty value
+          authInfoStore.set({
+            path: path, 
+            useClipboard: useClipboard
+          } as AuthInfo)
+          break;
+        default:
+          // Errors are handled internally by `api`
+        }
       })
     } else {
       open = !open

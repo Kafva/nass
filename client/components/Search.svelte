@@ -1,9 +1,9 @@
 <script lang="ts">
-  import {queryString} from '../ts/store'
+  import { queryStringStore } from '../ts/store'
 </script>
 
 <!-- '$' is used to pass a store as writable -->
-<input type="text" placeholder="Search..." bind:value={$queryString}/>
+<input type="text" placeholder="Search..." bind:value={$queryStringStore}/>
 
 <style lang="scss">
   @use "../scss/vars";

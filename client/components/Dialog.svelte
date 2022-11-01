@@ -1,27 +1,31 @@
 <script lang="ts">
   import type { SvelteComponent } from "svelte";
   import { fly, fade } from '../ts/util';
-  import { authDialogForPath } from '../ts/store';
+  import { authInfoStore, showPassStore } from '../ts/store';
   
   // The component to render inside of the modal
   export let component: typeof SvelteComponent;
   export let btnClass: string;
-  // Optional props
-  export let path = "";
-  export let password = "";
 
   let visible = false;
   
+  /**
+   * Clear all stores related to a dialog and disable the local 
+   * visibility flag.
+   */
+  const hideDialog = () => {
+    authInfoStore.set({path: "", useClipboard: false})
+    showPassStore.set({path: "", password: ""})
+    visible = false
+  }
+
   const handleKeyDown = (event: KeyboardEvent) => {
     switch (event.key) {
     case "Escape":
-      visible = false
-      authDialogForPath.set("")
+      hideDialog()
       break;
     }
   }
-
-  // TODO trigger destructor
 
 </script>
 
@@ -31,12 +35,12 @@
 {#if visible || btnClass == ""}
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div id="modalCover" transition:fade="{{ limit: 0.5, duration: 400 }}"
-       on:click="{() => { visible = false; authDialogForPath.set('') } }" />
+       on:click="{hideDialog}"/>
 
   <div id="dialog" transition:fly="{{ vh: 10, duration: 400 }}">
     <!-- bind: is used to have the parent react to any changes that
     the child makes to 'visible' -->
-    <svelte:component this={component} bind:visible={visible} path={path} password={password}/>
+    <svelte:component this={component} bind:visible={visible}/>
   </div>
 {/if}
 

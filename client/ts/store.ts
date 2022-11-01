@@ -1,23 +1,24 @@
 import { writable } from 'svelte/store'
+import type { AuthInfo, PassItem } from './types'
+
 /**
  * 'Stores' can be used in Svelte to share values between components that are
  * far apart in the component hierarchy.
  */
-export const queryString = writable("")
+export const queryStringStore = writable("")
 
 /**
  * Used to create alerts from anywhere in the application
  * First item is used as a key in the `MessageIcons` dict and the
  * second is appended to form the complete message
  */
-export const msgText = writable<[string,string]>(["",""])
+export const msgTextStore = writable<[string,string]>(["",""])
 
 /**
- * Used to control if the <Auth/> dialog needs to be displayed.
- * This store contains the path to the resource that should
- * be decrypted or an empty string if the dialog should be hidden.
+ * Used to control if the <Auth/> dialog needs to be displayed and
+ * wheter or not to use the clipboard to save requestsed passwords.
  */
-export const authDialogForPath = writable("")
+export const authInfoStore = writable<AuthInfo>({path: "", useClipboard: false})
 
 /**
  * Determines if the modal with a [path,password] should be shown.
@@ -25,4 +26,5 @@ export const authDialogForPath = writable("")
  * but I do not think this makes the GC (notably) less likely to delete the
  * string from memory.
  */
-export const showPassValues = writable<[string,string]>(["",""])
+export const showPassStore = writable<PassItem>({path: "", password: ""})
+

@@ -1,4 +1,5 @@
-import { msgText } from "./store"
+import Config from "./config"
+import { msgTextStore } from "./store"
 import { MessageText } from "./types"
 
 /** Regex based UA platform check */
@@ -68,11 +69,20 @@ const GetHTMLElements = function<Type extends Element>(selector:string, root: El
 const CopyToClipboard = async (value: string) => {
   try {
     await navigator.clipboard.writeText(value)
-    msgText.set([MessageText.clipboard, ""])
+    msgTextStore.set([MessageText.clipboard, ""])
   } catch (err) {
-    msgText.set([MessageText.err, "failed to access clipboard"])
-    console.error(err)
+    msgTextStore.set([MessageText.err, "failed to access clipboard"])
+    Err(err)
   }
 }
 
-export {IS_MOBILE, fly, fade, GetHTMLElement, GetHTMLElements, CopyToClipboard }
+const Debug = (...args: any) => {
+  if (Config.debugLogs) {
+    console.log("%c DEBUG ", 'background: #2b71e0; color: #f5e4f3', ...args)
+  }
+}
+const Err = (...args: any) => {
+  console.log("%c ERROR ", 'background: #ed493e; color: #f5e4f3', ...args)
+}
+
+export {IS_MOBILE, fly, fade, GetHTMLElement, GetHTMLElements, CopyToClipboard, Debug, Err }

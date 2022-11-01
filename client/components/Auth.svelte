@@ -2,12 +2,13 @@
   import Config from "../ts/config";
   import ApiRequest from "../ts/ApiRequest";
   import { ApiStatusResponse } from "../ts/types";
-  import type { ApiResponse } from '../ts/types';
-  import { authDialogForPath } from "../ts/store";
+  import type { ApiResponse, PassItem } from '../ts/types';
+  import { authInfoStore, showPassStore } from "../ts/store";
+  import { CopyToClipboard, Debug, Err } from "../ts/util";
 
-  export let path: string;
-  let passInput: string;
+  export let visible: boolean;
   const api = new ApiRequest()
+  let passInput: string;
 
   /**
    * Maybe not great to have an event listener for every keyboard event on
@@ -16,15 +17,26 @@
   const handleKeyDown = (event: KeyboardEvent) => {
     switch (event.key) {
     case "Enter":
-      api.getPass(path, passInput).then( (apiRes: ApiResponse) => {
+      api.getPass($authInfoStore.path, passInput).then( (apiRes: ApiResponse) => {
         if (apiRes.status == ApiStatusResponse.success ) {
-          // We need to know if the initial keypress targeted the 'eye'
-          // button or the clipboard
-          // TODO
-          console.log("Now authenticated: ", apiRes.value)
-          authDialogForPath.set("")
+          Debug("Authentication successful: ", apiRes)
+
+          if ($authInfoStore.useClipboard) {
+            CopyToClipboard(apiRes.value)
+          } else {
+            showPassStore.set({
+              path: $authInfoStore.path, 
+              password: apiRes.value
+            } as PassItem)
+          }
+
+          // Restore the passInfo store... 
+          authInfoStore.set({path: "", useClipboard: false})
+          // ...and close the outer <Dialog/>
+          visible = false
+
         } else {
-          console.error("Error", apiRes.desc)
+          Err("Error", apiRes.desc)
         }
       })
       break;

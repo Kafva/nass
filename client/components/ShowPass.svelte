@@ -1,21 +1,9 @@
 <script lang="ts">
-  //import { showPassValues } from "../ts/store";
-  //import { onDestroy } from "svelte";
-
-  //onDestroy( () => {
-  //  // Clear on close TODO
-  //  showPassValues.set(["",""])
-  //})
-
-  // No escape???
-
-  export let path: string;
-  export let password: string;
-
+  import { showPassStore } from "../ts/store";
 </script>
 
-<span>{path.slice(1)}</span>
-<span>{password}</span>
+<span>{$showPassStore.path}</span>
+<span>{$showPassStore.password}</span>
 
 <style lang="scss">
   @use "../scss/vars";
