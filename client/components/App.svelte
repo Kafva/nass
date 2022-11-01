@@ -1,7 +1,6 @@
 <script lang="ts">
-  import { GetHTMLElement, Err } from '../ts/util'
-  import { authInfoStore, msgTextStore, showPassStore } from '../ts/store';
-  import { MessageText } from '../ts/types';
+  import { GetHTMLElement } from '../ts/util'
+  import { authInfoStore, showPassStore } from '../ts/store';
   import PassEntry from '../ts/PassEntry'
   import Search from './Search.svelte'
   import PasswordTree from './PasswordTree.svelte'
@@ -19,18 +18,6 @@
   // node (used for matching each node against a query string)
   rootEntry.loadFromDOM(tmpl, [])
   rootEntry.updateSubpaths()
-
-
-  if (!Object.keys(navigator).includes('clipboard')) {
-    // Wait a short time before printing the error to ensure
-    // that the <Msg/> is loaded
-    setTimeout(()=>{
-      msgTextStore.set([MessageText.err, "Clipboard is inaccessible"])
-      Err(
-        "Clipboard is inaccessible, the site origin needs to be over https:// or localhost"
-      )
-    }, 2000)
-  }
 </script>
 
 <Msg/>
@@ -41,9 +28,7 @@
 
 {#if $authInfoStore.path != ""}
   <Dialog component={Auth}     btnClass=""/>
-{/if}
-
-{#if $showPassStore.path != ""}
+{:else if $showPassStore.path != ""}
   <Dialog component={ShowPass} btnClass=""/>
 {/if}
 

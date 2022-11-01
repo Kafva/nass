@@ -25,12 +25,12 @@
             CopyToClipboard(apiRes.value)
           } else {
             showPassStore.set({
-              path: $authInfoStore.path, 
+              path: $authInfoStore.path,
               password: apiRes.value
             } as PassItem)
           }
 
-          // Restore the passInfo store... 
+          // Restore the passInfo store...
           authInfoStore.set({path: "", useClipboard: false})
           // ...and close the outer <Dialog/>
           visible = false

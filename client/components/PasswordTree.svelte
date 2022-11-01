@@ -2,9 +2,9 @@
   import Config from '../ts/config';
   import ApiRequest from '../ts/ApiRequest';
   import type PassEntry from '../ts/PassEntry'
-  import { queryStringStore, authInfoStore, showPassStore } from '../ts/store'
+  import { queryStringStore, authInfoStore, showPassStore, msgTextStore } from '../ts/store'
   import { CopyToClipboard, Debug } from '../ts/util';
-  import type { ApiResponse, AuthInfo, PassItem } from '../ts/types';
+  import { MessageText, type ApiResponse, type AuthInfo, type PassItem } from '../ts/types';
   import { ApiStatusResponse } from '../ts/types';
 
   const SWIPE_MARGIN = 40
@@ -81,40 +81,45 @@
 
 
   const handleDelPass = () => {
+    const path = entry.path()
+    api.delPass(path).then((apiRes: ApiResponse) => {
+      switch (apiRes.status) {
+      case ApiStatusResponse.success:
+        msgTextStore.set([MessageText.deleted, path])
+        break;
+      default:
+        // Errors are handled internally by `api`
+      }
+    })
   }
 
   const handleGetPass = (useClipboard: boolean) => {
-    if (isLeaf) {
-      const path = entry.path()
-      api.getPass(path, "").then((apiRes: ApiResponse) => {
-        switch (apiRes.status) {
-        case ApiStatusResponse.success:
-          // FIXME We get this x2 when clicking the eye
-          Debug("Already authenticated", apiRes)
-          if (useClipboard) {
-            CopyToClipboard(apiRes.value)
-          } else {
-            showPassStore.set({
-              path: path, 
-              password: apiRes.value
-            } as PassItem)
-          }
-          break;
-        case ApiStatusResponse.retry:
-          // The authentication dialog is open as long
-          // as a non-empty path is set togheter with an empty value
-          authInfoStore.set({
-            path: path, 
-            useClipboard: useClipboard
-          } as AuthInfo)
-          break;
-        default:
-          // Errors are handled internally by `api`
+    const path = entry.path()
+    api.getPass(path, "").then((apiRes: ApiResponse) => {
+      switch (apiRes.status) {
+      case ApiStatusResponse.success:
+        Debug("Already authenticated", apiRes)
+        if (useClipboard) {
+          CopyToClipboard(apiRes.value)
+        } else {
+          showPassStore.set({
+            path: path,
+            password: apiRes.value
+          } as PassItem)
         }
-      })
-    } else {
-      open = !open
-    }
+        break;
+      case ApiStatusResponse.retry:
+        // The authentication dialog is open as long
+        // as a non-empty path is set togheter with an empty value
+        authInfoStore.set({
+          path: path,
+          useClipboard: useClipboard
+        } as AuthInfo)
+        break;
+      default:
+        // Errors are handled internally by `api`
+      }
+    })
   }
 
   // Increase the left-justification as we go to deeper levels
@@ -130,11 +135,10 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div
       class:dir="{!isLeaf}"
-      role="button"
-      on:click="{() => handleGetPass(true)}"
       on:touchstart="{startTouch}"
       on:touchmove="{swipe}"
       on:touchend="{endTouch}"
+      on:click="{() => open = !open }"
     >
       {#if isLeaf}
         <span
@@ -147,7 +151,11 @@
           style:margin-left={marginLeft}
         />
       {/if}
-      <span class="name">{entry.name}</span>
+      <span role="button" class="name" on:click="{() => {
+        if(isLeaf) handleGetPass(true)
+      }}">
+        {entry.name}
+      </span>
 
       {#if isLeaf}
         <span role="button" class="{Config.showPassword}"

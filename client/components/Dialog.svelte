@@ -2,15 +2,15 @@
   import type { SvelteComponent } from "svelte";
   import { fly, fade } from '../ts/util';
   import { authInfoStore, showPassStore } from '../ts/store';
-  
+
   // The component to render inside of the modal
   export let component: typeof SvelteComponent;
   export let btnClass: string;
 
   let visible = false;
-  
+
   /**
-   * Clear all stores related to a dialog and disable the local 
+   * Clear all stores related to a dialog and disable the local
    * visibility flag.
    */
   const hideDialog = () => {
@@ -53,7 +53,7 @@
 
 <style lang="scss">
   @use "../scss/vars";
-  
+
   div#modalCover {
     z-index: vars.$cover_z;
     position: fixed;
@@ -63,7 +63,7 @@
     height: 100vh;
     background-color: vars.$black;
   }
-  
+
   div#dialog {
     position: fixed;
     z-index: vars.$dialog_z;
@@ -72,20 +72,20 @@
     padding: 15px;
     border: 1px solid vars.$lilac;
     border-radius: 5%;
-  
+
     // Position the dialog off-screen by default, the `fly`
     // animation will move it into place.
     top: -5vh;
-  
+
     @include vars.fixed-centering(vars.$dialog_width, 15px);
   }
-  
+
   // Buttons float to the corner
   span.nf {
     font-size: vars.$font_large;
     float: right;
     margin: 10px 15px 0 0;
-  
+
     &:hover {
       color: vars.$lilac;
     }
