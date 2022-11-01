@@ -89,6 +89,7 @@
       api.getPass(path, "").then((apiRes: ApiResponse) => {
         switch (apiRes.status) {
         case ApiStatusResponse.success:
+          // FIXME We get this x2 when clicking the eye
           Debug("Already authenticated", apiRes)
           if (useClipboard) {
             CopyToClipboard(apiRes.value)
