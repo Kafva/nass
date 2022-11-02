@@ -19,8 +19,8 @@ export default class PassEntry {
   /** Returns the path to the current item _without_ a leading slash */
   path(): string {
     const parent_path = this.parents.join('/')
-    return parent_path == "" ? 
-      this.name : 
+    return parent_path == "" ?
+      this.name :
       parent_path + "/" + this.name
   }
 

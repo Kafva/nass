@@ -22,7 +22,7 @@ const MessageTimeouts: { [id: string]: number } = {
   [MessageText.clipboard]: 4000,
   [MessageText.added]: 4000,
   [MessageText.deleted]: 4000,
-  [MessageText.err]: -1,
+  [MessageText.err]: 10_000,
 }
 
 enum ApiStatusResponse {
