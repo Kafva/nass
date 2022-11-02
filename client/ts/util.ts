@@ -1,6 +1,5 @@
-import Config from "./config"
+import { Config, MessageText } from "./config"
 import { msgTextStore } from "./store"
-import { MessageText } from "./types"
 
 /** Regex based UA platform check */
 const IS_MOBILE = ( (): boolean => {

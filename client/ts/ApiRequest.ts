@@ -1,7 +1,8 @@
 import { msgTextStore } from "../ts/store";
-import { MessageText, ApiStatusResponse } from '../ts/types';
+import { ApiStatusResponse } from '../ts/types';
 import type { ApiResponse } from '../ts/types';
 import { Err } from "./util";
+import { MessageText } from "./config";
 
 export default class ApiRequest {
   private async baseRequest(url: string,

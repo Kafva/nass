@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Config from "../ts/config";
+  import { Config } from "../ts/config";
   import ApiRequest from "../ts/ApiRequest";
   import { ApiStatusResponse } from "../ts/types";
   import type { ApiResponse, PassItem } from '../ts/types';

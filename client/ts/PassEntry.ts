@@ -1,4 +1,4 @@
-import {GetHTMLElements} from './util'
+import { GetHTMLElements } from './util'
 
 export default class PassEntry {
   constructor(

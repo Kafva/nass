@@ -1,11 +1,11 @@
 <script lang="ts">
-  import Config from '../ts/config';
+  import { Config, MessageText} from '../ts/config';
   import ApiRequest from '../ts/ApiRequest';
   import type PassEntry from '../ts/PassEntry'
   import TouchHandler from '../ts/TouchHandler';
   import { queryStringStore, authInfoStore, showPassStore, msgTextStore } from '../ts/store'
   import { CopyToClipboard, Debug } from '../ts/util';
-  import { MessageText, ApiStatusResponse } from '../ts/types';
+  import { ApiStatusResponse } from '../ts/types';
   import type { ApiResponse, AuthInfo, PassItem } from '../ts/types';
 
   export let entry: PassEntry;
