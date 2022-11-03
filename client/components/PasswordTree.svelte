@@ -1,35 +1,36 @@
 <script lang="ts">
-  import { Config, MessageText} from '../ts/config';
-  import ApiRequest from '../ts/ApiRequest';
+  import { authInfoStore, msgTextStore, queryStringStore, showPassStore } from '../ts/store'
+  import { Config, MessageText} from '../ts/config'
+  import type { ApiResponse, AuthInfo, PassItem } from '../ts/types'
+  import { CopyToClipboard, Debug } from '../ts/util'
+  import { ApiStatusResponse } from '../ts/types'
   import type PassEntry from '../ts/PassEntry'
-  import TouchHandler from '../ts/TouchHandler';
-  import { queryStringStore, authInfoStore, showPassStore, msgTextStore } from '../ts/store'
-  import { CopyToClipboard, Debug } from '../ts/util';
-  import { ApiStatusResponse } from '../ts/types';
-  import type { ApiResponse, AuthInfo, PassItem } from '../ts/types';
+  import ApiRequest from '../ts/ApiRequest'
+  import TouchHandler from '../ts/TouchHandler'
 
-  export let entry: PassEntry;
+  export let entry: PassEntry
   let currentQuery = ""
-  let deleteButton: HTMLSpanElement;
-  let showButton: HTMLSpanElement|null = null;
+  let deleteButton: HTMLSpanElement
+  let showButton: HTMLSpanElement|null = null
   const api = new ApiRequest()
   const touch = new TouchHandler()
 
   queryStringStore.subscribe( (value: string) => {
-    currentQuery = value.toLowerCase();
+    currentQuery = value.toLowerCase()
   })
 
   const handleDelPass = () => {
     const path = entry.path()
-    api.delPass(path).then((apiRes: ApiResponse) => {
-      switch (apiRes.status) {
-      case ApiStatusResponse.success:
-        msgTextStore.set([MessageText.deleted, path])
-        break;
-      default:
-        // Errors are handled internally by `api`
-      }
-    })
+    if (confirm(`Are you sure you want to delete '${path}'`)) {
+      api.delPass(path).then((apiRes: ApiResponse) => {
+        switch (apiRes.status) {
+        case ApiStatusResponse.success:
+          msgTextStore.set([MessageText.deleted, path])
+          break;
+        default: // Errors are handled internally by `api`
+        }
+      })
+    }
   }
 
   const handleGetPass = (useClipboard: boolean) => {

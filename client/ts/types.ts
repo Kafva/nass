@@ -19,11 +19,18 @@ interface AuthInfo {
   useClipboard: boolean
 }
 
-// An item to show using the <ShowPass/> component
+/** An item to show using the <ShowPass/> component */
 interface PassItem {
   path: string
   password: string
 }
 
-export type { ApiResponse, AuthInfo, PassItem }
+/** A deletion or creation event in the password tree */
+interface TreeUpdate {
+  path: string
+  // A false value indicates 'create'
+  delete: boolean
+}
+
+export type { ApiResponse, AuthInfo, PassItem, TreeUpdate }
 export { ApiStatusResponse }

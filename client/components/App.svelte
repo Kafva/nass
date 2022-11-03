@@ -1,15 +1,16 @@
 <script lang="ts">
-  import { GetHTMLElement } from '../ts/util'
-  import { authInfoStore, showPassStore } from '../ts/store';
+  import { authInfoStore, showPassStore, treeUpdateStore } from '../ts/store'
+  import { Debug, GetHTMLElement } from '../ts/util'
+  import type { TreeUpdate } from '../ts/types'
   import PassEntry from '../ts/PassEntry'
   import Search from './Search.svelte'
   import PasswordTree from './PasswordTree.svelte'
-  import Dialog from './Dialog.svelte';
-  import AddPass from './AddPass.svelte';
-  import Help from './Help.svelte';
-  import Auth from './Auth.svelte';
-  import Msg from './Msg.svelte';
-  import ShowPass from './ShowPass.svelte';
+  import Dialog from './Dialog.svelte'
+  import AddPass from './AddPass.svelte'
+  import Help from './Help.svelte'
+  import Auth from './Auth.svelte'
+  import Msg from './Msg.svelte'
+  import ShowPass from './ShowPass.svelte'
 
   const tmpl = GetHTMLElement<HTMLDivElement>("#tmpl")
   const rootEntry = new PassEntry("", [], [], [])
@@ -18,6 +19,20 @@
   // node (used for matching each node against a query string)
   rootEntry.loadFromDOM(tmpl, [])
   rootEntry.updateSubpaths()
+
+  treeUpdateStore.subscribe( (treeUpdate: TreeUpdate) => {
+    if (treeUpdate.delete) {
+    } else {
+    }
+  })
+
+  // TESTING
+  setTimeout( () => {
+    const path = "jane/Github/Jane0x2"
+    rootEntry.deleteChild(path)
+    Debug("Deleting!", path)
+  }, 2000)
+
 </script>
 
 <Msg/>
@@ -35,5 +50,5 @@
 <PasswordTree entry={rootEntry}/>
 
 <style lang="scss">
-  @import "../scss/global";
+  @import "../scss/global"
 </style>

@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { Config } from "../ts/config";
-  import ApiRequest from "../ts/ApiRequest";
-  import { ApiStatusResponse } from "../ts/types";
-  import type { ApiResponse, PassItem } from '../ts/types';
   import { authInfoStore, showPassStore } from "../ts/store";
   import { CopyToClipboard, Debug, Err } from "../ts/util";
+  import type { ApiResponse, PassItem } from '../ts/types';
+  import { Config } from "../ts/config";
+  import { ApiStatusResponse } from "../ts/types";
+  import ApiRequest from "../ts/ApiRequest";
 
   export let visible: boolean;
   const api = new ApiRequest()

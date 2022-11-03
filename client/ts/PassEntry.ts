@@ -1,4 +1,4 @@
-import { GetHTMLElements } from './util'
+import { Err, GetHTMLElements } from './util'
 
 export default class PassEntry {
   constructor(
@@ -91,6 +91,60 @@ export default class PassEntry {
     })
 
     return this
+  }
+
+  /**
+   * Follow the given path of parents until the array is empty and either add 
+   * or delete the given `entry`.
+   */
+  private followToLeaf(parents: string[], entry: PassEntry, remove: boolean): boolean {
+
+    if (parents.length == 0) {
+      const idx = this.subitems.findIndex(c => c.name == entry.name)
+      if (remove) { // DELETE
+        if (idx != -1) {
+          delete this.subitems[idx]
+          return true
+        } else {
+          Err(`The entry '${entry.name}' does not exist under '${this.path}'`)
+        }
+      } else { // ADD
+        if (idx == -1) {
+          this.subitems.push(entry)
+          return true
+        } else {
+          Err(`The entry '${entry.name}' already exists under '${this.path}'`)
+        }
+      }
+
+      return false
+    }
+
+    const results: boolean[] = []
+
+    this.subitems.forEach( (subentry: PassEntry) => {
+      if (subentry.name == parents[0]) {
+        results.push(subentry.followToLeaf(parents.slice(1,-1), entry, remove))
+      }
+    })
+
+    return results.some(r=>r)
+  }
+
+  /** Delete a leaf or directory in the given path */
+  deleteChild(path: string): boolean {
+    const nodes = path.split('/')
+    const entry = new PassEntry(nodes[0], [], [], [])
+    
+    return this.followToLeaf(nodes.slice(0,-1), entry, true)
+  }
+
+  /** Add a leaf in the provided path */
+  addChild(path: string) {
+    const nodes = path.split('/')
+    const entry = new PassEntry(nodes[0], [], [], [])
+    
+    return this.followToLeaf(nodes.slice(0,-1), entry, false) != null
   }
 
   /** Compile a flat array of all the paths in the tree */

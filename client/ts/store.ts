@@ -1,5 +1,5 @@
+import type { TreeUpdate, AuthInfo, PassItem } from './types'
 import { writable } from 'svelte/store'
-import type { AuthInfo, PassItem } from './types'
 
 /**
  * 'Stores' can be used in Svelte to share values between components that are
@@ -28,3 +28,5 @@ export const authInfoStore = writable<AuthInfo>({path: "", useClipboard: false})
  */
 export const showPassStore = writable<PassItem>({path: "", password: ""})
 
+/** Tracks deletion and creation events for the password tree */
+export const treeUpdateStore = writable<TreeUpdate>({path: "", delete: false})

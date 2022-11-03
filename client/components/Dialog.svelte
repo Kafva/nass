@@ -1,7 +1,7 @@
 <script lang="ts">
-  import type { SvelteComponent } from "svelte";
-  import { fly, fade } from '../ts/util';
   import { authInfoStore, showPassStore } from '../ts/store';
+  import { fade, fly } from '../ts/util';
+  import type { SvelteComponent } from "svelte";
 
   // The component to render inside of the modal
   export let component: typeof SvelteComponent;

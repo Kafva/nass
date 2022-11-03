@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { msgTextStore } from "../ts/store";
   import { MessageIcons, MessageTimeouts } from "../ts/config";
+  import { msgTextStore } from "../ts/store";
   import { fly } from "../ts/util";
 
   let message = ""

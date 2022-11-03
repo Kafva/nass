@@ -5,6 +5,8 @@
   let generatePass = true
   let passInput: string;
   let verifyInput: string;
+  // TODO verify that path does not alreay exist
+  // maybe provide autocomplete for existing directories
 </script>
 
 <form method="dialog" autocomplete="off">

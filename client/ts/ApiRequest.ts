@@ -29,7 +29,6 @@ export default class ApiRequest {
       msgTextStore.set([MessageText.err, apiRes.desc])
     }
     return apiRes
-
   }
 
   /**
@@ -52,6 +51,6 @@ export default class ApiRequest {
   }
 
   async delPass(path: string): Promise<ApiResponse> {
-    return this.baseRequest(`/del?path=${path}`, {method: 'GET'})
+    return this.baseRequest(`/del?path=${path}`, {method: 'DELETE'})
   }
 }
