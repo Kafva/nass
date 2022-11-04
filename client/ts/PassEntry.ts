@@ -102,15 +102,19 @@ export default class PassEntry {
     const nodes = path.split('/')
     const leaf = nodes.pop()
     if (leaf) {
-      const entry = new PassEntry(leaf, [], [], [])
-      return this.followToLeaf(nodes, entry, remove)
+      const entry = new PassEntry(leaf, [], structuredClone(nodes), [])
+      if (this.followToLeaf(nodes, entry, remove)) {
+        this.updateSubpaths()
+        return true
+      }
+    } else {
+      Err("Empty path provided")
     }
-    Err("Empty path provided")
     return false
   }
 
   /**
-   * Follow the given path of parents until the array is empty and either add
+   * Follow the given path of `parents` until the array is empty and either add
    * or delete the given `entry`.
    */
   private followToLeaf(parents: string[], entry: PassEntry, remove: boolean): boolean {
@@ -136,10 +140,11 @@ export default class PassEntry {
     }
 
     const results: boolean[] = []
+    const nextParent = parents.splice(0,1)[0]
 
     this.subitems.forEach( (subentry: PassEntry) => {
-      if (subentry.name == parents[0]) {
-        results.push(subentry.followToLeaf(parents.slice(1,-1), entry, remove))
+      if (subentry.name == nextParent) {
+        results.push(subentry.followToLeaf(parents, entry, remove))
       }
     })
 

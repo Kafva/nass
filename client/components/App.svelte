@@ -32,6 +32,8 @@
     rootEntry.updateTree("Wallets/eth/main", true)
     rootEntry.updateTree("Wallets/eth/xD", false)
     rootEntry.updateTree("Wallets/eth/xd", false)
+    rootEntry.updateTree("mastercard", true) // TODO
+    console.log(rootEntry)
   }, 2000)
 
 </script>
