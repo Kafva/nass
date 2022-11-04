@@ -93,27 +93,42 @@ export default class PassEntry {
     return this
   }
 
+
   /**
-   * Follow the given path of parents until the array is empty and either add 
+   * Remove or add an entry matching the given path, returns
+   * true on success.
+   */
+  updateTree(path: string, remove: boolean): boolean {
+    const nodes = path.split('/')
+    const leaf = nodes.pop()
+    if (leaf) {
+      const entry = new PassEntry(leaf, [], [], [])
+      return this.followToLeaf(nodes, entry, remove)
+    }
+    Err("Empty path provided")
+    return false
+  }
+
+  /**
+   * Follow the given path of parents until the array is empty and either add
    * or delete the given `entry`.
    */
   private followToLeaf(parents: string[], entry: PassEntry, remove: boolean): boolean {
-
     if (parents.length == 0) {
       const idx = this.subitems.findIndex(c => c.name == entry.name)
       if (remove) { // DELETE
         if (idx != -1) {
-          delete this.subitems[idx]
+          this.subitems.splice(idx, 1)
           return true
         } else {
-          Err(`The entry '${entry.name}' does not exist under '${this.path}'`)
+          Err(`The entry '${entry.name}' does not exist under '${this.path()}'`)
         }
       } else { // ADD
         if (idx == -1) {
           this.subitems.push(entry)
           return true
         } else {
-          Err(`The entry '${entry.name}' already exists under '${this.path}'`)
+          Err(`The entry '${entry.name}' already exists under '${this.path()}'`)
         }
       }
 
@@ -129,22 +144,6 @@ export default class PassEntry {
     })
 
     return results.some(r=>r)
-  }
-
-  /** Delete a leaf or directory in the given path */
-  deleteChild(path: string): boolean {
-    const nodes = path.split('/')
-    const entry = new PassEntry(nodes[0], [], [], [])
-    
-    return this.followToLeaf(nodes.slice(0,-1), entry, true)
-  }
-
-  /** Add a leaf in the provided path */
-  addChild(path: string) {
-    const nodes = path.split('/')
-    const entry = new PassEntry(nodes[0], [], [], [])
-    
-    return this.followToLeaf(nodes.slice(0,-1), entry, false) != null
   }
 
   /** Compile a flat array of all the paths in the tree */

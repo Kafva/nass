@@ -1,6 +1,6 @@
 <script lang="ts">
   import { authInfoStore, showPassStore, treeUpdateStore } from '../ts/store'
-  import { Debug, GetHTMLElement } from '../ts/util'
+  import { GetHTMLElement } from '../ts/util'
   import type { TreeUpdate } from '../ts/types'
   import PassEntry from '../ts/PassEntry'
   import Search from './Search.svelte'
@@ -28,9 +28,10 @@
 
   // TESTING
   setTimeout( () => {
-    const path = "jane/Github/Jane0x2"
-    rootEntry.deleteChild(path)
-    Debug("Deleting!", path)
+    rootEntry.updateTree("Github/Jane0x3", false)
+    rootEntry.updateTree("Wallets/eth/main", true)
+    rootEntry.updateTree("Wallets/eth/xD", false)
+    rootEntry.updateTree("Wallets/eth/xd", false)
   }, 2000)
 
 </script>
