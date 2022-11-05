@@ -1,4 +1,6 @@
 class Config {
+  /** Max length of passwords and paths in the tree */
+  static readonly textMaxLen = 255
   static readonly debugLogs = true
 
   // Icon classes
@@ -10,6 +12,16 @@ class Config {
   static readonly showPassword = 'nf nf-oct-eye'
   static readonly deleteIcon = 'nf nf-fa-close'
 }
+
+/**
+ * 1-`TEXT_MAX_LEN` alpha numeric characters including '-', '_', '.' and '@'
+ * '/' is only allowed up to MAX_PASS_DEPTH times, checked separately
+ */
+const passentryRegex = "^[-_.@/a-zA-Z0-9]{1," + Config.textMaxLen + "}$"
+
+/** 1-`TEXT_MAX_LEN` alpha numeric characters including most ASCII symbols */
+const passwordRegex = "^[-§$!\"'#€%&()=?*<>_.@/a-zA-Z0-9åäöÅÄÖ]{1," + Config.textMaxLen + "}$"
+
 
 /** Predefined text for <Msg/> messages */
 enum MessageText {
@@ -47,6 +59,11 @@ const MessageTimeouts: { [id: string]: number } = {
   [MessageText.added]: 4000,
   [MessageText.deleted]: 4000,
   [MessageText.err]: 10_000,
+  [MessageText.pathExists]: 4000,
+  [MessageText.invalidNesting]: 4000,
+  [MessageText.invalidPath]: 4000,
+  [MessageText.invalidPass]: 4000,
+  [MessageText.invalidVerify]: 4000,
 }
 
-export { Config, MessageText, MessageIcons, MessageTimeouts }
+export { Config, MessageText, MessageIcons, MessageTimeouts, passentryRegex, passwordRegex }

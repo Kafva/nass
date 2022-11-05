@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"runtime/debug"
+	"strconv"
+	"strings"
 	"testing"
 )
 
@@ -16,6 +18,17 @@ func assert_validatePath(t *testing.T, res http.ResponseWriter,
   req.URL.RawQuery = "path="+value
 
   validated :=  validatePath(res, req, user)
+
+  if expected != validated  {
+    debug.PrintStack()
+    t.Error("Expected: '"+expected+"', Actual: '"+validated+"'")
+  }
+}
+
+// Test if password validation of `value` results in the `expected` output
+func assert_validatePassword(t *testing.T, res http.ResponseWriter, 
+                             value string, expected string) {
+  validated :=  validatePassword(res, value)
 
   if expected != validated  {
     debug.PrintStack()
@@ -55,3 +68,26 @@ func Test_validatePath(t *testing.T) {
   assert_validatePath(t, res, req, &user, "Email/\\", "")
   assert_validatePath(t, res, req, &user, "Email/😉", "")
 }
+
+func Test_validatePassword(t *testing.T) {
+  res := httptest.NewRecorder()
+
+  maxLen, _ := strconv.Atoi(TEXT_MAX_LEN)
+
+  /* VALID */
+  assert_validatePassword(t, res, "hjkl", "hjkl")
+  assert_validatePassword(t, res, "_dir603Pw3Dd-uuJUVKL", "_dir603Pw3Dd-uuJUVKL")
+  assert_validatePassword(t, res, strings.Repeat("A", maxLen), strings.Repeat("A", maxLen))
+  assert_validatePassword(t, res, "-§$!\"'#€%&()=?*<>_.@/", "-§$!\"'#€%&()=?*<>_.@/")
+  assert_validatePassword(t, res, "åäö", "åäö")
+  assert_validatePassword(t, res, "ÅÄÖ", "ÅÄÖ")
+
+  /* INVALID */
+  assert_validatePassword(t, res, "", "")
+  assert_validatePassword(t, res, "\\a", "")
+  assert_validatePassword(t, res, "\n", "")
+  assert_validatePassword(t, res, "\r", "")
+  assert_validatePassword(t, res, ">>> 🤣 <<<", "")
+  assert_validatePassword(t, res, strings.Repeat("A", maxLen+1), "")
+}
+

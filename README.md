@@ -31,6 +31,7 @@ docker run -p 5678:5678 -d nass
 
 # Test endpoints, e.g.
 curl -X POST -d "pass=jane" -L 'http://10.0.1.6:5678/get?path=Wallets/eth/main'|jq
+curl -X POST -d "pass=jane" -L 'http://10.0.1.6:5678/add?path=Wallets/eth/new'|jq
 curl -X GET -L 'http://10.0.1.6:5678/get?path=Wallets/eth/main'|jq
 
 #== Remote development ==#

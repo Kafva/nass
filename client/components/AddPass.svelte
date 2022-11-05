@@ -15,6 +15,24 @@
 
   const validateSubmit = () => {
     console.log("It has been done.")
+    const pathMsg = pathIsValid()
+    const passMsg = passwordIsValid()
+
+    if (pathMsg != MessageText.valid) {
+      msgTextStore.set([pathMsg, ""])
+    } else if (passMsg != MessageText.valid) {
+      msgTextStore.set([passMsg, ""])
+    } else {
+      api.addPass(pathInput, passInput, false).then( (apiRes: ApiResponse) => {
+        switch (apiRes.status) {
+        case ApiStatusResponse.success:
+          msgTextStore.set([MessageText.added, pathInput])
+          visible = false
+          break;
+        default: // Errors are handled internally by `api`
+        }
+      })
+    }
   }
 
   // Verify that the path only contains allowed characters, 
@@ -34,24 +52,8 @@
   const keyDown = (event: KeyboardEvent) => {
     switch (event.key) {
       case 'Enter': 
-        const pathMsg = pathIsValid()
-        const passMsg = passwordIsValid()
-
-        if (pathMsg != MessageText.valid) {
-          msgTextStore.set([pathMsg, ""])
-        } else if (passMsg != MessageText.valid) {
-          msgTextStore.set([passMsg, ""])
-        } else {
-          api.addPass(pathInput, passInput, false).then( (apiRes: ApiResponse) => {
-            switch (apiRes.status) {
-            case ApiStatusResponse.success:
-              msgTextStore.set([MessageText.added, pathInput])
-              visible = false
-              break;
-            default: // Errors are handled internally by `api`
-            }
-          })
-        }
+        event.preventDefault()
+        validateSubmit()
         break;
       default:
     }
@@ -89,7 +91,7 @@
 
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <button class="nf nf-mdi-key_plus"
-          on:click="{() => { visible = false } }"></button>
+          on:click="{validateSubmit}"></button>
 </form>
 
 <style lang="scss">

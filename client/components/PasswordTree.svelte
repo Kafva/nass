@@ -15,7 +15,7 @@
   const api = new ApiRequest()
   const touch = new TouchHandler()
 
-  queryStringStore.subscribe( (value: string) => {
+  queryStringStore.subscribe((value: string) => {
     currentQuery = value.toLowerCase()
   })
 

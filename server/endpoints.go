@@ -101,13 +101,14 @@ func AddPass(res http.ResponseWriter, req *http.Request) {
   passphrase := formGet(res, req, "pass", false)
   generate   := formGet(res, req, "generate", false) == "true"
 
-  if passphrase == "" && !generate { return }
-
   fspath := CONFIG.Passwordstore+"/"+passPath+".gpg"
 
   if !Exists(fspath) {
     if generate {
       passphrase = genPass()
+    } else {
+      passphrase = validatePassword(res, passphrase)
+      if passphrase == "" { return }
     }
 
     cmd := exec.Command(CONFIG.PassBinary, "insert", passPath)
@@ -206,6 +207,19 @@ func validatePath(res http.ResponseWriter,
     return passPath
   } else {
     ErrorResponse(res, "Invalid path format", http.StatusBadRequest)
+    return ""
+  }
+}
+
+// Returns a sanitized password on success and an empty 
+// string if validation fails.
+func validatePassword(res http.ResponseWriter, password string) string {
+  regex := regexp.MustCompile(PASSWORD_REGEX)
+
+  if regex.Match([]byte(password)) {
+    return password
+  } else {
+    ErrorResponse(res, "Invalid password format", http.StatusBadRequest)
     return ""
   }
 }
