@@ -24,7 +24,8 @@
     if (confirm(`Are you sure you want to delete '${path}'?`)) {
       api.delPass(path).then((apiRes: ApiResponse) => {
         if (apiRes.status == ApiStatusResponse.success) {
-          $rootEntryStore.updateTree(path, true)
+          const newTree = $rootEntryStore.updateTree(path, true)
+          rootEntryStore.set(newTree)
           msgTextStore.set([MessageText.deleted, path])
         } // Errors are handled internally by `api`
       })

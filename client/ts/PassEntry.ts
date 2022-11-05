@@ -26,9 +26,10 @@ export default class PassEntry {
 
   /**
    * Returns true if the current node has a subpath
-   * that matches `subpath`
+   * that matches `subpath`.
    */
   hasSubpath(toMatch: string): boolean {
+    this.subpaths.some((subpath: string) => { console.log(subpath, toMatch); } )
     return this.subpaths.some((subpath: string) => subpath == toMatch)
   }
 
@@ -108,10 +109,8 @@ export default class PassEntry {
       // The nodes will be popped out incrementally so a deep copy
       // is needed for the parents of the `entry`.
       const entry = new PassEntry(leaf, [], structuredClone(nodes), [])
-      if (this.followToLeaf(nodes, entry, remove)) {
-        this.updateSubpaths()
-        return this
-      }
+      this.followToLeaf(nodes, entry, remove)
+      this.updateSubpaths()
     } else {
       Err("Empty path provided")
     }
@@ -119,17 +118,17 @@ export default class PassEntry {
   }
 
   /**
-   * Follow the given path of `parents` until the array is empty and either add
-   * or delete the given `entry`.
+   * Follow the given path of `parents` until the array is empty, removing entries starting
+   * from the left and either add or delete the given `entry`.
+   * @note: for add operations new nodes leading up to the leaf will be created.
    */
-  private followToLeaf(parents: string[], entry: PassEntry, remove: boolean): boolean {
+  private followToLeaf(parents: string[],  entry: PassEntry, remove: boolean) {
     if (parents.length == 0) {
       const idx = this.subitems.findIndex(c => c.name == entry.name)
       if (remove) { // DELETE
         if (idx != -1) {
           Debug(`Deleting '${entry.name}' from '${this.path()}'`)
           this.subitems.splice(idx, 1)
-          return true
         } else {
           Err(`The entry '${entry.name}' does not exist under '${this.path()}'`)
         }
@@ -137,25 +136,29 @@ export default class PassEntry {
         if (idx == -1) {
           Debug(`Adding '${entry.name}' to '${this.path()}'`)
           this.subitems.push(entry)
-          return true
         } else {
           Err(`The entry '${entry.name}' already exists under '${this.path()}'`)
         }
       }
-
-      return false
+      return // Basecase
     }
 
-    const results: boolean[] = []
-    const nextParent = parents.splice(0,1)[0]
+    const nextNode = parents.splice(0,1)[0]
+    let matchFound = false
 
     this.subitems.forEach( (subentry: PassEntry) => {
-      if (subentry.name == nextParent) {
-        results.push(subentry.followToLeaf(parents, entry, remove))
+      if (subentry.name == nextNode ) {
+        subentry.followToLeaf(parents, entry, remove)
+        matchFound = true
       }
     })
 
-    return results.some(r=>r)
+    // Add the node's parent path if it did not already exist and recurse on.
+    if (!matchFound) {
+      const subentry = new PassEntry(nextNode, [], [], [])
+      subentry.followToLeaf(parents, entry, remove)
+      this.subitems.push(subentry)
+    }
   }
 
   /** Compile a flat array of all the paths in the tree */

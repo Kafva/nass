@@ -33,7 +33,7 @@ func GetPass(res http.ResponseWriter, req *http.Request) {
   user := MapReqToUser(res, req)
   if user.Name == "" { return }
 
-  passPath := validatePath(res, req, &user)
+  passPath := validatePath(res, req, &user, false)
   if passPath == "" { return }
 
   cmd := exec.Command(CONFIG.PassBinary, passPath)
@@ -93,7 +93,7 @@ func AddPass(res http.ResponseWriter, req *http.Request) {
   user := MapReqToUser(res, req)
   if user.Name == "" { return }
 
-  passPath := validatePath(res, req, &user)
+  passPath := validatePath(res, req, &user, true)
   if passPath == "" { return }
 
   req.ParseForm()
@@ -155,7 +155,7 @@ func DelPass(res http.ResponseWriter, req *http.Request) {
   user := MapReqToUser(res, req)
   if user.Name == "" { return }
 
-  passPath := validatePath(res, req, &user)
+  passPath := validatePath(res, req, &user, false)
   if passPath == "" { return }
 
   fspath := CONFIG.Passwordstore+"/"+passPath
@@ -185,9 +185,9 @@ func DelPass(res http.ResponseWriter, req *http.Request) {
 // * /a/b/c/d.gpg 
 // * /a/b.gpg 
 //
-// get rejected.
+// get rejected, this is only enforced when `addNew` is set.
 func validatePath(res http.ResponseWriter, 
-                  req *http.Request, user *User) string {
+                  req *http.Request, user *User, addNew bool) string {
   passPath := req.URL.Query().Get("path")
 
   if ! CONFIG.SingleUser {
@@ -206,32 +206,36 @@ func validatePath(res http.ResponseWriter,
    !strings.HasPrefix(passPath, "/") &&
    !strings.HasSuffix(passPath, "/") {
 
-    nodes := strings.Split(passPath, "/")
+    if addNew {
+      nodes := strings.Split(passPath, "/")
 
-    // Ensure that no .gpg file with a name that overlaps with
-    // a directory name exists in the path.
-    // NOTE: we require that ~/.password-store/$USER.gpg does NOT exist in
-    // multiuser mode. All paths will be rejected if this file somehow
-    // exists.
-    for i := range nodes {
-      if (i == len(nodes)) { break }
-      parentPath :=  CONFIG.Passwordstore + "/" + strings.Join(nodes[0:i+1], "/")
+      // Ensure that no .gpg file with a name that overlaps with
+      // a directory name exists in the path.
+      // NOTE: we require that ~/.password-store/$USER.gpg does NOT exist in
+      // multiuser mode. All paths will be rejected if this file somehow
+      // exists.
+      for i := range nodes {
+        if (i == len(nodes)) { break }
+        parentPath :=  CONFIG.Passwordstore + "/" + strings.Join(nodes[0:i+1], "/")
 
-      // A directory which overlaps with the new name is not allowed for the
-      // last iteration.
-      if Exists(parentPath + ".gpg") || (i == len(nodes)-1 && Exists(parentPath))  {
-        ErrorResponse(res, "One or more entries in the path already exist", 
-                      http.StatusBadRequest)
-        return ""
+        // A directory which overlaps with the new name is not allowed for the
+        // last iteration.
+        if Exists(parentPath + ".gpg") || (i == len(nodes)-1 && Exists(parentPath))  {
+          ErrorResponse(res, "One or more entries in the path already exist", 
+                        http.StatusBadRequest)
+          return ""
+        }
       }
     }
-
     return passPath
   } else {
     ErrorResponse(res, "Invalid path format", http.StatusBadRequest)
     return ""
   }
 }
+
+
+
 
 // Returns a sanitized password on success and an empty 
 // string if validation fails.

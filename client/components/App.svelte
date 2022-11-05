@@ -21,10 +21,10 @@
 
   rootEntryStore.set(rootEntry)
 
-  Debug("Tree", rootEntry)
-  //rootEntryStore.subscribe((newRoot: PassEntry) => { 
-  //  rootEntry = newRoot
-  //})
+  rootEntryStore.subscribe((newRoot: PassEntry) => {
+    Debug("New tree", newRoot)
+    rootEntry = newRoot
+  })
 
 
   // TESTING
@@ -51,7 +51,7 @@
   <Dialog component={ShowPass} btnClass=""/>
 {/if}
 
-<PasswordTree entry={$rootEntryStore}/>
+<PasswordTree entry={rootEntry}/>
 
 <style lang="scss">
   @import "../scss/global"

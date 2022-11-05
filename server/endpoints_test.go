@@ -18,7 +18,7 @@ func assert_validatePath(t *testing.T, res http.ResponseWriter,
                          value string, expected string) {
   req.URL.RawQuery = "path="+value
 
-  validated :=  validatePath(res, req, user)
+  validated :=  validatePath(res, req, user, true)
 
   if expected != validated  {
     debug.PrintStack()

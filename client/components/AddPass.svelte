@@ -29,15 +29,16 @@
       api.addPass(path, passInput, generatePass).then( (apiRes: ApiResponse) => {
         if (apiRes.status == ApiStatusResponse.success) {
           msgTextStore.set([MessageText.added, path])
-          $rootEntryStore.updateTree(path, false)
+          const newTree = $rootEntryStore.updateTree(path, false)
+          rootEntryStore.set(newTree)
           visible = false
         } // Errors are handled internally by `api`
       })
     }
   }
 
-  /** 
-   * Verify that the path only contains allowed characters, 
+  /**
+   * Verify that the path only contains allowed characters,
    * Is not nested to deep and does not already exist.
    * Returns MessageText.valid on success.
    */
@@ -55,8 +56,8 @@
     return MessageText.valid
   }
 
-  /** 
-   * Verify that the password and verify inputs match and 
+  /**
+   * Verify that the password and verify inputs match and
    * only contain allowed characters.
    * Returns MessageText.valid on success.
    */
@@ -71,20 +72,20 @@
 
   const keyDown = (event: KeyboardEvent) => {
     switch (event.key) {
-      case 'Enter': 
-        event.preventDefault()
-        validateSubmit()
-        break;
-      default:
+    case 'Enter':
+      event.preventDefault()
+      validateSubmit()
+      break;
+    default:
     }
-  } 
+  }
 
 </script>
 
 <form method="dialog" autocomplete="off" on:submit|preventDefault={validateSubmit}>
   <div class="form-item">
     <label for="path">Path:</label>
-    <input spellcheck="false" type="text" name="path" bind:value={pathInput} 
+    <input spellcheck="false" type="text" name="path" bind:value={pathInput}
            on:keydown={keyDown}>
 
     <label for="generate">Generate:</label>
