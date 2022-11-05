@@ -1,8 +1,8 @@
-import { msgTextStore } from "../ts/store";
-import { ApiStatusResponse } from '../ts/types';
 import type { ApiResponse } from '../ts/types';
+import { ApiStatusResponse } from '../ts/types';
 import { Err } from "./util";
 import { MessageText } from "./config";
+import { msgTextStore } from "../ts/store";
 
 export default class ApiRequest {
   private async baseRequest(url: string,
@@ -53,4 +53,15 @@ export default class ApiRequest {
   async delPass(path: string): Promise<ApiResponse> {
     return this.baseRequest(`/del?path=${path}`, {method: 'DELETE'})
   }
+
+  async addPass(path: string, pass: string, generate: boolean): Promise<ApiResponse> {
+    return this.baseRequest(`/add?path=${path}`, {
+      method: 'POST',
+      body: generate ? "generate=true" : `pass=${pass}`,
+      headers: {
+        'content-type': 'application/x-www-form-urlencoded'
+      }
+    } as RequestInit)
+  }
+
 }

@@ -16,7 +16,13 @@ enum MessageText {
   clipboard = "Copied to clipboard",
   added = "Added",
   deleted = "Deleted",
-  err = "Error:"
+  pathExists = "Path already exists",
+  invalidNesting = "Path contains  to many '/' separators",
+  invalidPath = "Invalid format for path",
+  invalidPass = "Invalid format for password",
+  invalidVerify = "Passwords do not match",
+  err = "Error:",
+  valid = "Valid" // Only used internally
 }
 
 /** Predefined icon mappings for messages: */
@@ -25,6 +31,11 @@ const MessageIcons: { [id: string]: string } = {
   [MessageText.added]: "nf-mdi-key_plus",
   [MessageText.deleted]: "nf-mdi-key_minus",
   [MessageText.err]: "nf-oct-issue_opened",
+  [MessageText.pathExists]: "nf-mdi-textbox",
+  [MessageText.invalidNesting]: "nf-mdi-textbox",
+  [MessageText.invalidPath]: "nf-mdi-textbox",
+  [MessageText.invalidPass]: "nf-mdi-textbox_password",
+  [MessageText.invalidVerify]: "nf-mdi-textbox_password",
 }
 
 /**

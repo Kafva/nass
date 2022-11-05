@@ -29,7 +29,7 @@ interface PassItem {
 interface TreeUpdate {
   path: string
   // A false value indicates 'create'
-  delete: boolean
+  remove: boolean
 }
 
 export type { ApiResponse, AuthInfo, PassItem, TreeUpdate }

@@ -1,4 +1,4 @@
-import type { TreeUpdate, AuthInfo, PassItem } from './types'
+import type { AuthInfo, PassItem, TreeUpdate  } from './types'
 import { writable } from 'svelte/store'
 
 /**
@@ -29,4 +29,4 @@ export const authInfoStore = writable<AuthInfo>({path: "", useClipboard: false})
 export const showPassStore = writable<PassItem>({path: "", password: ""})
 
 /** Tracks deletion and creation events for the password tree */
-export const treeUpdateStore = writable<TreeUpdate>({path: "", delete: false})
+export const treeUpdateStore = writable<TreeUpdate>({path: "", remove: false})

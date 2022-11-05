@@ -1,4 +1,5 @@
-import { Err, GetHTMLElements } from './util'
+import { Debug, Err, GetHTMLElements } from './util'
+import type { TreeUpdate } from './types'
 
 export default class PassEntry {
   constructor(
@@ -22,6 +23,14 @@ export default class PassEntry {
     return parent_path == "" ?
       this.name :
       parent_path + "/" + this.name
+  }
+
+  /**
+   * Returns true if the current node has a subpath
+   * that matches `subpath`
+   */
+  hasSubpath(toMatch: string): boolean {
+    return this.subpaths.some((subpath: string) => subpath == toMatch)
   }
 
   /** Returns true if there is case-insensitive match with the current `.name`,
@@ -95,22 +104,25 @@ export default class PassEntry {
 
 
   /**
-   * Remove or add an entry matching the given path, returns
-   * true on success.
+   * Remove or add an entry matching the given path in the 
+   * `TreeUpdate`. Since Svelte's update are assignment based,
+   * a copy of the updated tree is returned.
    */
-  updateTree(path: string, remove: boolean): boolean {
-    const nodes = path.split('/')
+  updateTree(u: TreeUpdate): PassEntry {
+    const nodes = u.path.split('/')
     const leaf = nodes.pop()
     if (leaf) {
+      // The nodes will be popped out incrementally so a deep copy
+      // is needed for the parents of the `entry`.
       const entry = new PassEntry(leaf, [], structuredClone(nodes), [])
-      if (this.followToLeaf(nodes, entry, remove)) {
+      if (this.followToLeaf(nodes, entry, u.remove)) {
         this.updateSubpaths()
-        return true
+        return this
       }
     } else {
       Err("Empty path provided")
     }
-    return false
+    return this
   }
 
   /**
@@ -122,6 +134,7 @@ export default class PassEntry {
       const idx = this.subitems.findIndex(c => c.name == entry.name)
       if (remove) { // DELETE
         if (idx != -1) {
+          Debug(`Deleting '${entry.name}' from '${this.path()}'`)
           this.subitems.splice(idx, 1)
           return true
         } else {
@@ -129,6 +142,7 @@ export default class PassEntry {
         }
       } else { // ADD
         if (idx == -1) {
+          Debug(`Adding '${entry.name}' to '${this.path()}'`)
           this.subitems.push(entry)
           return true
         } else {

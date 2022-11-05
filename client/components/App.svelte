@@ -13,28 +13,28 @@
   import ShowPass from './ShowPass.svelte'
 
   const tmpl = GetHTMLElement<HTMLDivElement>("#tmpl")
-  const rootEntry = new PassEntry("", [], [], [])
+  let rootEntry = new PassEntry("", [], [], [])
 
   // Load the full tree and compile a list of subpaths for each
   // node (used for matching each node against a query string)
   rootEntry.loadFromDOM(tmpl, [])
   rootEntry.updateSubpaths()
 
-  treeUpdateStore.subscribe( (treeUpdate: TreeUpdate) => {
-    if (treeUpdate.delete) {
-    } else {
+  treeUpdateStore.subscribe( (u: TreeUpdate) => { 
+    if (u.path != "") { 
+      rootEntry = rootEntry.updateTree(u) 
     }
   })
 
   // TESTING
-  setTimeout( () => {
-    rootEntry.updateTree("Github/Jane0x3", false)
-    rootEntry.updateTree("Wallets/eth/main", true)
-    rootEntry.updateTree("Wallets/eth/xD", false)
-    rootEntry.updateTree("Wallets/eth/xd", false)
-    rootEntry.updateTree("mastercard", true) // TODO
-    console.log(rootEntry)
-  }, 2000)
+  // setTimeout( () => {
+  //   rootEntry.updateTree({path: "Github/Jane0x3",   remove: false})
+  //   rootEntry.updateTree({path: "Wallets/eth/main", remove: true})
+  //   rootEntry.updateTree({path: "Wallets/eth/xD",   remove: false})
+  //   rootEntry.updateTree({path: "Wallets/eth/xd",   remove: false})
+  //   rootEntry.updateTree({path: "mastercard",       remove: true}) // TODO
+  //   console.log(rootEntry)
+  // }, 2000)
 
 </script>
 
