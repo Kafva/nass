@@ -21,7 +21,7 @@
 
   const handleDelPass = () => {
     const path = entry.path()
-    if (confirm(`Are you sure you want to delete '${path}'`)) {
+    if (confirm(`Are you sure you want to delete '${path}'?`)) {
       api.delPass(path).then((apiRes: ApiResponse) => {
         switch (apiRes.status) {
         case ApiStatusResponse.success:

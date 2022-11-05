@@ -1,7 +1,9 @@
 class Config {
-  /** Max length of passwords and paths in the tree */
-  static readonly textMaxLen = 255
   static readonly debugLogs = true
+
+  // !! Mirrored options from config.go !!
+  static readonly textMaxLen = 255
+  static readonly maxPassDepth = 6
 
   // Icon classes
   static readonly dropdownClosed = 'nf nf-fa-angle_right'
@@ -13,14 +15,6 @@ class Config {
   static readonly deleteIcon = 'nf nf-fa-close'
 }
 
-/**
- * 1-`TEXT_MAX_LEN` alpha numeric characters including '-', '_', '.' and '@'
- * '/' is only allowed up to MAX_PASS_DEPTH times, checked separately
- */
-const passentryRegex = "^[-_.@/a-zA-Z0-9]{1," + Config.textMaxLen + "}$"
-
-/** 1-`TEXT_MAX_LEN` alpha numeric characters including most ASCII symbols */
-const passwordRegex = "^[-§$!\"'#€%&()=?*<>_.@/a-zA-Z0-9åäöÅÄÖ]{1," + Config.textMaxLen + "}$"
 
 
 /** Predefined text for <Msg/> messages */
@@ -65,5 +59,9 @@ const MessageTimeouts: { [id: string]: number } = {
   [MessageText.invalidPass]: 4000,
   [MessageText.invalidVerify]: 4000,
 }
+
+// !! Mirrored in config.go !!
+const passentryRegex = "^[-_.@/a-zA-Z0-9]{1," + Config.textMaxLen + "}$"
+const passwordRegex = "^[-§$!\"'#€%&()=?*<>_.@/a-zA-Z0-9åäöÅÄÖ]{1," + Config.textMaxLen + "}$"
 
 export { Config, MessageText, MessageIcons, MessageTimeouts, passentryRegex, passwordRegex }

@@ -9,22 +9,10 @@ const WEBROOT = "./dist"
 // Length of auto-generated passwords
 const GEN_PASS_LEN = 24
 
-// Max length of passwords and paths in the tree
-const TEXT_MAX_LEN = "255"
-
 // Possible characters for auto-generated passwords
 const GEN_PASS_CHARS =
   "-_.@/0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 
-// 1-`TEXT_MAX_LEN` alpha numeric characters including '-', '_', '.' and '@'
-// '/' is only allowed up to MAX_PASS_DEPTH times, checked separately
-const PASSENTRY_REGEX = "^[-_.@/a-zA-Z0-9]{1," + TEXT_MAX_LEN + "}$"
-
-// 1-`TEXT_MAX_LEN` alpha numeric characters including most ASCII symbols
-const PASSWORD_REGEX = "^[-§$!\"'#€%&()=?*<>_.@/a-zA-Z0-9åäöÅÄÖ]{1," + TEXT_MAX_LEN + "}$"
-
-// Maximum allowed folder depth in the password store
-const MAX_PASS_DEPTH = 6
 
 // The expected output if PIN entry is required to fetch a secret
 const GPG_FAIL_STRING = "gpg: decryption failed: No secret key"
@@ -68,6 +56,21 @@ func DefaultConfig() Config {
   }
 }
 
-
 var USERS  = []User{}
 var CONFIG = DefaultConfig()
+
+// !! These settings should match those in client/config.ts !!
+
+// Max length of passwords and paths in the tree
+const TEXT_MAX_LEN = "255"
+
+// Maximum allowed folder depth in the password store
+const MAX_PASS_DEPTH = 6
+
+// 1-`TEXT_MAX_LEN` alpha numeric characters including '-', '_', '.' and '@'
+// '/' is only allowed up to MAX_PASS_DEPTH times, checked separately
+const PASSENTRY_REGEX = "^[-_.@/a-zA-Z0-9]{1," + TEXT_MAX_LEN + "}$"
+
+// 1-`TEXT_MAX_LEN` alpha numeric characters including most ASCII symbols
+const PASSWORD_REGEX = "^[-§$!\"'#€%&()=?*<>_.@/a-zA-Z0-9åäöÅÄÖ]{1," + TEXT_MAX_LEN + "}$"
+
