@@ -1,7 +1,7 @@
 <script lang="ts">
   import ApiRequest from '../ts/ApiRequest';
-  import { MessageText } from '../ts/config';
-  import { msgTextStore } from '../ts/store';
+  import { Config, MessageText, passentryRegex, passwordRegex } from '../ts/config';
+  import { msgTextStore, rootEntryStore } from '../ts/store';
   import { ApiStatusResponse } from '../ts/types';
   import type { ApiResponse } from '../ts/types';
   import { fade } from '../ts/util';
@@ -14,39 +14,59 @@
   const api = new ApiRequest()
 
   const validateSubmit = () => {
-    console.log("It has been done.")
-    const pathMsg = pathIsValid()
+    const path = pathInput.replace(/^\//, "")
+    const pathMsg = pathIsValid(path)
     const passMsg = passwordIsValid()
 
     if (pathMsg != MessageText.valid) {
       msgTextStore.set([pathMsg, ""])
-    } else if (passMsg != MessageText.valid) {
+    } else if (!generatePass && passMsg != MessageText.valid) {
       msgTextStore.set([passMsg, ""])
     } else {
-      api.addPass(pathInput, passInput, false).then( (apiRes: ApiResponse) => {
-        switch (apiRes.status) {
-        case ApiStatusResponse.success:
-          msgTextStore.set([MessageText.added, pathInput])
+      // Conditions met at this point:
+      //  * Path is valid
+      //  * generatePass is set OR the password+verification is valid
+      api.addPass(path, passInput, generatePass).then( (apiRes: ApiResponse) => {
+        if (apiRes.status == ApiStatusResponse.success) {
+          msgTextStore.set([MessageText.added, path])
+          $rootEntryStore.updateTree(path, false)
           visible = false
-          break;
-        default: // Errors are handled internally by `api`
-        }
+        } // Errors are handled internally by `api`
       })
     }
   }
 
-  // Verify that the path only contains allowed characters, 
-  // Is not nested to deep and does not already exist
-  // Returns MessageText.valid on success.
-  const pathIsValid = (): MessageText => {
-    return MessageText.invalidPath
+  /** 
+   * Verify that the path only contains allowed characters, 
+   * Is not nested to deep and does not already exist.
+   * Returns MessageText.valid on success.
+   */
+  const pathIsValid = (path: string): MessageText => {
+    const depth = (Array.from(path.matchAll(/\//g)) || []).length
+
+    if (path.match(passentryRegex) == null) {
+      return MessageText.invalidPath
+    } else if (depth > Config.maxPassDepth) {
+      return MessageText.invalidNesting
+    } else if ($rootEntryStore.hasSubpath(path)) {
+      // This check is the main reason why the rootEntry needs to be globally available
+      return MessageText.pathExists
+    }
+    return MessageText.valid
   }
 
-  // Verify that the password and verify inputs match and 
-  // only contain allowed characters.
-  // Returns MessageText.valid on success.
+  /** 
+   * Verify that the password and verify inputs match and 
+   * only contain allowed characters.
+   * Returns MessageText.valid on success.
+   */
   const passwordIsValid = (): MessageText => {
-    return MessageText.invalidPass
+    if ((passInput || "").match(passwordRegex) == null) {
+      return MessageText.invalidPath
+    } else if (passInput != (verifyInput || "")) { // passInput is valid
+      return MessageText.invalidVerify
+    }
+    return MessageText.valid
   }
 
   const keyDown = (event: KeyboardEvent) => {

@@ -101,48 +101,42 @@ func AddPass(res http.ResponseWriter, req *http.Request) {
   passphrase := formGet(res, req, "pass", false)
   generate   := formGet(res, req, "generate", false) == "true"
 
-  fspath := CONFIG.Passwordstore+"/"+passPath+".gpg"
-
-  if !Exists(fspath) {
-    if generate {
-      passphrase = genPass()
-    } else {
-      passphrase = validatePassword(res, passphrase)
-      if passphrase == "" { return }
-    }
-
-    cmd := exec.Command(CONFIG.PassBinary, "insert", passPath)
-    stdin, err := cmd.StdinPipe()
-    defer stdin.Close()
-
-    if err != nil {
-      ErrorResponse(res, "Failed to open stdin", http.StatusInternalServerError)
-      return
-    }
-    err = cmd.Start()
-    if err != nil {
-      ErrorResponse(res, "Failed to run "+CONFIG.PassBinary, 
-                    http.StatusInternalServerError)
-      return
-    }
-
-    // Provide the password twice for confirmation
-    io.WriteString(stdin, passphrase+"\n"+passphrase+"\n")
-    cmd.Wait()
-
-    if cmd.ProcessState.ExitCode() == 0 && generate {
-      // Respond with generated passphrase
-      WriteResponse(res, StatusSuccess, "", passphrase)
-
-    } else if cmd.ProcessState.ExitCode() == 0 {
-      WriteResponse(res, StatusSuccess, "", "")
-
-    } else {
-      ErrorResponse(res, "Failed to insert password",
-                    http.StatusInternalServerError)
-    }
+  if generate {
+    passphrase = genPass()
   } else {
-    ErrorResponse(res, "Entry already exists", http.StatusBadRequest)
+    passphrase = validatePassword(res, passphrase)
+    if passphrase == "" { return }
+  }
+
+  cmd := exec.Command(CONFIG.PassBinary, "insert", passPath)
+  stdin, err := cmd.StdinPipe()
+  defer stdin.Close()
+
+  if err != nil {
+    ErrorResponse(res, "Failed to open stdin", http.StatusInternalServerError)
+    return
+  }
+  err = cmd.Start()
+  if err != nil {
+    ErrorResponse(res, "Failed to run "+CONFIG.PassBinary, 
+                  http.StatusInternalServerError)
+    return
+  }
+
+  // Provide the password twice for confirmation
+  io.WriteString(stdin, passphrase+"\n"+passphrase+"\n")
+  cmd.Wait()
+
+  if cmd.ProcessState.ExitCode() == 0 && generate {
+    // Respond with generated passphrase
+    WriteResponse(res, StatusSuccess, "", passphrase)
+
+  } else if cmd.ProcessState.ExitCode() == 0 {
+    WriteResponse(res, StatusSuccess, "", "")
+
+  } else {
+    ErrorResponse(res, "Failed to insert password",
+                  http.StatusInternalServerError)
   }
 }
 
@@ -185,6 +179,13 @@ func DelPass(res http.ResponseWriter, req *http.Request) {
 // unless the `SingleUser` mode is active.
 // '.' is not allowed as a prefix or suffix
 // Sequences of '.' are not allowed
+//
+// Additionally, if /a/b/c.gpg exists we need to ensure that: 
+//
+// * /a/b/c/d.gpg 
+// * /a/b.gpg 
+//
+// get rejected.
 func validatePath(res http.ResponseWriter, 
                   req *http.Request, user *User) string {
   passPath := req.URL.Query().Get("path")
@@ -204,6 +205,27 @@ func validatePath(res http.ResponseWriter,
    !strings.Contains(passPath, "./") &&
    !strings.HasPrefix(passPath, "/") &&
    !strings.HasSuffix(passPath, "/") {
+
+    nodes := strings.Split(passPath, "/")
+
+    // Ensure that no .gpg file with a name that overlaps with
+    // a directory name exists in the path.
+    // NOTE: we require that ~/.password-store/$USER.gpg does NOT exist in
+    // multiuser mode. All paths will be rejected if this file somehow
+    // exists.
+    for i := range nodes {
+      if (i == len(nodes)) { break }
+      parentPath :=  CONFIG.Passwordstore + "/" + strings.Join(nodes[0:i+1], "/")
+
+      // A directory which overlaps with the new name is not allowed for the
+      // last iteration.
+      if Exists(parentPath + ".gpg") || (i == len(nodes)-1 && Exists(parentPath))  {
+        ErrorResponse(res, "One or more entries in the path already exist", 
+                      http.StatusBadRequest)
+        return ""
+      }
+    }
+
     return passPath
   } else {
     ErrorResponse(res, "Invalid path format", http.StatusBadRequest)

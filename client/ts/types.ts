@@ -25,12 +25,5 @@ interface PassItem {
   password: string
 }
 
-/** A deletion or creation event in the password tree */
-interface TreeUpdate {
-  path: string
-  // A false value indicates 'create'
-  remove: boolean
-}
-
-export type { ApiResponse, AuthInfo, PassItem, TreeUpdate }
+export type { ApiResponse, AuthInfo, PassItem }
 export { ApiStatusResponse }

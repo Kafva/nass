@@ -1,5 +1,4 @@
 import { Debug, Err, GetHTMLElements } from './util'
-import type { TreeUpdate } from './types'
 
 export default class PassEntry {
   constructor(
@@ -37,7 +36,7 @@ export default class PassEntry {
    * within the `.subpaths` or `.parents` arrays.
    * NOTE: The `queryString` needs to be given in lowercase.
    * Returns true for empty queries and for the root node (which lacks a name)
-   * */
+   */
   matchesQuery(queryString: string): boolean {
     return queryString == "" || this.name == "" ||
       this.name.toLowerCase().includes(queryString) ||
@@ -49,17 +48,11 @@ export default class PassEntry {
       )
   }
 
-  /**
-   * Update the list of all complete paths beneath the current entry.
-   * The root entry is skipped (searches do not need to know if they match
-   * the root path) and will always have an empty `subpaths` attribute.
-   */
+  /** Update the list of all complete paths beneath the current entry. */
   updateSubpaths(){
     this.subpaths = []
     this.subitems.forEach((entry: PassEntry) => {
-      if (this.name != "") {
-        this.subpaths = this.subpaths.concat(entry.flatten(this.name))
-      }
+      this.subpaths = this.subpaths.concat(entry.flatten(this.name))
       if (entry.subitems.length > 0) {
         entry.updateSubpaths()
       }
@@ -104,18 +97,18 @@ export default class PassEntry {
 
 
   /**
-   * Remove or add an entry matching the given path in the 
-   * `TreeUpdate`. Since Svelte's update are assignment based,
+   * Remove or add an entry matching the given path
+   * Since Svelte's update are assignment based,
    * a copy of the updated tree is returned.
    */
-  updateTree(u: TreeUpdate): PassEntry {
-    const nodes = u.path.split('/')
+  updateTree(path: string, remove: boolean): PassEntry {
+    const nodes = path.split('/')
     const leaf = nodes.pop()
     if (leaf) {
       // The nodes will be popped out incrementally so a deep copy
       // is needed for the parents of the `entry`.
       const entry = new PassEntry(leaf, [], structuredClone(nodes), [])
-      if (this.followToLeaf(nodes, entry, u.remove)) {
+      if (this.followToLeaf(nodes, entry, remove)) {
         this.updateSubpaths()
         return this
       }

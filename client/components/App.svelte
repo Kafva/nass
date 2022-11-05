@@ -1,7 +1,6 @@
 <script lang="ts">
-  import { authInfoStore, showPassStore, treeUpdateStore } from '../ts/store'
-  import { GetHTMLElement } from '../ts/util'
-  import type { TreeUpdate } from '../ts/types'
+  import { authInfoStore, rootEntryStore, showPassStore } from '../ts/store'
+  import { Debug, GetHTMLElement } from '../ts/util'
   import PassEntry from '../ts/PassEntry'
   import Search from './Search.svelte'
   import PasswordTree from './PasswordTree.svelte'
@@ -20,11 +19,13 @@
   rootEntry.loadFromDOM(tmpl, [])
   rootEntry.updateSubpaths()
 
-  treeUpdateStore.subscribe( (u: TreeUpdate) => { 
-    if (u.path != "") { 
-      rootEntry = rootEntry.updateTree(u) 
-    }
-  })
+  rootEntryStore.set(rootEntry)
+
+  Debug("Tree", rootEntry)
+  //rootEntryStore.subscribe((newRoot: PassEntry) => { 
+  //  rootEntry = newRoot
+  //})
+
 
   // TESTING
   // setTimeout( () => {
@@ -50,7 +51,7 @@
   <Dialog component={ShowPass} btnClass=""/>
 {/if}
 
-<PasswordTree entry={rootEntry}/>
+<PasswordTree entry={$rootEntryStore}/>
 
 <style lang="scss">
   @import "../scss/global"

@@ -3,6 +3,7 @@ package server
 import (
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"runtime/debug"
 	"strconv"
 	"strings"
@@ -37,15 +38,31 @@ func assert_validatePassword(t *testing.T, res http.ResponseWriter,
 }
 
 func Test_validatePath(t *testing.T) {
+  CONFIG.Passwordstore = "/tmp/.password-store"
   CONFIG.SingleUser = false
   user := User { Name: USERNAME, Origins: []string{} }
 
   req := httptest.NewRequest(http.MethodGet, "/get?path=", nil)
   res := httptest.NewRecorder()
 
+  // /tmp/.password-store
+  // └── tester
+  //     ├── Email
+  //     │   └── already@here.gpg
+  //     └── a
+  //         └── b
+  //             └── c
+  //                 └── d.gpg
+  passRoot := CONFIG.Passwordstore + "/" + USERNAME
+  os.MkdirAll(passRoot, 0777)
+  os.MkdirAll(passRoot+"/Email", 0777)
+  os.MkdirAll(passRoot+"/a/b/c", 0777)
+  os.OpenFile(passRoot+"/a/b/c/d.gpg", os.O_RDONLY|os.O_CREATE, 0666)
+  os.OpenFile(passRoot+"/Email/already@here.gpg", os.O_RDONLY|os.O_CREATE, 0666)
+
   /* VALID */
   assert_validatePath(t, res, req, &user, "abcd", USERNAME+"/abcd")
-  assert_validatePath(t, res, req, &user, "a/b/c/d", USERNAME+"/a/b/c/d")
+  assert_validatePath(t, res, req, &user, "a/b/c/q", USERNAME+"/a/b/c/q")
   assert_validatePath(t, res, req, &user, "Email/some@mail.co", USERNAME+"/Email/some@mail.co")
   assert_validatePath(t, res, req, &user, "Email/john.doe@mail.co", USERNAME+"/Email/john.doe@mail.co")
 
@@ -67,6 +84,14 @@ func Test_validatePath(t *testing.T) {
   assert_validatePath(t, res, req, &user, "Email/\"$HOME\"", "")
   assert_validatePath(t, res, req, &user, "Email/\\", "")
   assert_validatePath(t, res, req, &user, "Email/😉", "")
+
+  assert_validatePath(t, res, req, &user, "Email/already@here", "")
+  assert_validatePath(t, res, req, &user, "Email/already@here/pw", "")
+  assert_validatePath(t, res, req, &user, "a/b/c", "")
+  assert_validatePath(t, res, req, &user, "a/b/c/d", "")
+  assert_validatePath(t, res, req, &user, "a/b/c/d/e", "")
+  assert_validatePath(t, res, req, &user, "a/b/c/d/e/f", "")
+
 }
 
 func Test_validatePassword(t *testing.T) {

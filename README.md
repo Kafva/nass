@@ -46,7 +46,6 @@ curl -X GET -L 'http://10.0.1.6:5678/get?path=Wallets/eth/main'|jq
 go test -v --run $test_name ./server
 ```
 
-## Related projects
-<!-- `pass` itself is a shell script -->
-* https://git.zx2c4.com/password-store
-* https://github.com/BenoitZugmeyer/pass-web
+## Notes
+* Overlapping directory and file names are __not__ supported, e.g. `/a/b.gpg` 
+and `/a.gpg` are not allowed to exist at the same time.

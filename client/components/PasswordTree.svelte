@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { authInfoStore, msgTextStore, queryStringStore, showPassStore, treeUpdateStore } from '../ts/store'
+  import { authInfoStore, msgTextStore, queryStringStore, rootEntryStore, showPassStore } from '../ts/store'
   import { Config, MessageText} from '../ts/config'
   import type { ApiResponse, AuthInfo, PassItem } from '../ts/types'
   import { CopyToClipboard, Debug } from '../ts/util'
@@ -23,13 +23,10 @@
     const path = entry.path()
     if (confirm(`Are you sure you want to delete '${path}'?`)) {
       api.delPass(path).then((apiRes: ApiResponse) => {
-        switch (apiRes.status) {
-        case ApiStatusResponse.success:
-          treeUpdateStore.set({path: path, remove: true})
+        if (apiRes.status == ApiStatusResponse.success) {
+          $rootEntryStore.updateTree(path, true)
           msgTextStore.set([MessageText.deleted, path])
-          break;
-        default: // Errors are handled internally by `api`
-        }
+        } // Errors are handled internally by `api`
       })
     }
   }

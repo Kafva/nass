@@ -1,5 +1,7 @@
-import type { AuthInfo, PassItem, TreeUpdate  } from './types'
+import type { AuthInfo, PassItem } from './types'
+import PassEntry from './PassEntry'
 import { writable } from 'svelte/store'
+
 
 /**
  * 'Stores' can be used in Svelte to share values between components that are
@@ -28,5 +30,8 @@ export const authInfoStore = writable<AuthInfo>({path: "", useClipboard: false})
  */
 export const showPassStore = writable<PassItem>({path: "", password: ""})
 
-/** Tracks deletion and creation events for the password tree */
-export const treeUpdateStore = writable<TreeUpdate>({path: "", remove: false})
+/**
+ * Reference to the root node in the password tree. This is used e.g.
+ * to determine if an entry already exists from <AddPass/>
+ */
+export const rootEntryStore = writable<PassEntry>(new PassEntry("", [], [], []))
