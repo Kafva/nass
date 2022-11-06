@@ -7,7 +7,7 @@
   import { fade } from '../ts/util';
   export let visible: boolean;
 
-  let generatePass = true
+  export let generatePass = true // This is allowed as a prop to simplify tests
   let pathInput: string;
   let passInput: string;
   let verifyInput: string;
@@ -70,8 +70,10 @@
    * Returns MessageText.valid on success.
    */
   const passwordIsValid = (): MessageText => {
-    if ((passInput || "").match(passwordRegex) == null) {
-      return MessageText.invalidPath
+    if (passInput == null) {
+      return MessageText.invalidPass
+    } else if (passInput.match(passwordRegex) == null) { // Dissallows ""
+      return MessageText.invalidPass
     } else if (passInput != (verifyInput || "")) { // passInput is valid
       return MessageText.invalidVerify
     }

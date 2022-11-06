@@ -8,34 +8,12 @@ import { rootDummy } from './data'
 import { tick } from 'svelte'
 
 Config.useMockApi = true
-Config.debugLogs = true
+Config.debugLogs = false
 
 let pathInput: HTMLInputElement
-let generateInput: HTMLInputElement
 let passwordInput: HTMLInputElement
 let verifyInput: HTMLInputElement
 let submitBtn: HTMLButtonElement
-let component: HTMLElement 
-
-/**
- * Toggle the auto-generate checkbox and fetch the 
- * password and verify input elements.
- */
-const setGenerate = async (shouldBeActive: boolean) => {
-  if (shouldBeActive == generateInput.checked) {
-    return
-  }
-  await fireEvent.input(generateInput, { target: { checked: shouldBeActive } })
-  await tick()
-  assert(shouldBeActive == generateInput.checked)
-
-  if (!shouldBeActive) {
-    passwordInput = component.querySelector("input[name='pass']")!
-    verifyInput = component.querySelector("input[name='verify']")!
-    expect(passwordInput).toBeTruthy()
-    expect(verifyInput).toBeTruthy()
-  }
-}
 
 const addPath = async (value: string, msg: MessageText, shouldExist: boolean,
   password = "") => {
@@ -44,18 +22,20 @@ const addPath = async (value: string, msg: MessageText, shouldExist: boolean,
   if (password != "") {
     await fireEvent.input(passwordInput, { target: { value: password } })
     await fireEvent.input(verifyInput,   { target: { value: password } })
+    assert(passwordInput.value == password && verifyInput.value == password,
+      `Conflicting verification '${passwordInput.value}' == '${verifyInput.value}' == '${password}'`)
   }
 
   await fireEvent.click(submitBtn)
-  await tick()
+  await tick() // !!
 
   const trimmedValue = value.replace(/^\//, "").replace(/\/$/, "")
-  
+
   if (shouldExist) {
     expect(get(rootEntryStore).subpaths, `tree is missing '${trimmedValue}'`)
       .toContain(trimmedValue)
   } else {
-    expect(get(rootEntryStore).subpaths, 
+    expect(get(rootEntryStore).subpaths,
       `tree should not contain '${trimmedValue}'`)
       .not.toContain(trimmedValue)
   }
@@ -72,25 +52,37 @@ describe('AddPass.svelte', () => {
       "Failed to update store with dummy data").toBe(rootDummy.subitems.length)
   })
 
-  beforeEach(() => {
-    const { container } = render(AddPass, { visible: true })
-    component = container
+  // 'expect' needs to be explicitly listed as an argument for
+  // the testname to be non-null.
+  beforeEach( ({expect}) => {
+    // !!                                                         !!
+    // !! Hacky matching on test name to access password <input/> !!
+    // !!                                                         !!
+    const usePassword = expect.getState()
+      .currentTestName?.includes("[PASSWORD]")
+    const { container } = render(AddPass, {
+      visible: true,
+      generatePass: !usePassword
+    })
+    expect(container).toBeTruthy()
 
-    expect(component).toBeTruthy()
-
-    pathInput = component.querySelector("input[name='path']")!
-    generateInput = component.querySelector("input[name='generate']")!
-    submitBtn = component.querySelector("button")!
+    pathInput = container.querySelector("input[name='path']")!
+    submitBtn = container.querySelector("button")!
 
     expect(pathInput).toBeTruthy()
-    expect(generateInput).toBeTruthy()
     expect(submitBtn).toBeTruthy()
+
+    if (usePassword) {
+      passwordInput = container.querySelector("input[name='pass']")!
+      verifyInput = container.querySelector("input[name='verify']")!
+      expect(passwordInput).toBeTruthy()
+      expect(verifyInput).toBeTruthy()
+    }
   })
 
   afterEach(() => cleanup())
 
   it('adds valid paths to the password tree', async () => {
-    await setGenerate(true)
     await addPath("a/b/c",                        MessageText.added, true)
     await addPath("-_.@",                         MessageText.added, true)
     await addPath("@.@/-_-",                      MessageText.added, true)
@@ -102,8 +94,7 @@ describe('AddPass.svelte', () => {
     await addPath("/both/", MessageText.added, true)
   })
 
-  it('sets error messages for invalid paths', async () => {
-    await setGenerate(true)
+  it('rejects invalid paths', async () => {
     await addPath(" ", MessageText.invalidPath, false)
     await addPath("/", MessageText.invalidPath, false)
     await addPath("Email/me.gpg", MessageText.invalidPath, false)
@@ -127,26 +118,24 @@ describe('AddPass.svelte', () => {
     await addPath("visa/beneath_leaf", MessageText.pathOverlap, false)
 
     await addPath("axa/".repeat(Config.maxPassDepth + 2), MessageText.invalidNesting, false)
-
   })
 
-  //it('accepts valid passwords', async () => {
-  //  await setGenerate(false)
-  //  await addPath("001", MessageText.added, true, "hjkl")
-  //  await addPath("002", MessageText.added, true, "_dir603Pw3Dd-uuJUVKL")
-  //  await addPath("003", MessageText.added, true, "A".repeat(Config.textMaxLen))
-  //  await addPath("004", MessageText.added, true, "-§$!\"'#€%&()=?*<>_.@/")
-  //  await addPath("005", MessageText.added, true, "åäö")
-  //  await addPath("006", MessageText.added, true, "ÅÄÖ")
-  //})
+  it('[PASSWORD] accepts valid passwords', async () => {
+    await addPath("001", MessageText.added, true, "hjkl")
+    await addPath("002", MessageText.added, true, "_dir603Pw3Dd-uuJUVKL")
+    await addPath("003", MessageText.added, true, "A".repeat(Config.textMaxLen))
+    await addPath("004", MessageText.added, true, "-§$!\"'#€%&()=?*<>_.@/")
+    await addPath("005", MessageText.added, true, "åäö")
+    await addPath("006", MessageText.added, true, "ÅÄÖ")
+  })
 
-  //it('rejects passwords with invalid characters', async () => {
-  //  await setGenerate(false)
-  //})
+  it('[PASSWORD] rejects passwords with invalid characters', async () => {
+    await addPath("010", MessageText.invalidPass, false, "A".repeat(Config.textMaxLen+1))
+    await addPath("020", MessageText.invalidPass, false, "\\a")
+    await addPath("030", MessageText.invalidPass, false, ">>> 🤣 <<<")
+  })
 
   //it('rejects passwords that do not match', async () => {
-  //  await setGenerate(false)
-
   //})
 })
 

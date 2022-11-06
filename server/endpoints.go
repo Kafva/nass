@@ -62,7 +62,7 @@ func GetPass(res http.ResponseWriter, req *http.Request) {
     // We need a nil check on 'err' in case someone were to set
     // 'GPG_FAIL_STRING' as their password
     if req.Method == http.MethodGet {
-      WriteResponse(res, StatusRetry, 
+      WriteResponse(res, StatusRetry,
                     "Retry with PIN entry in POST request", "")
     } else {
       ErrorResponse(res, "Incorrect PIN entry", http.StatusBadRequest)
@@ -118,7 +118,7 @@ func AddPass(res http.ResponseWriter, req *http.Request) {
   }
   err = cmd.Start()
   if err != nil {
-    ErrorResponse(res, "Failed to run "+CONFIG.PassBinary, 
+    ErrorResponse(res, "Failed to run "+CONFIG.PassBinary,
                   http.StatusInternalServerError)
     return
   }
@@ -162,7 +162,7 @@ func DelPass(res http.ResponseWriter, req *http.Request) {
   if IsDir(fspath) || IsFile(fspath+".gpg") {
     _, err := exec.Command(CONFIG.PassBinary, "rm", "--force", passPath).Output()
     if err != nil {
-      ErrorResponse(res, "Failed to remove password", 
+      ErrorResponse(res, "Failed to remove password",
                     http.StatusInternalServerError)
       return
     }
@@ -180,13 +180,13 @@ func DelPass(res http.ResponseWriter, req *http.Request) {
 // '.' is not allowed as a prefix or suffix
 // Sequences of '.' are not allowed
 //
-// Additionally, if /a/b/c.gpg exists we need to ensure that: 
+// Additionally, if /a/b/c.gpg exists we need to ensure that:
 //
-// * /a/b/c/d.gpg 
-// * /a/b.gpg 
+// * /a/b/c/d.gpg
+// * /a/b.gpg
 //
 // get rejected, this is only enforced when `addNew` is set.
-func validatePath(res http.ResponseWriter, 
+func validatePath(res http.ResponseWriter,
                   req *http.Request, user *User, addNew bool) string {
   passPath := req.URL.Query().Get("path")
 
@@ -221,7 +221,7 @@ func validatePath(res http.ResponseWriter,
         // A directory which overlaps with the new name is not allowed for the
         // last iteration.
         if Exists(parentPath + ".gpg") || (i == len(nodes)-1 && Exists(parentPath))  {
-          ErrorResponse(res, "One or more entries in the path already exist", 
+          ErrorResponse(res, "One or more entries in the path already exist",
                         http.StatusBadRequest)
           return ""
         }
@@ -234,10 +234,7 @@ func validatePath(res http.ResponseWriter,
   }
 }
 
-
-
-
-// Returns a sanitized password on success and an empty 
+// Returns a sanitized password on success and an empty
 // string if validation fails.
 func validatePassword(res http.ResponseWriter, password string) string {
   regex := regexp.MustCompile(PASSWORD_REGEX)
