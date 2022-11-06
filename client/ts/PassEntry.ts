@@ -40,7 +40,7 @@ export default class PassEntry {
     for (let i = 1; i <= nodes.length; i++) {
       // Check that each partial subpath of the provided path is not a leaf
       if (this.subpaths.some((subpath: string) =>
-                              subpath == nodes.slice(0,i).join('/'))) {
+        subpath == nodes.slice(0,i).join('/'))) {
         return true
       }
     }
@@ -172,12 +172,13 @@ export default class PassEntry {
     const nextNode = parents.splice(0,1)[0]
     let matchFound = false
 
-    this.subitems.forEach( (subentry: PassEntry) => {
-      if (subentry.name == nextNode ) {
+    for (const subentry of this.subitems) {
+      if (subentry.name == nextNode) {
         subentry.followToLeaf(parents, entry, remove)
         matchFound = true
+        break
       }
-    })
+    }
 
     // Add the node's parent path if it did not already exist and recurse on.
     if (!matchFound) {

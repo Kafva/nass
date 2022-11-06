@@ -22,21 +22,9 @@
   rootEntryStore.set(rootEntry)
 
   rootEntryStore.subscribe((newRoot: PassEntry) => {
-    Debug("Updated tree", newRoot)
     rootEntry = newRoot
+    Debug("Updated tree", rootEntry)
   })
-
-
-  // TESTING
-  // setTimeout( () => {
-  //   rootEntry.updateTree({path: "Github/Jane0x3",   remove: false})
-  //   rootEntry.updateTree({path: "Wallets/eth/main", remove: true})
-  //   rootEntry.updateTree({path: "Wallets/eth/xD",   remove: false})
-  //   rootEntry.updateTree({path: "Wallets/eth/xd",   remove: false})
-  //   rootEntry.updateTree({path: "mastercard",       remove: true}) // TODO
-  //   console.log(rootEntry)
-  // }, 2000)
-
 </script>
 
 <Msg/>
@@ -51,7 +39,11 @@
   <Dialog component={ShowPass} btnClass=""/>
 {/if}
 
-<PasswordTree entry={rootEntry}/>
+<!-- With #key the password tree will be re-created from scratch when changes
+occur, this simplifies the update logic. -->
+{#key rootEntry}
+  <PasswordTree entry={rootEntry}/>
+{/key}
 
 <style lang="scss">
   @import "../scss/global"
