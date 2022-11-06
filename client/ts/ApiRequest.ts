@@ -5,36 +5,10 @@ import { Err } from "./util";
 import { msgTextStore } from "../ts/store";
 
 export default class ApiRequest {
-  private async baseRequest(url: string, reqInfo: RequestInit): 
+  private async baseRequest(url: string, reqInfo: RequestInit):
     Promise<ApiResponse> {
     if (Config.useMockApi) {
-      const mockDesc = "Mock response"
-      switch (reqInfo.method) {
-      case 'GET':
-        return { 
-          status: ApiStatusResponse.success, 
-          desc: mockDesc, 
-          value: "password" 
-        } 
-      case 'POST':
-        return { 
-          status: ApiStatusResponse.success, 
-          desc: mockDesc, 
-          value: "" 
-        } 
-      case 'DELETE':
-        return { 
-          status: ApiStatusResponse.success, 
-          desc: mockDesc, 
-          value: "" 
-        } 
-      default:
-        return { 
-          status: ApiStatusResponse.error, 
-          desc: "Unsupported method", 
-          value: "" 
-        } 
-      }
+      return this.mockResponse(reqInfo.method!)
     }
 
     let apiRes = {
@@ -93,4 +67,35 @@ export default class ApiRequest {
       }
     } as RequestInit)
   }
+
+  private mockResponse(method: string): ApiResponse {
+    const mockDesc = "Mock response"
+    switch (method) {
+    case 'GET':
+      return {
+        status: ApiStatusResponse.success,
+        desc: mockDesc,
+        value: "password"
+      }
+    case 'POST':
+      return {
+        status: ApiStatusResponse.success,
+        desc: mockDesc,
+        value: ""
+      }
+    case 'DELETE':
+      return {
+        status: ApiStatusResponse.success,
+        desc: mockDesc,
+        value: ""
+      }
+    default:
+      return {
+        status: ApiStatusResponse.error,
+        desc: "Unsupported method",
+        value: ""
+      }
+    }
+  }
+
 }
