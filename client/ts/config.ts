@@ -1,5 +1,7 @@
 class Config {
   static readonly debugLogs = true
+  // Toggled in tests to skip actual API requests
+  static useMockApi = false
 
   // !! Mirrored options from config.go !!
   static readonly textMaxLen = 255

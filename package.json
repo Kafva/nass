@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
+    "test": "vitest",
     "check": "svelte-check --tsconfig ./tsconfig.json",
-    "lint": "eslint client/{ts,components}"
+    "lint": "eslint client/{ts,components,tests}"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^1.0.2",
@@ -16,6 +17,7 @@
     "@typescript-eslint/parser": "^5.40.1",
     "eslint": "^8.26.0",
     "eslint-plugin-svelte3": "^4.0.0",
+    "happy-dom": "^7.6.6",
     "sass": "^1.55.0",
     "svelte": "^3.49.0",
     "svelte-check": "^2.8.1",

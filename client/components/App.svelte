@@ -22,7 +22,7 @@
   rootEntryStore.set(rootEntry)
 
   rootEntryStore.subscribe((newRoot: PassEntry) => {
-    Debug("New tree", newRoot)
+    Debug("Updated tree", newRoot)
     rootEntry = newRoot
   })
 

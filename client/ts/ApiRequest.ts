@@ -1,12 +1,43 @@
+import { Config, MessageText } from "./config";
 import type { ApiResponse } from '../ts/types';
 import { ApiStatusResponse } from '../ts/types';
 import { Err } from "./util";
-import { MessageText } from "./config";
 import { msgTextStore } from "../ts/store";
 
 export default class ApiRequest {
-  private async baseRequest(url: string,
-    reqInfo: RequestInit): Promise<ApiResponse> {
+  private async baseRequest(url: string, reqInfo: RequestInit): 
+    Promise<ApiResponse> {
+
+    if (Config.useMockApi) {
+      const mockDesc = "Mock response"
+      switch (reqInfo.method) {
+      case 'GET':
+        return { 
+          status: ApiStatusResponse.success, 
+          desc: mockDesc, 
+          value: "password" 
+        } 
+      case 'POST':
+        return { 
+          status: ApiStatusResponse.success, 
+          desc: mockDesc, 
+          value: "" 
+        } 
+      case 'DELETE':
+        return { 
+          status: ApiStatusResponse.success, 
+          desc: mockDesc, 
+          value: "" 
+        } 
+      default:
+        return { 
+          status: ApiStatusResponse.error, 
+          desc: "Unsupported method", 
+          value: "" 
+        } 
+      }
+    }
+
     let apiRes = {
       status: ApiStatusResponse.error,
       desc: "Unknown error",

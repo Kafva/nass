@@ -15,4 +15,12 @@ export default defineConfig({
     outDir: 'dist',
     assetsDir: 'assets',
   },
+  test: {
+    // With this set to false, methods like 'it()' and 'describe()' need to be
+    // explicitly imported
+    globals: false,
+    // The headless browser backend to use during testing
+    // FIXME: pnpm has issues finding this, that is why we use yarn.
+    environment: 'happy-dom',
+  }
 })
