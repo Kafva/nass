@@ -14,7 +14,8 @@
   const api = new ApiRequest()
 
   const validateSubmit = () => {
-    const path = pathInput.replace(/^\//, "")
+    // Automatically remove trailing and leading '/'
+    const path = pathInput.replace(/^\//, "").replace(/\/$/, "")
     const pathMsg = pathIsValid(path)
     const passMsg = passwordIsValid()
 
@@ -41,17 +42,24 @@
    * Verify that the path only contains allowed characters,
    * Is not nested to deep and does not already exist.
    * Returns MessageText.valid on success.
+   * The patterns here match the corresponding server validation.
    */
   const pathIsValid = (path: string): MessageText => {
     const depth = (Array.from(path.matchAll(/\//g)) || []).length
 
-    if (path.match(passentryRegex) == null) {
+    if (path.match(passentryRegex) == null ||
+        path.includes("//") ||
+        path.includes(".gpg") ||
+        path.includes("..") ||
+        path.includes("/.") ||
+        path.includes("./")) {
       return MessageText.invalidPath
     } else if (depth > Config.maxPassDepth) {
       return MessageText.invalidNesting
-    } else if ($rootEntryStore.hasSubpath(path)) {
-      // This check is the main reason why the rootEntry needs to be globally available
-      return MessageText.pathExists
+    } else if ($rootEntryStore.pathHasOverlap(path)) {
+      // This check is the main reason why the rootEntry needs to be 
+      // globally available.
+      return MessageText.pathOverlap
     }
     return MessageText.valid
   }

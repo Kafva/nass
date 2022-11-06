@@ -7,7 +7,6 @@ import { msgTextStore } from "../ts/store";
 export default class ApiRequest {
   private async baseRequest(url: string, reqInfo: RequestInit): 
     Promise<ApiResponse> {
-
     if (Config.useMockApi) {
       const mockDesc = "Mock response"
       switch (reqInfo.method) {
@@ -94,5 +93,4 @@ export default class ApiRequest {
       }
     } as RequestInit)
   }
-
 }

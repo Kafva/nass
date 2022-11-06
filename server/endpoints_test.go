@@ -91,7 +91,6 @@ func Test_validatePath(t *testing.T) {
   assert_validatePath(t, res, req, &user, "a/b/c/d", "")
   assert_validatePath(t, res, req, &user, "a/b/c/d/e", "")
   assert_validatePath(t, res, req, &user, "a/b/c/d/e/f", "")
-
 }
 
 func Test_validatePassword(t *testing.T) {

@@ -1,10 +1,15 @@
 class Config {
   static debugLogs = true
-  // Toggled in tests to skip actual API requests
+  /** Toggled in tests to skip actual API requests */
   static useMockApi = false
 
-  // !! Mirrored options from config.go !!
+  /** !! Mirrored options from config.go !! */
   static readonly textMaxLen = 255
+
+  /**
+   * No folders are allowed with this set to 0
+   * One '/' is allowed if it is set to 1, etc.
+   */
   static readonly maxPassDepth = 6
 
   // Icon classes
@@ -17,15 +22,13 @@ class Config {
   static readonly deleteIcon = 'nf nf-fa-close'
 }
 
-
-
 /** Predefined text for <Msg/> messages */
 enum MessageText {
   clipboard = "Copied to clipboard",
   added = "Added",
   deleted = "Deleted",
-  pathExists = "Path already exists",
-  invalidNesting = "Path contains  to many '/' separators",
+  pathOverlap = "One or more entries in the path already exist",
+  invalidNesting = "Path contains to many '/' separators",
   invalidPath = "Invalid format for path",
   invalidPass = "Invalid format for password",
   invalidVerify = "Passwords do not match",
@@ -39,7 +42,7 @@ const MessageIcons: { [id: string]: string } = {
   [MessageText.added]: "nf-mdi-key_plus",
   [MessageText.deleted]: "nf-mdi-key_minus",
   [MessageText.err]: "nf-oct-issue_opened",
-  [MessageText.pathExists]: "nf-mdi-textbox",
+  [MessageText.pathOverlap]: "nf-mdi-textbox",
   [MessageText.invalidNesting]: "nf-mdi-textbox",
   [MessageText.invalidPath]: "nf-mdi-textbox",
   [MessageText.invalidPass]: "nf-mdi-textbox_password",
@@ -55,7 +58,7 @@ const MessageTimeouts: { [id: string]: number } = {
   [MessageText.added]: 4000,
   [MessageText.deleted]: 4000,
   [MessageText.err]: 10_000,
-  [MessageText.pathExists]: 4000,
+  [MessageText.pathOverlap]: 4000,
   [MessageText.invalidNesting]: 4000,
   [MessageText.invalidPath]: 4000,
   [MessageText.invalidPass]: 4000,

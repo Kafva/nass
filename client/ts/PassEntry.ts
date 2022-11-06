@@ -25,12 +25,27 @@ export default class PassEntry {
   }
 
   /**
-   * Returns true if the current node has a subpath
-   * that matches `subpath`.
+   * Returns true if `path` does not contain
+   * an overlap with an existing leaf and does not conflict with
+   * an existing directory.
+   * E.g. if we have: /a/b/c
+   *
+   * /a/b     <-- INVALID
+   * /a/b/c/d <-- INVALID
+   * /a/b/e   <-- VALID
    */
-  hasSubpath(toMatch: string): boolean {
-    this.subpaths.some((subpath: string) => { console.log(subpath, toMatch); } )
-    return this.subpaths.some((subpath: string) => subpath == toMatch)
+  pathHasOverlap(newPath: string): boolean {
+    const nodes = newPath.split('/')
+
+    for (let i = 1; i <= nodes.length; i++) {
+      // Check that each partial subpath of the provided path is not a leaf
+      if (this.subpaths.some((subpath: string) =>
+                              subpath == nodes.slice(0,i).join('/'))) {
+        return true
+      }
+    }
+
+    return false
   }
 
   /** Returns true if there is case-insensitive match with the current `.name`,
