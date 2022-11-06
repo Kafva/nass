@@ -96,6 +96,17 @@ export default class PassEntry {
     return this
   }
 
+  /** Load a tree from a JSON dict, this is useful for tests */
+  loadFromJSON(current: { [id:string]: any }): PassEntry {
+    current["subitems"].forEach( (s:any) => {
+      let subentry = new PassEntry(s["name"],  s["subpaths"], s["parents"], [])
+      subentry = subentry.loadFromJSON(s)
+
+      this.subitems.push(subentry)
+    })
+    return this
+  }
+
 
   /**
    * Remove or add an entry matching the given path

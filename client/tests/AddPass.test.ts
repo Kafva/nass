@@ -1,24 +1,57 @@
-import { afterEach, describe, expect, it } from 'vitest'
-import { cleanup, render } from '@testing-library/svelte'
+import { Config, MessageText } from '../ts/config'
+import { afterEach, assert, beforeAll, beforeEach, describe, expect, it } from 'vitest'
+import { cleanup, fireEvent, render } from '@testing-library/svelte'
+import { msgTextStore, rootEntryStore } from '../ts/store'
 import AddPass from '../components/AddPass.svelte'
-import { Config } from '../ts/config'
+import { get } from 'svelte/store'
+import { rootDummy } from './data'
+import { tick } from 'svelte'
 
 Config.useMockApi = true
+Config.debugLogs = false
+
+let pathInput: HTMLInputElement;
+let submitBtn: HTMLButtonElement;
+
+const addPass = async (value: string) => {
+  await fireEvent.input(pathInput, { target: { value: value } })
+  await fireEvent.click(submitBtn)
+  await tick() // Wait for DOM to update
+}
 
 describe('AddPass.svelte', () => {
-  afterEach(() => cleanup())
 
-  it('mounts', () => {
-    const { container } = render(AddPass, { visible: true })
-    expect(container).toBeTruthy()
+  beforeAll( async () => {
+    assert(rootDummy.subitems.length > 0, "Failed to load dummy data")
+
+    rootEntryStore.set(rootDummy)
+    expect(get(rootEntryStore).subitems.length, 
+      "Failed to update store with dummy data").toBe(rootDummy.subitems.length)
   })
 
-  // This module is meant to test validation of paths and passwords,
-  // 
-  // To test that the rootEntry tree is updated in an expected manner
-  // requires mocking the rootEntryStore...
-  //
-  // We could maybe do inline-tests instead...?
+  beforeEach(() => {
+    const { container } = render(AddPass, { visible: true })
+    expect(container).toBeTruthy()
+
+    pathInput = container.querySelector("input[name='path']")!
+    submitBtn = container.querySelector("button")!
+  })
+
+  
+  afterEach(() => cleanup())
+
+  it('successfully adds valid paths to the PassEntry tree', async () => {
+    await addPass("valid")
+    expect(get(rootEntryStore).subitems.map(s=>s.name)).toContain("valid")
+  })
+
+  it('sets error messages for invalid paths', async () => {
+    await addPass(" ")
+    expect(get(rootEntryStore).subitems.map(s=>s.name)).not.toContain(" ")
+    expect(get(msgTextStore)[0]).toBe(MessageText.invalidPath)
+  })
+
+  // Inline vi. for tests
 })
 
 

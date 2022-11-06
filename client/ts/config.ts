@@ -1,5 +1,5 @@
 class Config {
-  static readonly debugLogs = true
+  static debugLogs = true
   // Toggled in tests to skip actual API requests
   static useMockApi = false
 

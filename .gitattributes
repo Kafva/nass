@@ -1,3 +1,4 @@
 index.html       linguist-language=None
 svelte.config.js linguist-language=None
 .eslintrc.cjs    linguist-language=None
+client/tests/*   linguist-language=None
