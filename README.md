@@ -7,10 +7,13 @@ The client uses Svelte which is somewhat overkill, plain Typescript would likely
 have worked as well if not better.
 ```bash
 npm i -g vite yarn
-yarn i && vite build
+yarn && vite build
 
 # Linting
 yarn run lint
+
+# Client tests
+yarn run test
 ```
 
 ## Server

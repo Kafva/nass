@@ -52,7 +52,7 @@ describe('AddPass.svelte', () => {
       "Failed to update store with dummy data").toBe(rootDummy.subitems.length)
   })
 
-  // 'expect' needs to be explicitly listed as an argument for
+  // NOTE: 'expect' needs to be explicitly listed as an argument for
   // the testname to be non-null.
   beforeEach( ({expect}) => {
     // !!                                                         !!
@@ -135,8 +135,21 @@ describe('AddPass.svelte', () => {
     await addPath("030", MessageText.invalidPass, false, ">>> 🤣 <<<")
   })
 
-  //it('rejects passwords that do not match', async () => {
-  //})
+  it('[PASSWORD] rejects passwords that do not match', async () => {
+    const pathName = "verify_failure"
+    await fireEvent.input(pathInput, { target: { value: pathName } })
+
+    await fireEvent.input(passwordInput, { target: { value: "password" } })
+    await fireEvent.input(verifyInput,   { target: { value: "Password" } })
+    await fireEvent.click(submitBtn)
+    await tick() // !!
+
+    expect(get(rootEntryStore).subpaths, `tree should not contain '${pathName}'`)
+      .not.toContain(pathName)
+
+    expect(get(msgTextStore)[0], `Incorrect message for '${pathName}'`)
+      .toBe(MessageText.invalidVerify)
+  })
 })
 
 
