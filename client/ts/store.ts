@@ -1,4 +1,5 @@
 import type { AuthInfo, PassItem } from './types'
+import { FoldPolicy } from './types'
 import PassEntry from './PassEntry'
 import { writable } from 'svelte/store'
 
@@ -35,3 +36,6 @@ export const showPassStore = writable<PassItem>({path: "", password: ""})
  * to determine if an entry already exists from <AddPass/>
  */
 export const rootEntryStore = writable<PassEntry>(new PassEntry("", [], [], []))
+
+/** Used to control if the password tree should be fully folded/unfolded */
+export const foldPolicyStore = writable<FoldPolicy>(FoldPolicy.localControl)

@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { authInfoStore, msgTextStore, queryStringStore, rootEntryStore, showPassStore } from '../ts/store'
+  import { authInfoStore, foldPolicyStore, msgTextStore, queryStringStore, rootEntryStore, showPassStore } from '../ts/store'
   import { Config, MessageText} from '../ts/config'
+  import { FoldPolicy } from '../ts/types'
   import type { ApiResponse, AuthInfo, PassItem } from '../ts/types'
   import { CopyToClipboard, Debug } from '../ts/util'
   import { ApiStatusResponse } from '../ts/types'
@@ -66,6 +67,18 @@
   const isRoot = entry.name == ""
   const isLeaf = entry.subitems.length == 0
   let open = false
+
+  foldPolicyStore.subscribe((value: FoldPolicy) => {
+    switch (value) {
+      case FoldPolicy.allOpen:
+        open = true
+        break
+      case FoldPolicy.allClosed:
+        open = false
+        break
+    }
+  })
+
 </script>
 
 {#if entry.matchesQuery(currentQuery)}
@@ -77,7 +90,7 @@
       on:touchstart="{(e) => touch.start(e, deleteButton, showButton) }"
       on:touchmove="{(e) => touch.move(e, deleteButton, showButton) }"
       on:touchend="{(e) => touch.end(e, deleteButton, showButton) }"
-      on:click="{() => open = !open }"
+      on:click="{() => { foldPolicyStore.set(FoldPolicy.localControl);  open = !open } }"
     >
       {#if isLeaf}
         <span

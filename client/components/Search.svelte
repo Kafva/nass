@@ -1,13 +1,16 @@
 <script lang="ts">
-  import { queryStringStore } from '../ts/store'
+  import { FoldPolicy } from '../ts/types'
+  import { foldPolicyStore, queryStringStore } from '../ts/store'
 </script>
 
 <!-- '$' is used to pass a store as writable -->
-<input type="text" placeholder="Search..." bind:value={$queryStringStore}/>
+<input type="text" placeholder="Search..." bind:value={$queryStringStore}
+       on:focus="{() => foldPolicyStore.set(FoldPolicy.allOpen) }"
+       on:blur="{() => foldPolicyStore.set(FoldPolicy.allClosed) }"/>
 
 <style lang="scss">
   @use "../scss/vars";
-  
+
   input {
     @include vars.input-style;
     font-size: vars.$font_large;
