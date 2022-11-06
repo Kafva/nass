@@ -9,8 +9,8 @@ COPY . .
 RUN go get -u
 RUN go build
 
-RUN npm i -g pnpm vite
-RUN pnpm i
+RUN npm i -g yarn vite
+RUN yarn
 RUN vite build
 
 #============================================================================#

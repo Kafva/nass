@@ -2,7 +2,7 @@ FROM nass
 
 USER root
 RUN apk add -U npm go neovim file bash-completion pass-bash-completion
-RUN npm i -g pnpm vite
+RUN npm i -g yarn vite
 
 WORKDIR /nass
 USER nass

@@ -16,11 +16,11 @@ export default defineConfig({
     assetsDir: 'assets',
   },
   test: {
-    // With this set to false, methods like 'it()' and 'describe()' need to be
-    // explicitly imported
+    // Methods like 'it()' need to be explicitly imported if this is false
     globals: false,
     // The headless browser backend to use during testing
-    // FIXME: pnpm has issues finding this, that is why we use yarn.
+    // FIXME: local-pkg, https://github.com/antfu/local-pkg
+    // has issues finding the environment package when using pnpm...
     environment: 'happy-dom',
   }
 })

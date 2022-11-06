@@ -25,7 +25,7 @@ describe('AddPass.svelte', () => {
     assert(rootDummy.subitems.length > 0, "Failed to load dummy data")
 
     rootEntryStore.set(rootDummy)
-    expect(get(rootEntryStore).subitems.length, 
+    expect(get(rootEntryStore).subitems.length,
       "Failed to update store with dummy data").toBe(rootDummy.subitems.length)
   })
 
@@ -37,7 +37,7 @@ describe('AddPass.svelte', () => {
     submitBtn = container.querySelector("button")!
   })
 
-  
+
   afterEach(() => cleanup())
 
   it('successfully adds valid paths to the PassEntry tree', async () => {
