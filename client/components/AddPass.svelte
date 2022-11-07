@@ -9,6 +9,7 @@
 
   export let generatePass = true // This is allowed as a prop to simplify tests
   let suggestElement: HTMLSpanElement
+  let pathInputElement: HTMLInputElement
   let pathInput: string
   let passInput: string
   let verifyInput: string
@@ -81,39 +82,38 @@
     return MessageText.valid
   }
 
+ /**
+  * Update the suggestion <span/> with matches from the tree based
+  * on user input to the path <input/>
+  */
   const keyUp = () => {
-    // Update the autocomplete placeholder
-    // Paths entered with a leading slash will not get autocompletion
-
     // Clear placeholder when the input is empty
     if (pathInput == null || pathInput == "") {
       suggestElement.innerHTML = ""
       return
     }
 
-    const matches = $rootEntryStore.subpaths.map( (s:string) => {
+    let match: RegExpMatchArray|null = null
+
+    for (const subpath of $rootEntryStore.subpaths) {
       // Limit the autocomplete matching to non-leaf nodes
-      const nodes = s.split('/')
-      nodes.splice(-1,1)
-      return nodes.join('/').match("^"+pathInput)
-    })
-
-    const match = matches.reduce( (prevMatch, nextMatch) =>
-                              prevMatch != null ? prevMatch : nextMatch,
-                              null)
-
-    console.log(matches)
+      // Paths entered with a leading slash will not get autocompletion
+      match = subpath.slice(0, subpath.lastIndexOf('/'))
+                           .match("^"+pathInput)
+      // Use the first match
+      if (match != null) {
+        break
+      }
+    }
 
     // The suggest <span/> is placed over the actual <input/>
     // we therefore need to replace every matching character with a space
     // to avoid clipping.
     if (match != null) {
        const spaces = "&nbsp;".repeat(pathInput.length)
-       console.log("Setting ", spaces + match.input!.slice(pathInput.length))
        suggestElement.innerHTML = spaces + match.input!.slice(pathInput.length)
+       suggestElement.setAttribute("data-match", match.input!)
     }
-
-    // suggestelement.innertext = match != null ? match.input! : ""
   }
 
   const keyDown = (event: KeyboardEvent) => {
@@ -122,6 +122,15 @@
       event.preventDefault()
       validateSubmit()
       break;
+    case 'Tab': // Auto-complete in path input
+      if ((event.target as HTMLInputElement).name == "path") {
+        const suggestion = suggestElement.getAttribute("data-match")
+        if (suggestion != null &&
+            suggestion.length > pathInputElement.value.length) {
+          event.preventDefault()
+          pathInputElement.value = suggestion
+        }
+      }
     }
   }
 </script>
@@ -134,7 +143,7 @@
     <div>
       <span class="suggest" bind:this="{suggestElement}"></span>
       <input spellcheck="false" type="text" name="path" bind:value={pathInput}
-             on:keydown={keyDown} on:keyup={keyUp}>
+             bind:this="{pathInputElement}" on:keydown={keyDown} on:keyup={keyUp}>
     </div>
 
     <label for="generate">Generate:</label>
@@ -191,7 +200,8 @@
 
       div > span.suggest {
         font-size: inherit;
-        color: vars.$grey;
+        color: vars.$white;
+        opacity: 0.7;
         position: absolute;
         top: 16%;
         margin-left: 2px;
