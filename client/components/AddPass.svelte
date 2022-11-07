@@ -58,7 +58,7 @@
     } else if (depth > Config.maxPassDepth) {
       return MessageText.invalidNesting
     } else if ($rootEntryStore.pathHasOverlap(path)) {
-      // This check is the main reason why the rootEntry needs to be 
+      // This check is the main reason why the rootEntry needs to be
       // globally available.
       return MessageText.pathOverlap
     }
@@ -81,7 +81,33 @@
     return MessageText.valid
   }
 
-  // TODO use keyup instead (then we do not haft to workaround backspace etc.
+  // TODO 
+  const keyUp = () => {
+    // Update the autocomplete placeholder
+    // Paths entered with a leading slash will not get autocompletion
+
+    // Clear placeholder when the input is empty
+    if (pathInput == null || pathInput == "") {
+      pathInputElement.setAttribute("data-suggest", "")
+      return
+    }
+
+    const matches = $rootEntryStore.subpaths.map( (s:string) => {
+      // We want to limit the autocomplete matching to non-leafs
+      const nodes = s.split('/')
+      nodes.splice(-1,1)
+      return nodes.join('/').match("^"+pathInput)
+      })
+    console.log(matches)
+
+    const match = matches.reduce( (prevMatch, nextMatch) =>
+                              prevMatch != null ? prevMatch : nextMatch,
+                              null)
+
+    const suggest = match != null ? match.input! : ""
+    console.log("Setting ", suggest)
+    pathInputElement.setAttribute("data-suggest", suggest)
+  }
 
   const keyDown = (event: KeyboardEvent) => {
     switch (event.key) {
@@ -89,38 +115,6 @@
       event.preventDefault()
       validateSubmit()
       break;
-    default:
-      // Update the autocomplete placeholder
-      // Paths entered with a leading slash will not get autocompletion
-      if ((event.target as HTMLInputElement).name == "path") {
-        // Clear placeholder when the input is empty
-        if ((pathInput.length == 1 && event.key == "Backspace") || 
-            (pathInput.length == 0 && event.key.length > 1)) {
-          pathInputElement.setAttribute("data-suggest", "")
-          return
-        }
-
-        // The 'event.key' could be a string like 'Backspace'
-        const text = (pathInput||"") + (event.key.length == 1 ? event.key : "")
-
-        const matches = $rootEntryStore.subpaths.map( (s:string) => { 
-          // We want to limit the autocomplete matching to non-leafs
-          const nodes = s.split('/')
-          nodes.splice(-1,1)
-          return nodes.join('/').match("^"+text) 
-          })
-        console.log(matches)
-
-        const match = matches.reduce( (prevMatch, nextMatch) => 
-                                  prevMatch != null ? prevMatch : nextMatch,
-                                  null)
-
-        if (match != null) {
-          console.log("Setting ", match.input)
-          pathInputElement.setAttribute("data-suggest", match.input!)
-          return
-        }
-      }
     }
   }
 </script>
@@ -129,7 +123,7 @@
   <div class="form-item">
     <label for="path">Path:</label>
     <input spellcheck="false" type="text" name="path" bind:value={pathInput}
-           bind:this="{pathInputElement}" on:keydown={keyDown}>
+           bind:this="{pathInputElement}" on:keydown={keyDown} on:keyup={keyUp}>
 
     <label for="generate">Generate:</label>
     <input type="checkbox" name="generate" bind:checked={generatePass}>
