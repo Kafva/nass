@@ -8,7 +8,7 @@
   export let visible: boolean;
 
   export let generatePass = true // This is allowed as a prop to simplify tests
-  let pathInputElement: HTMLInputElement
+  let suggestElement: HTMLSpanElement
   let pathInput: string
   let passInput: string
   let verifyInput: string
@@ -81,32 +81,39 @@
     return MessageText.valid
   }
 
-  // TODO 
   const keyUp = () => {
     // Update the autocomplete placeholder
     // Paths entered with a leading slash will not get autocompletion
 
     // Clear placeholder when the input is empty
     if (pathInput == null || pathInput == "") {
-      pathInputElement.setAttribute("data-suggest", "")
+      suggestElement.innerHTML = ""
       return
     }
 
     const matches = $rootEntryStore.subpaths.map( (s:string) => {
-      // We want to limit the autocomplete matching to non-leafs
+      // Limit the autocomplete matching to non-leaf nodes
       const nodes = s.split('/')
       nodes.splice(-1,1)
       return nodes.join('/').match("^"+pathInput)
-      })
-    console.log(matches)
+    })
 
     const match = matches.reduce( (prevMatch, nextMatch) =>
                               prevMatch != null ? prevMatch : nextMatch,
                               null)
 
-    const suggest = match != null ? match.input! : ""
-    console.log("Setting ", suggest)
-    pathInputElement.setAttribute("data-suggest", suggest)
+    console.log(matches)
+
+    // The suggest <span/> is placed over the actual <input/>
+    // we therefore need to replace every matching character with a space
+    // to avoid clipping.
+    if (match != null) {
+       const spaces = "&nbsp;".repeat(pathInput.length)
+       console.log("Setting ", spaces + match.input!.slice(pathInput.length))
+       suggestElement.innerHTML = spaces + match.input!.slice(pathInput.length)
+    }
+
+    // suggestelement.innertext = match != null ? match.input! : ""
   }
 
   const keyDown = (event: KeyboardEvent) => {
@@ -119,11 +126,16 @@
   }
 </script>
 
+
 <form method="dialog" autocomplete="off" on:submit|preventDefault={validateSubmit}>
   <div class="form-item">
     <label for="path">Path:</label>
-    <input spellcheck="false" type="text" name="path" bind:value={pathInput}
-           bind:this="{pathInputElement}" on:keydown={keyDown} on:keyup={keyUp}>
+
+    <div>
+      <span class="suggest" bind:this="{suggestElement}"></span>
+      <input spellcheck="false" type="text" name="path" bind:value={pathInput}
+             on:keydown={keyDown} on:keyup={keyUp}>
+    </div>
 
     <label for="generate">Generate:</label>
     <input type="checkbox" name="generate" bind:checked={generatePass}>
@@ -167,12 +179,22 @@
       }
       input {
         padding: 5px 2px 5px 2px;
+        font-size: inherit;
+        font-family: inherit;
         @include vars.input-style;
 
         &[name="verify"] {
             border-bottom: 2px solid;
             border-color: transparent;
         }
+      }
+
+      div > span.suggest {
+        font-size: inherit;
+        color: vars.$grey;
+        position: absolute;
+        top: 16%;
+        margin-left: 2px;
       }
     }
 
