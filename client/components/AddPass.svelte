@@ -98,6 +98,8 @@
     for (const subpath of $rootEntryStore.subpaths) {
       // Limit the autocomplete matching to non-leaf nodes
       // Paths entered with a leading slash will not get autocompletion
+      if (!subpath.includes("/")) { continue; }
+
       match = subpath.slice(0, subpath.lastIndexOf('/'))
                            .match("^"+pathInput)
       // Use the first match
@@ -111,8 +113,9 @@
     // to avoid clipping.
     if (match != null) {
        const spaces = "&nbsp;".repeat(pathInput.length)
-       suggestElement.innerHTML = spaces + match.input!.slice(pathInput.length)
-       suggestElement.setAttribute("data-match", match.input!)
+       const trimmed = match.input!.slice(pathInput.length)
+       suggestElement.innerHTML = spaces + trimmed + "/"
+       suggestElement.setAttribute("data-match", match.input! + "/")
     }
   }
 
@@ -122,7 +125,9 @@
       event.preventDefault()
       validateSubmit()
       break;
-    case 'Tab': // Auto-complete in path input
+    // Auto-complete in path input
+    case 'Tab':
+    case 'ArrowRight':
       if ((event.target as HTMLInputElement).name == "path") {
         const suggestion = suggestElement.getAttribute("data-match")
         if (suggestion != null &&
