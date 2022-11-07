@@ -8,9 +8,10 @@
   export let visible: boolean;
 
   export let generatePass = true // This is allowed as a prop to simplify tests
-  let pathInput: string;
-  let passInput: string;
-  let verifyInput: string;
+  let pathInputElement: HTMLInputElement
+  let pathInput: string
+  let passInput: string
+  let verifyInput: string
   const api = new ApiRequest()
 
   const validateSubmit = () => {
@@ -80,6 +81,8 @@
     return MessageText.valid
   }
 
+  // TODO use keyup instead (then we do not haft to workaround backspace etc.
+
   const keyDown = (event: KeyboardEvent) => {
     switch (event.key) {
     case 'Enter':
@@ -87,16 +90,46 @@
       validateSubmit()
       break;
     default:
+      // Update the autocomplete placeholder
+      // Paths entered with a leading slash will not get autocompletion
+      if ((event.target as HTMLInputElement).name == "path") {
+        // Clear placeholder when the input is empty
+        if ((pathInput.length == 1 && event.key == "Backspace") || 
+            (pathInput.length == 0 && event.key.length > 1)) {
+          pathInputElement.setAttribute("data-suggest", "")
+          return
+        }
+
+        // The 'event.key' could be a string like 'Backspace'
+        const text = (pathInput||"") + (event.key.length == 1 ? event.key : "")
+
+        const matches = $rootEntryStore.subpaths.map( (s:string) => { 
+          // We want to limit the autocomplete matching to non-leafs
+          const nodes = s.split('/')
+          nodes.splice(-1,1)
+          return nodes.join('/').match("^"+text) 
+          })
+        console.log(matches)
+
+        const match = matches.reduce( (prevMatch, nextMatch) => 
+                                  prevMatch != null ? prevMatch : nextMatch,
+                                  null)
+
+        if (match != null) {
+          console.log("Setting ", match.input)
+          pathInputElement.setAttribute("data-suggest", match.input!)
+          return
+        }
+      }
     }
   }
-
 </script>
 
 <form method="dialog" autocomplete="off" on:submit|preventDefault={validateSubmit}>
   <div class="form-item">
     <label for="path">Path:</label>
     <input spellcheck="false" type="text" name="path" bind:value={pathInput}
-           on:keydown={keyDown}>
+           bind:this="{pathInputElement}" on:keydown={keyDown}>
 
     <label for="generate">Generate:</label>
     <input type="checkbox" name="generate" bind:checked={generatePass}>
