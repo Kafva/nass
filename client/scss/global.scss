@@ -20,7 +20,7 @@
   // Centering within main container
   @include vars.centering(vars.$tree_width);
 
-  @include vars.mobile{
+  @include vars.mobile {
     @include vars.centering(vars.$tree_width_mobile);
   }
 

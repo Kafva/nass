@@ -145,7 +145,7 @@
     border-bottom: solid 1px;
     border-color: rgba(0,0,0,0.0);
 
-    &:hover {
+    @include vars.desktop-hover {
       border-color: vars.$lilac;
 
       // Display buttons on the direct child
@@ -158,11 +158,13 @@
     span.nf {
       margin: 0 7px 0 7px;
 
-      &:not(:first-child) {
-        display: none;
+      @include vars.desktop {
+        &:not(:first-child) {
+          display: none;
 
-        &:hover {
-          color: vars.$lilac;
+          &:hover {
+            color: vars.$lilac;
+          }
         }
       }
     }

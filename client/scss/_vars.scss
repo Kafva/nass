@@ -1,7 +1,7 @@
 // @media query cut-off points
 $mobile_min_width: 320px;
 $mobile_max_width: 480px;
-$widescreen_min_width: 1400px;
+$desktop_min_width: 1024px;
 
 // Colors
 $lilac:      #6e85d3;
@@ -41,6 +41,20 @@ $cover_z: 9;
     (min-width: $mobile_min_width) and
     (max-width: $mobile_max_width) {
     @content;
+  }
+}
+
+@mixin desktop() {
+  @media (min-width: $desktop_min_width) {
+    @content;
+  }
+}
+
+@mixin desktop-hover() {
+  @include desktop {
+    &:hover {
+      @content;
+    }
   }
 }
 

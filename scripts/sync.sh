@@ -3,7 +3,7 @@
 # syncs with the remote machine, which in turn syncs with the podman container
 # that runs the application.
 
-REMOTE=vel
+REMOTE=${1:-vel}
 EXCLUDE=/tmp/excluded
 
 cat << EOF > $EXCLUDE

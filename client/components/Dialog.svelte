@@ -71,6 +71,7 @@
     padding: 15px;
     border: 1px solid vars.$lilac;
     border-radius: 5%;
+    
 
     // Position the dialog off-screen by default, the `fly`
     // animation will move it into place.
@@ -85,7 +86,7 @@
     float: right;
     margin: 10px 15px 0 0;
 
-    &:hover {
+    @include vars.desktop-hover {
       color: vars.$lilac;
     }
   }

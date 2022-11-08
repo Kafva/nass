@@ -226,10 +226,9 @@
       border-color: rgba(0,0,0,0.0);
       background-color: vars.$button_bg;
 
-      &:hover {
+      @include vars.desktop-hover {
         border-color: vars.$pink;
       }
-
     }
   }
 </style>
