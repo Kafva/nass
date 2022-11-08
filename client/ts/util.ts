@@ -1,11 +1,6 @@
 import { Config, MessageText } from "./config"
 import { msgTextStore } from "./store"
 
-/** Regex based UA platform check */
-const IS_MOBILE = ( (): boolean => {
-  return navigator.userAgent.match(/iPhone|iPad|Android|webOS/i) != null
-})()
-
 /**
  * Custom fly transition to avoid a CSP hack with the current Svelte
  * implementation.
@@ -86,4 +81,4 @@ const Err = (...args: any) => {
   console.log("%c ERROR ", 'background: #ed493e; color: #f5e4f3', ...args)
 }
 
-export {IS_MOBILE, fly, fade, GetHTMLElement, GetHTMLElements, CopyToClipboard, Debug, Err }
+export {fly, fade, GetHTMLElement, GetHTMLElements, CopyToClipboard, Debug, Err }

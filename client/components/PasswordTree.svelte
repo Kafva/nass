@@ -78,7 +78,6 @@
         break
     }
   })
-
 </script>
 
 {#if entry.matchesQuery(currentQuery)}
@@ -92,6 +91,10 @@
       on:touchend="{(e) => touch.end(e, deleteButton, showButton) }"
       on:click="{() => { foldPolicyStore.set(FoldPolicy.localControl);  open = !open } }"
     >
+
+      <div>
+
+      </div>
       {#if isLeaf}
         <span
           class={Config.passwordIcon}
@@ -158,15 +161,16 @@
     span.nf {
       margin: 0 7px 0 7px;
 
-      @include vars.desktop {
-        &:not(:first-child) {
-          display: none;
-
-          &:hover {
-            color: vars.$lilac;
-          }
-        }
+      // Hide all except the directory/key icon on the lhs
+      // by default.
+      &:not(:first-child) {
+        display: none;
       }
+
+      @include vars.desktop-hover {
+        color: vars.$lilac;
+      }
+
     }
 
     &.dir {

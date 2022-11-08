@@ -2,17 +2,25 @@ const SWIPE_MARGIN = 40
 
 /** Handler for touch events on each item in the PasswordTree */
 export default class TouchHandler {
+  /** Regex based UA platform check */
+  private is_mobile(): boolean {
+    return navigator.userAgent.match(/iPhone|iPad|Android|webOS/i) != null
+  }
+
   start(event: TouchEvent, deleteButton: HTMLSpanElement,
     showButton: HTMLSpanElement|null) {
+    if (!this.is_mobile()) { return; }
     const touch = event.touches.item(0)
     if (touch) {
       deleteButton.style.display     = "inline-block";
       deleteButton.style.opacity     = "0.0"
+      deleteButton.style.backgroundColor  = "#a8323e"
 
       if (showButton) {
         showButton.style.display     = "inline-block";
         showButton.style.marginLeft  = `${SWIPE_MARGIN}px`
         showButton.style.opacity     = "0.0"
+        showButton.style.backgroundColor  = "#32a852"
       } else {
         deleteButton.style.marginLeft = `${SWIPE_MARGIN}px`
       }
@@ -21,6 +29,7 @@ export default class TouchHandler {
 
   move(event: TouchEvent, deleteButton: HTMLSpanElement,
     showButton: HTMLSpanElement|null) {
+    if (!this.is_mobile()) { return; }
     const touch = event.touches.item(0)
     if (touch) {
       // 0.0: Far left
@@ -42,6 +51,7 @@ export default class TouchHandler {
 
   end(event: TouchEvent, deleteButton: HTMLSpanElement,
     showButton: HTMLSpanElement|null) {
+    if (!this.is_mobile()) { return; }
     const touch = event.changedTouches.item(0)
     if (touch) {
       const x = touch.pageX/window.innerWidth
