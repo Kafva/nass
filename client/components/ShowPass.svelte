@@ -1,14 +1,25 @@
 <script lang="ts">
+  import type { PassItem } from "../ts/types";
   import { showPassStore } from "../ts/store";
-  // FIXME The out-fade looks bad since the <span> content disappears mid-animation
+
+  let container: HTMLDivElement
+
+  // The <span/> content disappears mid-animation which triggers a change in
+  // geometry, to avoid this we use transparent placeholder text on:blur.
+  showPassStore.subscribe( (passItem: PassItem) => {
+      if (container) {
+        container.style.color = passItem.path == "" ? "transparent" : "inherit"
+      }
+  })
+  const spanWidth = 20
 </script>
 
-<div>
-  <span>{$showPassStore.path}</span>
-
+<div bind:this="{container}">
+  <span>{$showPassStore.path == "" ? "*".repeat(spanWidth) :
+         $showPassStore.path}</span>
   <span>
-   <span class="nf nf-mdi-subdirectory_arrow_right"/>
-    {$showPassStore.password}
+    {$showPassStore.password == "" ? "*".repeat(spanWidth) :
+     $showPassStore.password}
   </span>
 </div>
 
@@ -26,11 +37,12 @@
     padding: 10px 0px 10px 0px;
 
     span {
-       font-size: vars.$font_large;
-
-       &:first-child:not(.nf) {
+       &:first-child {
           text-decoration: underline;
           margin-bottom: 10px;
+       }
+       &:nth-child(2) {
+         font-size: vars.$font_small;
        }
     }
   }
