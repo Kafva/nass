@@ -89,33 +89,32 @@
   const keyUp = () => {
     // Clear placeholder when the input is empty
     if (pathInput == null || pathInput == "") {
-      suggestElement.innerHTML = ""
+      suggestElement.innerText = ""
       return
     }
 
-    let match: RegExpMatchArray|null = null
+    let match = ""
 
     for (const subpath of $rootEntryStore.subpaths) {
       // Limit the autocomplete matching to non-leaf nodes
       // Paths entered with a leading slash will not get autocompletion
       if (!subpath.includes("/")) { continue; }
 
-      match = subpath.slice(0, subpath.lastIndexOf('/'))
-                           .match("^"+pathInput)
+      const nonLeaf = subpath.slice(0, subpath.lastIndexOf('/'))
       // Use the first match
-      if (match != null) {
+      if (nonLeaf.startsWith(pathInput)) {
+        match = nonLeaf
         break
       }
     }
 
     // The suggest <span/> is placed over the actual <input/>
-    // we therefore need to replace every matching character with a space
-    // to avoid clipping.
-    if (match != null) {
-       const spaces = "&nbsp;".repeat(pathInput.length)
-       const trimmed = match.input!.slice(pathInput.length)
-       suggestElement.innerHTML = spaces + trimmed + "/"
-       suggestElement.setAttribute("data-match", match.input! + "/")
+    // we therefore need to indent it with a corresponding number of
+    // characters to avoid clipping.
+    if (match != "") {
+       suggestElement.innerText = match.slice(pathInput.length) + "/"
+       suggestElement.setAttribute("data-match", match + "/")
+       suggestElement.style.textIndent = `${pathInput.length * 0.6}em`
     }
   }
 
