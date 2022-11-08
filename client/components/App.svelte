@@ -25,6 +25,10 @@
     rootEntry = newRoot
     Debug("Updated tree", rootEntry)
   })
+
+  // import { MessageText } from '../ts/config';
+  // setTimeout(()=>msgTextStore.set([MessageText.pathOverlap, ""]), 1000)
+
 </script>
 
 <Msg/>

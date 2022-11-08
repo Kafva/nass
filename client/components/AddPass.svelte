@@ -111,11 +111,11 @@
     // The suggest <span/> is placed over the actual <input/>
     // we therefore need to indent it with a corresponding number of
     // characters to avoid clipping.
-    if (match != "") {
-       suggestElement.innerText = match.slice(pathInput.length) + "/"
-       suggestElement.setAttribute("data-match", match + "/")
-       suggestElement.style.textIndent = `${pathInput.length * 0.6}em`
-    }
+    match = match != "" ? match + "/" : ""
+
+    suggestElement.innerText = match.slice(pathInput.length)
+    suggestElement.setAttribute("data-match", match)
+    suggestElement.style.textIndent = `${pathInput.length * 0.6}em`
   }
 
   const keyDown = (event: KeyboardEvent) => {

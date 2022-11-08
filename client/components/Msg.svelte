@@ -61,10 +61,10 @@
       font-weight: bold;
       margin: 16px 20px 16px 20px;
 
-      width: calc(vars.$msg_width - 40px);
       text-overflow: ellipsis;
       overflow: hidden;
-      white-space: nowrap;
+      overflow-wrap: break-word;
+      hyphens: auto;
 
       span {
         margin-right: 10px;
