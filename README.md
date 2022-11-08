@@ -1,5 +1,5 @@
 <h1>
-<img width=42 height=42 src="https://i.imgur.com/HmWuIKF.png">&nbsp;&nbsp; nass
+<img width=42 height=42 src="./public/assets/icon.png">&nbsp;&nbsp; nass
 </h1>
 
 ## Client
