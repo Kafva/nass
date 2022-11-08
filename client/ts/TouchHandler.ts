@@ -14,13 +14,11 @@ export default class TouchHandler {
     if (touch) {
       deleteButton.style.display     = "inline-block";
       deleteButton.style.opacity     = "0.0"
-      deleteButton.style.backgroundColor  = "#a8323e"
 
       if (showButton) {
         showButton.style.display     = "inline-block";
         showButton.style.marginLeft  = `${SWIPE_MARGIN}px`
         showButton.style.opacity     = "0.0"
-        showButton.style.backgroundColor  = "#32a852"
       } else {
         deleteButton.style.marginLeft = `${SWIPE_MARGIN}px`
       }

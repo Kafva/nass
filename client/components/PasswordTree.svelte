@@ -91,10 +91,6 @@
       on:touchend="{(e) => touch.end(e, deleteButton, showButton) }"
       on:click="{() => { foldPolicyStore.set(FoldPolicy.localControl);  open = !open } }"
     >
-
-      <div>
-
-      </div>
       {#if isLeaf}
         <span
           class={Config.passwordIcon}
@@ -113,10 +109,10 @@
       </span>
 
       {#if isLeaf}
-        <span role="button" class="{Config.showPassword}"
+        <span role="button" class="{Config.showPassword} show-pass"
               bind:this={showButton} on:click="{() => handleGetPass(false)}"/>
       {/if}
-      <span role="button" class="{Config.deleteIcon}"
+      <span role="button" class="{Config.deleteIcon} delete-pass"
             bind:this={deleteButton} on:click="{() => handleDelPass()}" />
 
     </div>
@@ -169,6 +165,20 @@
 
       @include vars.desktop-hover {
         color: vars.$lilac;
+      }
+
+      // == Mobile ==
+      @include vars.mobile {
+        &.show-pass, &.delete-pass {
+          width: 20px;
+          padding: 2px 10px 2px 10px;
+        }
+        &.show-pass {
+          background-color: vars.$green;
+        }
+        &.delete-pass {
+          background-color: vars.$red;
+        }
       }
 
     }
