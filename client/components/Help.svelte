@@ -5,6 +5,7 @@
 <div>
   <img alt="nass icon" width=42 height=42 src="/app/assets/icon.png">
   <h1>nass</h1>
+  <a rel="noreferrer" href="https://github.com/Kafva/nass" target="_blank">https://github.com/Kafva/nass</a>
 </div>
 
 <ul>
@@ -21,6 +22,10 @@
     text-align: center;
     h1 {
       margin-bottom: 5px;
+    }
+    a {
+      font-style: italic;
+      color: vars.$pink;
     }
   }
 

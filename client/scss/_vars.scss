@@ -67,7 +67,7 @@ $cover_z: 9;
 // Centering of items with a fixed position
 @mixin fixed-centering($width, $padding) {
   width: $width;
-  left: calc(50vw - ($width - 2*$padding)/2);
+  left: calc(50% - ($width/2) - $padding);
 }
 
 // Shared style for input elements

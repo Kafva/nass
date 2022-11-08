@@ -53,6 +53,8 @@
 <style lang="scss">
   @use "../scss/vars";
 
+  $dialog_padding: 15px;
+
   div#modalCover {
     z-index: vars.$cover_z;
     position: fixed;
@@ -68,16 +70,16 @@
     z-index: vars.$dialog_z;
     background-color: vars.$dialog_bg;
     color: vars.$white;
-    padding: 15px;
+    padding: $dialog_padding;
     border: 1px solid vars.$lilac;
     border-radius: 5%;
-    
+    width: vars.$dialog_width;
 
     // Position the dialog off-screen by default, the `fly`
     // animation will move it into place.
     top: -5vh;
 
-    @include vars.fixed-centering(vars.$dialog_width, 15px);
+    @include vars.fixed-centering(vars.$dialog_width, $dialog_padding);
   }
 
   // Buttons float to the corner
