@@ -88,12 +88,10 @@
 
   const handleMainClick = () => {
      if (isLeaf) {
-       runIfNotMobile(handleGetPass, true)
+       handleGetPass(true)
      } else {
-       runIfNotMobile( () => { 
-         foldPolicyStore.set(FoldPolicy.localControl)
-         open = !open
-       })
+       foldPolicyStore.set(FoldPolicy.localControl)
+       open = !open
      }
   }
 
@@ -128,9 +126,9 @@
       <span role="button"
         class="{ isLeaf ? Config.passwordIcon : (open ? Config.dropdownOpen : Config.dropdownClosed)}"
         style:margin-left={marginLeft}
-        on:click="{handleMainClick}"
+        on:click="{() => runIfNotMobile(handleMainClick) }"
       />
-      <span role="button" class="name" on:click="{handleMainClick}">
+      <span role="button" class="name" on:click="{() => runIfNotMobile(handleMainClick) }">
         {entry.name}
       </span>
 
