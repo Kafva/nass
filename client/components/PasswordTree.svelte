@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { authInfoStore, foldPolicyStore, msgTextStore, queryStringStore, rootEntryStore, showPassStore } from '../ts/store'
+  import { authInfoStore, foldPolicyStore, msgTextStore, queryStringStore, rootEntryStore, showPassStore, visibleButtonsStore } from '../ts/store'
   import { Config, MessageText} from '../ts/config'
   import { FoldPolicy } from '../ts/types'
   import type { ApiResponse, AuthInfo, PassItem } from '../ts/types'
@@ -10,18 +10,26 @@
   import TouchHandler from '../ts/TouchHandler'
 
   export let entry: PassEntry
+  const path = entry.path()
   let currentQuery = ""
   let deleteButton: HTMLSpanElement
   let showButton: HTMLSpanElement|null = null
   const api = new ApiRequest()
-  const touch = new TouchHandler()
+  const touch = new TouchHandler(path)
 
   queryStringStore.subscribe((value: string) => {
     currentQuery = value.toLowerCase()
   })
 
+  // Hide local buttons if another path has visible buttons
+  visibleButtonsStore.subscribe((value: string) => {
+    if (value != path) {
+      touch.hideButton(deleteButton)
+      touch.hideButton(showButton)
+    }
+  })
+
   const handleDelPass = () => {
-    const path = entry.path()
     if (confirm(`Are you sure you want to delete '${path}'?`)) {
       api.delPass(path).then((apiRes: ApiResponse) => {
         if (apiRes.status == ApiStatusResponse.success) {
@@ -34,7 +42,6 @@
   }
 
   const handleGetPass = (useClipboard: boolean) => {
-    const path = entry.path()
     api.getPass(path, "").then((apiRes: ApiResponse) => {
       switch (apiRes.status) {
       case ApiStatusResponse.success:
@@ -130,12 +137,9 @@
   @use "../scss/vars";
 
   div {
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
     @include vars.fade-in(0.5s);
-
     font-size: vars.$font_medium;
+    white-space: nowrap;
     padding: 4px 0 4px 0;
     margin: 2px 0 5px 0;
 
@@ -144,17 +148,25 @@
     border-bottom: solid 1px;
     border-color: rgba(0,0,0,0.0);
 
-    @include vars.desktop-hover {
-      border-color: vars.$lilac;
+    &.dir {
+      span {
+        display: inline;
+        width: fit-content;
 
-      // Display buttons on the direct child
-      // when the parent element is hovered
-      & > span.nf:not(:first-child) {
-        display: inline-block;
+        &.name {
+          width: 50vw;
+        }
       }
     }
 
+    span.name {
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
     span.nf {
+      text-overflow: clip;
+      overflow: hidden;
       margin: 0 7px 0 7px;
 
       // Hide all except the directory/key icon on the lhs
@@ -172,6 +184,7 @@
         &.show-pass, &.delete-pass {
           width: 20px;
           padding: 2px 10px 2px 10px;
+          margin: 0;
         }
         &.show-pass {
           background-color: vars.$green;
@@ -180,17 +193,15 @@
           background-color: vars.$red;
         }
       }
-
     }
 
-    &.dir {
-      span {
-        display: inline;
-        width: fit-content;
+    @include vars.desktop-hover {
+      border-color: vars.$lilac;
 
-        &.name {
-          width: 50vw;
-        }
+      // Display buttons on the direct child
+      // when the parent element is hovered
+      & > span.nf:not(:first-child) {
+        display: inline-block;
       }
     }
   }

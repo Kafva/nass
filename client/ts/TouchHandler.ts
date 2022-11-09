@@ -1,15 +1,43 @@
+import { get } from "svelte/store";
+import { visibleButtonsStore } from "./store";
+
 const SWIPE_MARGIN = 40
+
+// TODO: Check if swipe went 'nowhere' if so register a click()
+// We need to allow for swipe-backs.
 
 /** Handler for touch events on each item in the PasswordTree */
 export default class TouchHandler {
+  constructor(
+    /**
+     * Path to the `PassEntry` that this `TouchHandler` instance
+     * is bound to.
+     */
+    private path: string
+  ){}
+
   /** Regex based UA platform check */
-  private is_mobile(): boolean {
+  private isMobile(): boolean {
     return navigator.userAgent.match(/iPhone|iPad|Android|webOS/i) != null
   }
 
+  private shouldHandleSwipe(): boolean {
+    // To actually allow for clicks on the buttons to register we must ignore new touch
+    // events when the buttons are visible. The user will haft to drag out the buttons
+    // for another entry to close those on the current entry.
+    return this.isMobile() && get(visibleButtonsStore) != this.path
+  }
+
+
   start(event: TouchEvent, deleteButton: HTMLSpanElement,
     showButton: HTMLSpanElement|null) {
-    if (!this.is_mobile()) { return; }
+    if (!this.shouldHandleSwipe()) { return; }
+
+    // If a swipe event is started on a new node, hide the buttons on the old
+    // one regardless of if the buttons on the new node end up being
+    // fully displayed.
+    visibleButtonsStore.set("")
+
     const touch = event.touches.item(0)
     if (touch) {
       deleteButton.style.display     = "inline-block";
@@ -27,7 +55,7 @@ export default class TouchHandler {
 
   move(event: TouchEvent, deleteButton: HTMLSpanElement,
     showButton: HTMLSpanElement|null) {
-    if (!this.is_mobile()) { return; }
+    if (!this.shouldHandleSwipe()) { return; }
     const touch = event.touches.item(0)
     if (touch) {
       // 0.0: Far left
@@ -49,17 +77,13 @@ export default class TouchHandler {
 
   end(event: TouchEvent, deleteButton: HTMLSpanElement,
     showButton: HTMLSpanElement|null) {
-    if (!this.is_mobile()) { return; }
+    if (!this.shouldHandleSwipe()) { return; }
     const touch = event.changedTouches.item(0)
     if (touch) {
       const x = touch.pageX/window.innerWidth
       if (x > 0.5) { // Hide the buttons if the swipe ends far to the right
-        deleteButton.style.display     = "none"
-        deleteButton.style.opacity     = "0.0"
-        if (showButton) {
-          showButton.style.display     = "none";
-          showButton.style.opacity     = "0.0"
-        }
+        this.hideButton(deleteButton)
+        this.hideButton(showButton)
       } else { // Let them remain visible if the swipe ends to the left
         deleteButton.style.display     = "inline-block";
         deleteButton.style.opacity     = "1.0"
@@ -70,7 +94,19 @@ export default class TouchHandler {
         } else {
           deleteButton.style.marginLeft = "0px"
         }
+
+        // Update the currently visible button, other PassEntry
+        // objects will be notified of this and hide their buttons
+        visibleButtonsStore.set(this.path)
       }
     }
   }
+
+  hideButton(btn: HTMLSpanElement|null) {
+    if (btn) {
+      btn.style.display     = "none"
+      btn.style.opacity     = "0.0"
+    }
+  }
+
 }

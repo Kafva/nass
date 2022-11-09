@@ -39,3 +39,9 @@ export const rootEntryStore = writable<PassEntry>(new PassEntry("", [], [], []))
 
 /** Used to control if the password tree should be fully folded/unfolded */
 export const foldPolicyStore = writable<FoldPolicy>(FoldPolicy.localControl)
+
+/**
+ * Path to the `PassEntry` (if any) that currently has the show/delete
+ * buttons visible.
+ */
+export const visibleButtonsStore = writable<string>("")
