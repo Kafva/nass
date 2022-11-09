@@ -3,6 +3,10 @@ import { visibleButtonsStore } from "./store";
 
 const SWIPE_MARGIN = 40
 
+// Closnes between the origin and end of a swipe for it
+// to be considered a click.
+const CLICK_LIMIT = 0.03
+
 // TODO: Check if swipe went 'nowhere' if so register a click()
 // We need to allow for swipe-backs.
 
@@ -13,33 +17,24 @@ export default class TouchHandler {
      * Path to the `PassEntry` that this `TouchHandler` instance
      * is bound to.
      */
-    private path: string
+    private path: string,
+    /** x coordinate origin of a new touch event. */
+    private startX = 0
   ){}
 
   /** Regex based UA platform check */
-  private isMobile(): boolean {
+  isMobile(): boolean {
     return navigator.userAgent.match(/iPhone|iPad|Android|webOS/i) != null
   }
 
-  private shouldHandleSwipe(): boolean {
-    // To actually allow for clicks on the buttons to register we must ignore new touch
-    // events when the buttons are visible. The user will haft to drag out the buttons
-    // for another entry to close those on the current entry.
-    return this.isMobile() && get(visibleButtonsStore) != this.path
-  }
-
-
   start(event: TouchEvent, deleteButton: HTMLSpanElement,
     showButton: HTMLSpanElement|null) {
-    if (!this.shouldHandleSwipe()) { return; }
+    if (!this.isMobile()) { return; }
 
-    // If a swipe event is started on a new node, hide the buttons on the old
-    // one regardless of if the buttons on the new node end up being
-    // fully displayed.
-    visibleButtonsStore.set("")
 
     const touch = event.touches.item(0)
     if (touch) {
+      this.startX = touch.pageX/window.innerWidth
       deleteButton.style.display     = "inline-block";
       deleteButton.style.opacity     = "0.0"
 
@@ -55,7 +50,7 @@ export default class TouchHandler {
 
   move(event: TouchEvent, deleteButton: HTMLSpanElement,
     showButton: HTMLSpanElement|null) {
-    if (!this.shouldHandleSwipe()) { return; }
+    if (!this.isMobile()) { return; }
     const touch = event.touches.item(0)
     if (touch) {
       // 0.0: Far left
@@ -76,11 +71,25 @@ export default class TouchHandler {
   }
 
   end(event: TouchEvent, deleteButton: HTMLSpanElement,
-    showButton: HTMLSpanElement|null) {
-    if (!this.shouldHandleSwipe()) { return; }
+    showButton: HTMLSpanElement|null): HTMLSpanElement|null {
+    if (!this.isMobile()) { return null; }
     const touch = event.changedTouches.item(0)
     if (touch) {
       const x = touch.pageX/window.innerWidth
+
+      // Return the current element being touched
+      // if the swipe was over a short distance (i.e. essentially a click)
+      if (Math.abs(x - this.startX) <= CLICK_LIMIT) {
+        return event.target as HTMLSpanElement
+      }
+
+      // If a swipe event is started on a new node, hide the buttons on the old
+      // one regardless of if the buttons on the new node end up being
+      // fully displayed.
+      if (get(visibleButtonsStore) != this.path) {
+        visibleButtonsStore.set("")
+      }
+
       if (x > 0.5) { // Hide the buttons if the swipe ends far to the right
         this.hideButton(deleteButton)
         this.hideButton(showButton)
@@ -100,6 +109,8 @@ export default class TouchHandler {
         visibleButtonsStore.set(this.path)
       }
     }
+
+    return null
   }
 
   hideButton(btn: HTMLSpanElement|null) {

@@ -17,6 +17,12 @@
   const api = new ApiRequest()
   const touch = new TouchHandler(path)
 
+  // Increase the left-justification as we go to deeper levels
+  const marginLeft = `${(entry.parents.length+1) * 50}px`
+  const isRoot = entry.name == ""
+  const isLeaf = entry.subitems.length == 0
+  let open = false
+
   queryStringStore.subscribe((value: string) => {
     currentQuery = value.toLowerCase()
   })
@@ -26,6 +32,17 @@
     if (value != path) {
       touch.hideButton(deleteButton)
       touch.hideButton(showButton)
+    }
+  })
+
+  foldPolicyStore.subscribe((value: FoldPolicy) => {
+    switch (value) {
+      case FoldPolicy.allOpen:
+        open = true
+        break
+      case FoldPolicy.allClosed:
+        open = false
+        break
     }
   })
 
@@ -69,22 +86,22 @@
     })
   }
 
-  // Increase the left-justification as we go to deeper levels
-  const marginLeft = `${(entry.parents.length+1) * 50}px`
-  const isRoot = entry.name == ""
-  const isLeaf = entry.subitems.length == 0
-  let open = false
+  const handleMainClick = () => {
+     if (isLeaf) {
+       runIfNotMobile(handleGetPass, true)
+     } else {
+       runIfNotMobile( () => { 
+         foldPolicyStore.set(FoldPolicy.localControl)
+         open = !open
+       })
+     }
+  }
 
-  foldPolicyStore.subscribe((value: FoldPolicy) => {
-    switch (value) {
-      case FoldPolicy.allOpen:
-        open = true
-        break
-      case FoldPolicy.allClosed:
-        open = false
-        break
-    }
-  })
+  const runIfNotMobile = (f: Function, ...args: any) => {
+    if (!touch.isMobile()) f(args)
+  }
+
+
 </script>
 
 {#if entry.matchesQuery(currentQuery)}
@@ -95,33 +112,34 @@
       class:dir="{!isLeaf}"
       on:touchstart="{(e) => touch.start(e, deleteButton, showButton) }"
       on:touchmove="{(e) => touch.move(e, deleteButton, showButton) }"
-      on:touchend="{(e) => touch.end(e, deleteButton, showButton) }"
-      on:click="{() => { foldPolicyStore.set(FoldPolicy.localControl);  open = !open } }"
+      on:touchend="{(e) => { 
+        const btn = touch.end(e, deleteButton, showButton) 
+        if (btn != null) {
+          if (btn.classList.contains('delete-pass')) {
+            handleDelPass()
+          } else if (btn.classList.contains('show-pass')) {
+            handleGetPass(false)
+          } else {
+            handleMainClick()
+          }
+        }
+      }}"
     >
-      {#if isLeaf}
-        <span
-          class={Config.passwordIcon}
-          style:margin-left={marginLeft}
-        />
-      {:else}
-        <span
-          class="{open ? Config.dropdownOpen : Config.dropdownClosed}"
-          style:margin-left={marginLeft}
-        />
-      {/if}
-      <span role="button" class="name" on:click="{() => {
-        if(isLeaf) handleGetPass(true)
-      }}">
+      <span role="button"
+        class="{ isLeaf ? Config.passwordIcon : (open ? Config.dropdownOpen : Config.dropdownClosed)}"
+        style:margin-left={marginLeft}
+        on:click="{handleMainClick}"
+      />
+      <span role="button" class="name" on:click="{handleMainClick}">
         {entry.name}
       </span>
 
       {#if isLeaf}
         <span role="button" class="{Config.showPassword} show-pass"
-              bind:this={showButton} on:click="{() => handleGetPass(false)}"/>
+              bind:this={showButton} on:click="{() => runIfNotMobile(handleGetPass, false) }"/>
       {/if}
       <span role="button" class="{Config.deleteIcon} delete-pass"
-            bind:this={deleteButton} on:click="{() => handleDelPass()}" />
-
+            bind:this={deleteButton} on:click="{() => runIfNotMobile(handleDelPass)}" />
     </div>
   {/if}
 
@@ -173,11 +191,11 @@
       // by default.
       &:not(:first-child) {
         display: none;
+        @include vars.desktop-hover {
+          color: vars.$lilac;
+        }
       }
 
-      @include vars.desktop-hover {
-        color: vars.$lilac;
-      }
 
       // == Mobile ==
       @include vars.mobile {
