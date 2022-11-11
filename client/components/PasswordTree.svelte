@@ -17,11 +17,31 @@
   const api = new ApiRequest()
   const touch = new TouchHandler(path)
 
-  // Increase the left-justification as we go to deeper levels
-  const marginLeft = `${(entry.parents.length+1) * 50}px`
   const isRoot = entry.name == ""
   const isLeaf = entry.subitems.length == 0
   let open = false
+
+  // Use a grid layout for each row
+  // -----------------------------------------------
+  // | <span icon/> | <span name/> | <div drawer/> |
+  // -----------------------------------------------
+  // Instead of adjusting the left margin of the icon span we will
+  // adjust the `grid-template-columns` layout for each tree level and
+  // touches on the drawer.
+  //
+  // Increase the space occupied by the icon column as 
+  // we go deeper.
+  // --------------------------------------------------------------------------- 
+  // |  [ICON_MIN,ICON_MAX] |  2/3 of remaining space | 1/3 of remaining space |
+  // --------------------------------------------------------------------------- 
+  const ICON_MIN_SPACE = 0.1
+  const ICON_MAX_SPACE = 0.6
+
+  const treeLevel = ((entry.parents.length+1) / Config.maxPassDepth)
+  const iconColumn = Math.max(ICON_MIN_SPACE, treeLevel * ICON_MAX_SPACE)
+  const nameColumn = 2 * ((1 - iconColumn) / 3)
+  const drawerColumn = 1 * ((1 - iconColumn) / 3)
+  const gridTemplateColumns = `${iconColumn}fr ${nameColumn}fr ${drawerColumn}fr`
 
   queryStringStore.subscribe((value: string) => {
     currentQuery = value.toLowerCase()
@@ -106,6 +126,7 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div
       class="row"
+      style:grid-template-columns={gridTemplateColumns}
       on:touchstart="{(e) => touch.start(e, deleteButton, showButton) }"
       on:touchmove="{(e) => touch.move(e, deleteButton, showButton) }"
       on:touchend="{(e) => {
@@ -126,7 +147,6 @@
       <span role="button"
         class="{ isLeaf ? Config.passwordIcon : 
           (open ? Config.dropdownOpen : Config.dropdownClosed)} row-icon"
-        style:margin-left={marginLeft}
         on:click="{() => runIfNotMobile(handleMainClick) }"
       />
       <span role="button" class="name" on:click="{() => runIfNotMobile(handleMainClick) }">
@@ -155,78 +175,34 @@
 <style lang="scss">
   @use "../scss/vars";
 
-  // Use a grid layout for each row
-  // ----------------------------------------------------------------
-  // | variable space | <span icon/> | <span name/> | <div drawer/> |
-  // ----------------------------------------------------------------
-  //
   div.row {
     @include vars.fade-in(0.5s);
+    display: grid;
+    text-align: center;
     font-size: vars.$font_medium;
     white-space: nowrap;
     padding: 4px 0 4px 0;
     margin: 2px 0 5px 0;
-
-    @include vars.desktop-hover {
-      border-color: vars.$lilac;
-
-      // Display buttons on the direct child
-      // when the parent element is hovered
-      div.drawer > span.nf:not(:first-child) {
-        display: inline-block;
-      }
-    }
 
     // Always show the border (translucently)
     // to avoid geometry changes on :hover()
     border-bottom: solid 1px;
     border-color: rgba(0,0,0,0.0);
 
-    // == Icon and name ==
-    span {
-      display: inline;
-      width: fit-content;
-
-      &.name {
-        width: 50vw;
-        text-overflow: ellipsis;
-        overflow: hidden;
-      }
-      &.nf {
-        text-overflow: clip;
-        overflow: hidden;
-        margin: 0 7px 0 7px;
-
-        // Hide all except the directory/key icon on the lhs
-        // by default.
-        &:not(.row-icon) {
-          display: none;
-          @include vars.desktop-hover {
-            color: vars.$lilac;
-          }
-        }
+    @include vars.desktop-hover {
+      border-color: vars.$lilac;
+      // Display buttons on the direct child
+      // when the parent element is hovered
+      div.drawer > span.nf {
+        display: inline-block;
       }
     }
 
-    div.drawer {
-      display: inline-block;
-      white-space: nowrap;
-      //overflow-x: hidden;
-      //overflow-y: hidden;
-      //padding: 2px 10px 2px 10px;
-      margin: 0px;
-      text-align: right;
-    }
-
-    // == Mobile ==
-    @include vars.mobile {
-      div.drawer {
-        span.show-pass {
-          background-color: vars.$green;
-        }
-        span.delete-pass {
-          background-color: vars.$red;
-        }
+    // Hide drawer icons
+    span.nf:not(.row-icon) {
+      display: none;
+      @include vars.desktop-hover {
+        color: vars.$lilac;
       }
     }
   }
