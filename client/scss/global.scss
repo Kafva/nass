@@ -21,6 +21,7 @@
   @include vars.centering(vars.$tree_width);
 
   @include vars.mobile {
+    // width: 100%;
     @include vars.centering(vars.$tree_width_mobile);
   }
 

@@ -98,8 +98,6 @@
   const runIfNotMobile = (f: Function, ...args: any) => {
     if (!touch.isMobile()) f(args)
   }
-
-
 </script>
 
 {#if entry.matchesQuery(currentQuery)}
@@ -110,8 +108,8 @@
       class:dir="{!isLeaf}"
       on:touchstart="{(e) => touch.start(e, deleteButton, showButton) }"
       on:touchmove="{(e) => touch.move(e, deleteButton, showButton) }"
-      on:touchend="{(e) => { 
-        const btn = touch.end(e, deleteButton, showButton) 
+      on:touchend="{(e) => {
+        const btn = touch.end(e, deleteButton, showButton)
         if (btn != null) {
           if (btn.classList.contains('delete-pass')) {
             handleDelPass()
@@ -123,6 +121,8 @@
         }
       }}"
     >
+      <!-- on:click() events are used on desktop and disabled in favor of
+      ontouch* on mobile -->
       <span role="button"
         class="{ isLeaf ? Config.passwordIcon : (open ? Config.dropdownOpen : Config.dropdownClosed)}"
         style:margin-left={marginLeft}
@@ -198,9 +198,15 @@
       // == Mobile ==
       @include vars.mobile {
         &.show-pass, &.delete-pass {
-          width: 20px;
+          float: right;
+          //display: inline-block;
+          //white-space: nowrap;
+          overflow-x: hidden;
+          overflow-y: hidden;
+
           padding: 2px 10px 2px 10px;
-          margin: 0;
+          margin: 0px;
+          text-align: right;
         }
         &.show-pass {
           background-color: vars.$green;

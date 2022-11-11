@@ -1,14 +1,17 @@
 import { get } from "svelte/store";
 import { visibleButtonsStore } from "./store";
 
-const SWIPE_MARGIN = 40
+// The #root container is centered using
+//  margin-left: 50vw - $width/2
+//
+// The widths need to be adjusted based on if one or two buttons
+// are going to be displayed
+const SWIPE_MIN_WIDTH = 20
+const SWIPE_MAX_WIDTH = 60
 
-// Closnes between the origin and end of a swipe for it
+// Max distance between the origin and end of a swipe for it
 // to be considered a click.
-const CLICK_LIMIT = 0.03
-
-// TODO: Check if swipe went 'nowhere' if so register a click()
-// We need to allow for swipe-backs.
+const CLICK_LIMIT = 0.02
 
 /** Handler for touch events on each item in the PasswordTree */
 export default class TouchHandler {
@@ -22,9 +25,10 @@ export default class TouchHandler {
     private startX = 0
   ){}
 
-  /** Regex based UA platform check */
+  /** Platform check based on viewport width and UA */
   isMobile(): boolean {
-    return navigator.userAgent.match(/iPhone|iPad|Android|webOS/i) != null
+    return navigator.userAgent.match(/iPhone|iPad|Android/i) != null
+           && document.body.clientWidth <= 480
   }
 
   start(event: TouchEvent, deleteButton: HTMLSpanElement,
@@ -40,11 +44,10 @@ export default class TouchHandler {
 
       if (showButton) {
         showButton.style.display     = "inline-block";
-        showButton.style.marginLeft  = `${SWIPE_MARGIN}px`
+        showButton.style.width  = `${SWIPE_MIN_WIDTH}px`
         showButton.style.opacity     = "0.0"
-      } else {
-        deleteButton.style.marginLeft = `${SWIPE_MARGIN}px`
       }
+      deleteButton.style.width = `${SWIPE_MIN_WIDTH}px`
     }
   }
 
@@ -55,18 +58,15 @@ export default class TouchHandler {
     if (touch) {
       // 0.0: Far left
       // 1.0: Far right
-      const x = touch.pageX/window.innerWidth
+      const x = Math.max(0.0, touch.pageX/window.innerWidth)
 
-      // The margin starts from `SWIPE_MARGIN` on a new swipe
-      // (far of to the right) and magnitude is decreased incrementally
       deleteButton.style.opacity     = `${1.0 - x}`
 
       if (showButton) {
-        showButton.style.marginLeft  = `${SWIPE_MARGIN*x}px`
+        showButton.style.width  = `${SWIPE_MAX_WIDTH*(1.0-x) + SWIPE_MIN_WIDTH}px`
         showButton.style.opacity     = `${1.0 - x}`
-      } else {
-        deleteButton.style.marginLeft = `${SWIPE_MARGIN*x}px`
       }
+      deleteButton.style.width = `${SWIPE_MAX_WIDTH*(1.0-x) + SWIPE_MIN_WIDTH}px`
     }
   }
 
@@ -79,6 +79,7 @@ export default class TouchHandler {
 
       // Return the current element being touched
       // if the swipe was over a short distance (i.e. essentially a click)
+      console.log(Math.abs(x - this.startX) , CLICK_LIMIT)
       if (Math.abs(x - this.startX) <= CLICK_LIMIT) {
         return event.target as HTMLSpanElement
       }
@@ -98,11 +99,10 @@ export default class TouchHandler {
         deleteButton.style.opacity     = "1.0"
         if (showButton) {
           showButton.style.display     = "inline-block";
-          showButton.style.marginLeft  = "0px"
+          showButton.style.width  = `${SWIPE_MAX_WIDTH + SWIPE_MIN_WIDTH}px`
           showButton.style.opacity     = "1.0"
-        } else {
-          deleteButton.style.marginLeft = "0px"
         }
+        deleteButton.style.width = `${SWIPE_MAX_WIDTH + SWIPE_MIN_WIDTH}px`
 
         // Update the currently visible button, other PassEntry
         // objects will be notified of this and hide their buttons
@@ -119,5 +119,4 @@ export default class TouchHandler {
       btn.style.opacity     = "0.0"
     }
   }
-
 }
