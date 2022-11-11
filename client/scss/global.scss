@@ -19,14 +19,16 @@
 :global(div#root) {
   // Centering within main container
   @include vars.centering(vars.$tree_width);
+  text-align: left;
+
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: scroll;
 
   @include vars.mobile {
-    // width: 100%;
+    // The rows should fill the entire X-axis on mobile
+    width: vars.$tree_width_mobile;
     @include vars.centering(vars.$tree_width_mobile);
   }
 
-  height: 100%;
-  text-align: left;
-  overflow-x: hidden;
-  overflow-y: scroll;
 }
