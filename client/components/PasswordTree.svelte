@@ -33,7 +33,7 @@
   const ICON_MIN_SPACE = 0.1
   const ICON_MAX_SPACE = 0.6
 
-  const DRAWER_MIN_SPACE = 0.0
+  const DRAWER_MIN_SPACE = 0.1
 
   const treeLevel = ((entry.parents.length+1) / Config.maxPassDepth)
   const iconColumn = Math.max(ICON_MIN_SPACE, treeLevel * ICON_MAX_SPACE)

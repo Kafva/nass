@@ -2,6 +2,7 @@ import { get } from "svelte/store";
 import { visibleButtonsStore } from "./store";
 
 const DRAWER_MAX_SPACE = 0.4
+  const DRAWER_MIN_SPACE = 0.1
 
 // Max distance between the origin and end of a swipe for it
 // to be considered a click.
@@ -56,14 +57,22 @@ export default class TouchHandler {
       // If startX is large, the swipe started far to the right
       const x = Math.max(0.0, touch.pageX/window.innerWidth) 
 
-      // Calculate the x offset based on where the touch started
+      // The drawerColumn should: 
+      //  * increase in width if we move  0.0 <-- 1.0  (startX - x > 0)
+      //  * decrease in width if we move  0.0 --> 1.0  (startX - x < 0)
+
+      const distance = this.startX - x 
+      // If the distance is negative, we want a small `fr` value
+      // If the distance is posisitve, we want a larger `fr` value
+      //
+      // Let d=-0.5 be the threshhold DRAWER_MIN_SPACE
+      // Let d=0.5 be the threshhold DRAWER_MAX_SPACE
 
       //this.drawer().style.opacity     = `${1.0 - x}`
 
-
-      const drawerColumn = Math.min(DRAWER_MAX_SPACE, 1 - this.defaultLayout.icon - x)
+      const drawerColumn =   distance < 0 ? DRAWER_MAX_SPACE * Math.max(-1*distance) : DRAWER_MIN_SPACE * distance
       const nameColumn = 1 - this.defaultLayout.icon - drawerColumn
-      console.log("move()", this.defaultLayout.icon, nameColumn, drawerColumn)
+      console.log("move()", distance, x)
 
       this.grid!.style.gridTemplateColumns = 
         `${this.defaultLayout.icon}fr ${nameColumn}fr ${drawerColumn}fr`
