@@ -19,7 +19,7 @@ class Config {
   static readonly passwordPrompt = 'nf nf-fa-angle_double_right'
 
   static readonly showPassword = 'nf nf-oct-eye'
-  static readonly deleteIcon = 'nf nf-fa-close'
+  static readonly deleteIcon = 'nf nf-fa-minus'
 }
 
 /** Predefined text for <Msg/> messages */

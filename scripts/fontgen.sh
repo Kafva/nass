@@ -2,13 +2,16 @@
 : '''
 Subset a TTF file to only contain extended ASCII and 
 the glyphs that are actually used in the application.
+Also create a .min.css file with classes for each glyph.
 '''
 die(){ printf "$1\n" >&2 ; exit 1; }
 info(){ printf "\033[34m!>\033[0m $1\n" >&2; }
+usage="usage: $(basename $0) <client source> <full font> <font output> <.min.css output>"
 
 command -v pyftsubset &> /dev/null || die "Missing pyftsubset"
+[ -z "$1" ] && die "$usage"
 
-INPUT=${1:-./client}
+INPUT=${1}
 FULL_FONT=${2:-public/assets/meslo-nerd-fonts.ttf}
 TTF=${3:-./public/assets/meslo-nass.ttf}
 MIN_CSS=${4:-./public/assets/nerd-fonts-nass.min.css}
@@ -21,7 +24,7 @@ SUBSET=$(mktemp)
 
 [ -f $GLYPH_INDEX ] || curl -L \
     https://gist.github.com/Kafva/0d143e61eb9c8e10c7ca297aec0701cf/raw/9186cc806887600bbd5127b86f61b66d41b20f5a/nerdfonts.raw \
-    > $GLYPH_INDEX
+    > $GLYPH_INDEX || die "Failed to fetch glyph index"
 
 # Determine the unicode value of each glyph from a lookup table
 while read -r line; do
