@@ -197,8 +197,10 @@
     border-color: rgba(0,0,0,0.0);
 
     div.drawer {
+      display: inline-flex;
       // Hide drawer icons without changing geometry
-      color: transparent;
+      opacity: 0;
+      align-items: center;
       span {
         display: inline-block;
       }

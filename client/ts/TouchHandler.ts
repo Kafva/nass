@@ -1,7 +1,7 @@
 import { get } from "svelte/store";
 import { visibleButtonsStore } from "./store";
 
-const DRAWER_MAX_SPACE = 0.3
+const DRAWER_MAX_SPACE = 0.4
 
 // Max distance between the origin and end of a swipe for it
 // to be considered a click.
@@ -41,10 +41,8 @@ export default class TouchHandler {
 
     const touch = event.touches.item(0)
     if (touch) {
-      // !! Do not change width of the buttons invidually, modify the 
-      // width of the drawer (tmeplate-columns) !!
-      // this.startX = touch.pageX/window.innerWidth
-      this.restoreGrid()
+      this.startX = touch.pageX/window.innerWidth
+      this.drawer().style.opacity = "1.0"
     }
   }
 
@@ -54,11 +52,16 @@ export default class TouchHandler {
     if (touch) {
       // 0.0: Far left
       // 1.0: Far right
-      const x = Math.max(0.0, touch.pageX/window.innerWidth)
+      //
+      // If startX is large, the swipe started far to the right
+      const x = Math.max(0.0, touch.pageX/window.innerWidth) 
 
-      this.drawer().style.opacity     = `${1.0 - x}`
+      // Calculate the x offset based on where the touch started
 
-      const drawerColumn = 1 - this.defaultLayout.icon - x
+      //this.drawer().style.opacity     = `${1.0 - x}`
+
+
+      const drawerColumn = Math.min(DRAWER_MAX_SPACE, 1 - this.defaultLayout.icon - x)
       const nameColumn = 1 - this.defaultLayout.icon - drawerColumn
       console.log("move()", this.defaultLayout.icon, nameColumn, drawerColumn)
 
@@ -75,7 +78,9 @@ export default class TouchHandler {
 
       // Return the current element being touched
       // if the swipe was over a short distance (i.e. essentially a click)
+      console.log(x, this.startX, CLICK_LIMIT)
       if (Math.abs(x - this.startX) <= CLICK_LIMIT) {
+        console.log("Returning click for", event.target)
         return event.target as HTMLSpanElement
       }
 
@@ -86,11 +91,11 @@ export default class TouchHandler {
         visibleButtonsStore.set("")
       }
 
-      if (x > 0.5) { // Hide the buttons if the swipe ends far to the right
+      if (x > 0.6) { // Hide the buttons if the swipe ends far to the right
         this.restoreGrid()
       } else { // Let them remain visible if the swipe ends to the left
 
-        this.drawer().style.opacity     = "1.0"
+        //this.drawer().style.opacity     = "1.0"
         const nameColumn = 1 - this.defaultLayout.icon - DRAWER_MAX_SPACE
 
         this.grid!.style.gridTemplateColumns = 
