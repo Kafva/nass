@@ -1,11 +1,7 @@
 @use "vars";
 
-@font-face {
-  font-family: "Meslo";
-  src: url("meslo-nerd-fonts.ttf");
-}
-
 :global(html), :global(body) {
+  // The @font-face for 'Meslo' is defined in `nerd-fonts.min.css`
   font-family: Meslo, Arial;
   height: 100%;
   background-color: vars.$body_bg;

@@ -21,7 +21,7 @@
   const isLeaf = entry.subitems.length == 0
   let open = false
 
-  // Use a grid layout for each row
+  // Each row is in a grid:
   // -----------------------------------------------
   // | <span icon/> | <span name/> | <div drawer/> |
   // -----------------------------------------------
@@ -100,8 +100,7 @@
           useClipboard: useClipboard
         } as AuthInfo)
         break;
-      default:
-        // Errors are handled internally by `api`
+      default: // Errors are handled internally by `api`
       }
     })
   }
