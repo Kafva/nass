@@ -11,12 +11,7 @@
   import TouchHandler from '../ts/TouchHandler'
 
   export let entry: PassEntry
-  const path = entry.path()
   let currentQuery = ""
-  let deleteButton: HTMLSpanElement
-  let showButton: HTMLSpanElement|null = null
-  const api = new ApiRequest()
-  const touch = new TouchHandler(path)
 
   const isRoot = entry.name == ""
   const isLeaf = entry.subitems.length == 0
@@ -33,26 +28,36 @@
   // Increase the space occupied by the icon column as 
   // we go deeper.
   // --------------------------------------------------------------------------- 
-  // |  [ICON_MIN,ICON_MAX] |  2/3 of remaining space | 1/3 of remaining space |
+  // |  [ICON_MIN,ICON_MAX] |  remaining space |   [DRAWER_MIN,DRAWER_MAX]     |
   // --------------------------------------------------------------------------- 
   const ICON_MIN_SPACE = 0.1
   const ICON_MAX_SPACE = 0.6
 
+  const DRAWER_MIN_SPACE = 0.0
+
   const treeLevel = ((entry.parents.length+1) / Config.maxPassDepth)
   const iconColumn = Math.max(ICON_MIN_SPACE, treeLevel * ICON_MAX_SPACE)
-  const nameColumn = 2 * ((1 - iconColumn) / 3)
-  const drawerColumn = 1 * ((1 - iconColumn) / 3)
+  const drawerColumn = DRAWER_MIN_SPACE
+  const nameColumn = 1 - iconColumn + drawerColumn
   const gridTemplateColumns = `${iconColumn}fr ${nameColumn}fr ${drawerColumn}fr`
+
+
+  const path = entry.path()
+  const api = new ApiRequest()
+  const touch = new TouchHandler(path, {
+    icon: iconColumn, // Fixed
+    name: nameColumn,
+    drawer: drawerColumn
+  })
 
   queryStringStore.subscribe((value: string) => {
     currentQuery = value.toLowerCase()
   })
 
-  // Hide local buttons if another path has visible buttons
+  // Restore the grid layout if another path has visible buttons
   visibleButtonsStore.subscribe((value: string) => {
     if (value != path) {
-      touch.hideButton(deleteButton)
-      touch.hideButton(showButton)
+      touch.restoreGrid()
     }
   })
 
@@ -126,11 +131,12 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div
       class="row"
+      bind:this={touch.grid}
       style:grid-template-columns={gridTemplateColumns}
-      on:touchstart="{(e) => touch.start(e, deleteButton, showButton) }"
-      on:touchmove="{(e) => touch.move(e, deleteButton, showButton) }"
+      on:touchstart="{(e) => touch.start(e) }"
+      on:touchmove="{(e) => touch.move(e) }"
       on:touchend="{(e) => {
-        const btn = touch.end(e, deleteButton, showButton)
+        const btn = touch.end(e)
         if (btn != null) {
           if (btn.classList.contains('delete-pass')) {
             handleDelPass()
@@ -157,11 +163,9 @@
       <div class="drawer">
         {#if isLeaf}
           <span role="button" class="{Config.showPassword} show-pass"
-                bind:this={showButton} 
                 on:click="{() => runIfNotMobile(handleGetPass, false) }"/>
         {/if}
         <span role="button" class="{Config.deleteIcon} delete-pass"
-              bind:this={deleteButton} 
               on:click="{() => runIfNotMobile(handleDelPass)}" />
       </div>
     </div>
@@ -192,33 +196,45 @@
     border-bottom: solid 1px;
     border-color: rgba(0,0,0,0.0);
 
+    div.drawer {
+      // Hide drawer icons without changing geometry
+      color: transparent;
+      span {
+        display: inline-block;
+      }
+    }
+
     @include vars.desktop-hover {
       border-color: vars.$lilac;
       // Display buttons on the direct child
       // when the parent element is hovered
       div.drawer > span.nf {
-        display: inline-block;
-        margin-left: 14px;
+        color: vars.$white;
       }
     }
 
-    // Hide drawer icons
-    span.nf:not(.row-icon) {
-      display: none;
-
-      // == Desktop ==
-      @include vars.desktop-hover {
-        color: vars.$lilac;
+    // == Desktop ==
+    @include vars.desktop-hover {
+      span.nf:not(.row-icon) {
+        &:hover {
+          color: vars.$lilac;
+        }
       }
     }
+    
     // == Mobile ==
     @include vars.mobile {
       div.drawer {
+        span {
+          height: 100%;
+        }
         span.show-pass {
           background-color: vars.$green;
+          width: 50%;
         }
         span.delete-pass {
           background-color: vars.$red;
+          width: 50%;
         }
       }
     }

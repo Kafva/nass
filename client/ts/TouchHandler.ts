@@ -1,13 +1,7 @@
 import { get } from "svelte/store";
 import { visibleButtonsStore } from "./store";
 
-// The #root container is centered using
-//  margin-left: 50vw - $width/2
-//
-// The widths need to be adjusted based on if one or two buttons
-// are going to be displayed
-const SWIPE_MIN_WIDTH = 20
-const SWIPE_MAX_WIDTH = 60
+const DRAWER_MAX_SPACE = 0.3
 
 // Max distance between the origin and end of a swipe for it
 // to be considered a click.
@@ -21,8 +15,15 @@ export default class TouchHandler {
      * is bound to.
      */
     private path: string,
+
+    /** Default layout of items in container grid */
+    private defaultLayout: {icon: number, name: number, drawer: number},
+
     /** x coordinate origin of a new touch event. */
-    private startX = 0
+    private startX = 0,
+
+    /** Grid container, the last child is always the drawer element */
+    public grid: HTMLDivElement|null = null
   ){}
 
   /** Platform check based on viewport width and UA */
@@ -31,28 +32,23 @@ export default class TouchHandler {
            && document.body.clientWidth <= 480
   }
 
-  start(event: TouchEvent, deleteButton: HTMLSpanElement,
-    showButton: HTMLSpanElement|null) {
-    if (!this.isMobile()) { return; }
+  private drawer(): HTMLDivElement {
+    return this.grid!.lastChild as HTMLDivElement
+  }
 
+  start(event: TouchEvent) {
+    if (!this.isMobile()) { return; }
 
     const touch = event.touches.item(0)
     if (touch) {
-      this.startX = touch.pageX/window.innerWidth
-      deleteButton.style.display     = "inline-block";
-      deleteButton.style.opacity     = "0.0"
-
-      if (showButton) {
-        showButton.style.display     = "inline-block";
-        showButton.style.width  = `${SWIPE_MIN_WIDTH}px`
-        showButton.style.opacity     = "0.0"
-      }
-      deleteButton.style.width = `${SWIPE_MIN_WIDTH}px`
+      // !! Do not change width of the buttons invidually, modify the 
+      // width of the drawer (tmeplate-columns) !!
+      // this.startX = touch.pageX/window.innerWidth
+      this.restoreGrid()
     }
   }
 
-  move(event: TouchEvent, deleteButton: HTMLSpanElement,
-    showButton: HTMLSpanElement|null) {
+  move(event: TouchEvent) {
     if (!this.isMobile()) { return; }
     const touch = event.touches.item(0)
     if (touch) {
@@ -60,18 +56,18 @@ export default class TouchHandler {
       // 1.0: Far right
       const x = Math.max(0.0, touch.pageX/window.innerWidth)
 
-      deleteButton.style.opacity     = `${1.0 - x}`
+      this.drawer().style.opacity     = `${1.0 - x}`
 
-      if (showButton) {
-        showButton.style.width  = `${SWIPE_MAX_WIDTH*(1.0-x) + SWIPE_MIN_WIDTH}px`
-        showButton.style.opacity     = `${1.0 - x}`
-      }
-      deleteButton.style.width = `${SWIPE_MAX_WIDTH*(1.0-x) + SWIPE_MIN_WIDTH}px`
+      const drawerColumn = 1 - this.defaultLayout.icon - x
+      const nameColumn = 1 - this.defaultLayout.icon - drawerColumn
+      console.log("move()", this.defaultLayout.icon, nameColumn, drawerColumn)
+
+      this.grid!.style.gridTemplateColumns = 
+        `${this.defaultLayout.icon}fr ${nameColumn}fr ${drawerColumn}fr`
     }
   }
 
-  end(event: TouchEvent, deleteButton: HTMLSpanElement,
-    showButton: HTMLSpanElement|null): HTMLSpanElement|null {
+  end(event: TouchEvent): HTMLSpanElement|null {
     if (!this.isMobile()) { return null; }
     const touch = event.changedTouches.item(0)
     if (touch) {
@@ -91,17 +87,14 @@ export default class TouchHandler {
       }
 
       if (x > 0.5) { // Hide the buttons if the swipe ends far to the right
-        this.hideButton(deleteButton)
-        this.hideButton(showButton)
+        this.restoreGrid()
       } else { // Let them remain visible if the swipe ends to the left
-        deleteButton.style.display     = "inline-block";
-        deleteButton.style.opacity     = "1.0"
-        if (showButton) {
-          showButton.style.display     = "inline-block";
-          showButton.style.width  = `${SWIPE_MAX_WIDTH + SWIPE_MIN_WIDTH}px`
-          showButton.style.opacity     = "1.0"
-        }
-        deleteButton.style.width = `${SWIPE_MAX_WIDTH + SWIPE_MIN_WIDTH}px`
+
+        this.drawer().style.opacity     = "1.0"
+        const nameColumn = 1 - this.defaultLayout.icon - DRAWER_MAX_SPACE
+
+        this.grid!.style.gridTemplateColumns = 
+          `${this.defaultLayout.icon}fr ${nameColumn}fr ${DRAWER_MAX_SPACE}fr`
 
         // Update the currently visible button, other PassEntry
         // objects will be notified of this and hide their buttons
@@ -112,10 +105,11 @@ export default class TouchHandler {
     return null
   }
 
-  hideButton(btn: HTMLSpanElement|null) {
-    if (btn) {
-      btn.style.display     = "none"
-      btn.style.opacity     = "0.0"
+  restoreGrid() {
+    if (this.grid != null) {
+      this.grid.style.gridTemplateColumns = 
+        `${this.defaultLayout.icon}fr ${this.defaultLayout.name}fr ${this.defaultLayout.drawer}fr`
+      this.drawer().style.opacity     = "0.0"
     }
   }
 }

@@ -34,8 +34,6 @@
 <Msg/>
 <Search/>
 
- 
-
 <Dialog component={Help}    btnClass="nf-mdi-help"/>
 <Dialog component={AddPass} btnClass="nf-fa-plus"/>
 
