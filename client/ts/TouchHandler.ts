@@ -79,7 +79,6 @@ export default class TouchHandler {
 
       // Return the current element being touched
       // if the swipe was over a short distance (i.e. essentially a click)
-      console.log(Math.abs(x - this.startX) , CLICK_LIMIT)
       if (Math.abs(x - this.startX) <= CLICK_LIMIT) {
         return event.target as HTMLSpanElement
       }

@@ -79,6 +79,17 @@ $cover_z: 9;
   border-radius: 5%;
 }
 
+// Shared style for <span/> buttons
+@mixin button-style() {
+  font-size: $font_large;
+  float: right;
+  margin: 10px 15px 0 0;
+
+  @include desktop-hover {
+    color: $lilac;
+  }
+}
+
 // This fading function is preferable for the password tree
 // (compared to the svelte JS-based approach) since it is triggered a
 // lot during searches

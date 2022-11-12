@@ -84,12 +84,6 @@
 
   // Buttons float to the corner
   span.nf {
-    font-size: vars.$font_large;
-    float: right;
-    margin: 10px 15px 0 0;
-
-    @include vars.desktop-hover {
-      color: vars.$lilac;
-    }
+    @include vars.button-style;
   }
 </style>

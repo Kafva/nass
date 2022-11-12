@@ -3,10 +3,9 @@
   import { foldPolicyStore, queryStringStore } from '../ts/store'
 </script>
 
-<!-- '$' is used to pass a store as writable -->
+<!-- '$' is used to pass a store as writable. -->
 <input type="text" placeholder="Search..." bind:value={$queryStringStore}
-       on:focus="{() => foldPolicyStore.set(FoldPolicy.allOpen) }"
-       on:blur="{() => foldPolicyStore.set(FoldPolicy.allClosed) }"/>
+       on:focus="{() => foldPolicyStore.set(FoldPolicy.allOpen) }"/>
 
 <style lang="scss">
   @use "../scss/vars";

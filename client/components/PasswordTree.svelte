@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { authInfoStore, foldPolicyStore, msgTextStore, queryStringStore, rootEntryStore, showPassStore, visibleButtonsStore } from '../ts/store'
+  import { authInfoStore, foldPolicyStore, msgTextStore, queryStringStore, 
+    rootEntryStore, showPassStore, visibleButtonsStore } from '../ts/store'
   import { Config, MessageText} from '../ts/config'
   import { FoldPolicy } from '../ts/types'
   import type { ApiResponse, AuthInfo, PassItem } from '../ts/types'
@@ -148,17 +149,20 @@
           (open ? Config.dropdownOpen : Config.dropdownClosed)} row-icon"
         on:click="{() => runIfNotMobile(handleMainClick) }"
       />
-      <span role="button" class="name" on:click="{() => runIfNotMobile(handleMainClick) }">
+      <span role="button" class="name" 
+            on:click="{() => runIfNotMobile(handleMainClick) }">
         {entry.name}
       </span>
 
       <div class="drawer">
         {#if isLeaf}
           <span role="button" class="{Config.showPassword} show-pass"
-                bind:this={showButton} on:click="{() => runIfNotMobile(handleGetPass, false) }"/>
+                bind:this={showButton} 
+                on:click="{() => runIfNotMobile(handleGetPass, false) }"/>
         {/if}
         <span role="button" class="{Config.deleteIcon} delete-pass"
-              bind:this={deleteButton} on:click="{() => runIfNotMobile(handleDelPass)}" />
+              bind:this={deleteButton} 
+              on:click="{() => runIfNotMobile(handleDelPass)}" />
       </div>
     </div>
   {/if}
@@ -197,11 +201,32 @@
       }
     }
 
+    span.name {
+      text-align: left;
+      margin-left: 20px;
+    }
+
     // Hide drawer icons
     span.nf:not(.row-icon) {
       display: none;
-      @include vars.desktop-hover {
-        color: vars.$lilac;
+
+      // == Desktop ==
+      @include vars.desktop {
+        margin-left: 20px;
+        &:hover {
+          color: vars.$lilac;
+        }
+      }
+    }
+    // == Mobile ==
+    @include vars.mobile {
+      div.drawer {
+        span.show-pass {
+          background-color: vars.$green;
+        }
+        span.delete-pass {
+          background-color: vars.$red;
+        }
       }
     }
   }
