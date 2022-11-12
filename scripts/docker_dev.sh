@@ -49,7 +49,7 @@ find . \
   -path ./dist -prune -o \
   -path ./node_modules -prune -o \
   -name "*.go" -o -name "*.js" -o -name "*.ts" -o -name "*.tsx" \
-  -o -name "*.html" -o -name "*.scss" -o -name "*.css" \
+  -o -name "*.html" -o -name "*.scss" -o -name "*.css" -o -name "*.ttf" \
   -o -name "*.yml" -o -name "*.svelte" |entr -n -s "
     docker cp main.go    $CONTAINER:/nass/ 2> /dev/null
     docker cp index.html $CONTAINER:/nass/ 2> /dev/null

@@ -14,6 +14,13 @@ yarn run lint
 
 # Client tests
 yarn run test
+
+
+# Create subset font (i.e. exclude unused glyphs)
+pip install --user fonttools
+pyftsubset public/assets/meslo-nerd-fonts.ttf \
+  --unicodes-file=conf/subset.utf8 \
+  --output-file=public/assets/meslo-nass.ttf
 ```
 
 ## Server
