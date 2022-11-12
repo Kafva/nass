@@ -29,8 +29,6 @@
 
   // import { MessageText } from '../ts/config';
   // setTimeout(()=>msgTextStore.set([MessageText.pathOverlap, ""]), 1000)
-
-  
 </script>
 
 <Msg/>
@@ -70,5 +68,4 @@ occur, this simplifies the update logic. -->
   span.nf {
     @include vars.button-style;
   }
-
 </style>

@@ -116,7 +116,7 @@
   }
 
   const runIfNotMobile = (f: Function, ...args: any) => {
-    if (!touch.isMobile()) f(args)
+    if (!touch.isMobile()) f(...args)
   }
 </script>
 
@@ -198,12 +198,8 @@
       // when the parent element is hovered
       div.drawer > span.nf {
         display: inline-block;
+        margin-left: 14px;
       }
-    }
-
-    span.name {
-      text-align: left;
-      margin-left: 20px;
     }
 
     // Hide drawer icons
@@ -211,11 +207,8 @@
       display: none;
 
       // == Desktop ==
-      @include vars.desktop {
-        margin-left: 20px;
-        &:hover {
-          color: vars.$lilac;
-        }
+      @include vars.desktop-hover {
+        color: vars.$lilac;
       }
     }
     // == Mobile ==
