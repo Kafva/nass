@@ -1,25 +1,5 @@
 @use "vars";
 
-// TODO
-@font-face {
-  font-family: Meslo;
-  src: url("meslo-nass.ttf");
-  font-weight: normal;
-  font-style: normal;
-}
-
-:global(.nf-fa-plus:before) {
-    content: "\f067";
-}
-:global(.nf-mdi-key:before) {
-    content: "\f805";
-}
-:global(.nf-fa-angle_down:before) {
-    content: "\f107";
-}
-// TODO
-
-
 :global(html), :global(body) {
   // The @font-face for 'Meslo' is defined in `nerd-fonts.min.css`
   font-family: Meslo, Arial;
