@@ -75,6 +75,18 @@ export default class TouchHandler {
     }
   }
 
+  /**
+   * Returns the distance from `startX` of the current touch
+   * 0.0: Far left
+   * 1.0: Far right
+   *
+   * A negative value indicates that startX > currentX, i.e. [<---]
+   * A positive value indicates that startX < currentX, i.e. [--->]
+   */
+  private distanceX(touch: Touch): number {
+    return touch.pageX/window.innerWidth - this.startX
+  }
+
   move(event: TouchEvent) {
     if (!this.isMobile()) { return; }
     const touch = event.touches.item(0)
@@ -83,20 +95,25 @@ export default class TouchHandler {
       // The intensity of the effect is based on the distance between the
       // start and endpoint, not the actual position
       //
-      // 0.0: Far left
-      // 1.0: Far right
-      const x = touch.pageX/window.innerWidth - this.startX
-
+      const x = this.distanceX(touch)
 
       // [<---] If x < 0, we should INCREASE the right offset
       //  We want the offset to be MAX_OFFSET when x=-0.7
       // [--->] If x > 0, we should DECREASE the right offset
       //  We want the offset to be MIN_OFFSET when x=0.7
-      const offset = x < 0 ?
-        Math.min(MAX_OFFSET, Math.abs(x)) :
-        Math.max(0, 0.7 - x)
+      //const offset = x < 0 ?
+      //  Math.min(MAX_OFFSET, Math.abs(x)) :
+      //  Math.min(MAX_OFFSET, 1-Math.abs(x))
+      //Math.max(0, Math.max(MAX_OFFSET, x))
 
-      console.log("x", touch.pageX/window.innerWidth)
+      const leftwards_swipe_offset = Math.min(MAX_OFFSET, Math.abs(x)) 
+
+      // The new X should be greater than the startX
+      const rightwards_swipe_offset = -1*( this.startX + (touch.pageX/window.innerWidth) )
+
+      const offset = x < 0 ? leftwards_swipe_offset : rightwards_swipe_offset
+
+      console.log("x", x)
       console.log("offset:", offset)
 
       // Decrease the opacity of the name and icon (up to a threshold)
@@ -105,8 +122,8 @@ export default class TouchHandler {
       const low = Math.max(OPACITY_LOW_TIDE, Math.min(...opacity)).toString()
       const high = Math.max(OPACITY_LOW_TIDE, Math.max(...opacity))
 
-      this.icon().style.opacity     = low
-      this.name().style.opacity     = low
+      this.icon().style.opacity = low
+      this.name().style.opacity = low
       this.setDrawerOpacity(high)
 
       this.grid!.style.backgroundColor =
@@ -124,16 +141,15 @@ export default class TouchHandler {
     if (!this.isMobile()) { return null; }
     const touch = event.changedTouches.item(0)
     if (touch) {
-      const x = touch.pageX/window.innerWidth
-
+      const x = Math.abs(this.distanceX(touch))
       // Return the current element being touched
       // if the swipe was over a short distance (i.e. essentially a click)
-      if (Math.abs(x - this.startX) <= CLICK_LIMIT) {
+      if (x <= CLICK_LIMIT) {
         return event.target as HTMLSpanElement
       }
 
       if (x > 0.5) { // Hide the buttons if the swipe ends far to the right
-        this.restoreGrid()
+        this.restoreLayout()
       } else { // Let them remain visible if the swipe ends to the left
         this.icon().style.opacity     = OPACITY_LOW_TIDE.toString()
         this.name().style.opacity     = OPACITY_LOW_TIDE.toString()
@@ -148,7 +164,7 @@ export default class TouchHandler {
     return null
   }
 
-  restoreGrid() {
+  restoreLayout() {
     if (this.grid != null) {
       this.updateElements("inherit", 0)
 

@@ -42,7 +42,7 @@
   // Restore the grid layout if another path has visible buttons
   visibleButtonsStore.subscribe((value: string) => {
     if (value != path) {
-      touch.restoreGrid()
+      touch.restoreLayout()
     }
   })
 
