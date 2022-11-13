@@ -27,8 +27,8 @@
  
   const treeLevel = ((entry.parents.length+1) / Config.maxPassDepth)
   const iconColumn = Math.max(ICON_MIN_SPACE, treeLevel * ICON_MAX_SPACE)
-  const nameColumn = 2 * ((1 - iconColumn) / 3)
-  const drawerColumn = 1 * ((1 - iconColumn) / 3)
+  const drawerColumn = 1 * ((1 - iconColumn) / 4)
+  const nameColumn = 1 - iconColumn - drawerColumn
   const gridTemplateColumns = `${iconColumn}fr ${nameColumn}fr ${drawerColumn}fr`
 
   const path = entry.path()
@@ -200,8 +200,7 @@
       }
       // == Desktop ==
       @include vars.desktop {
-        justify-content: space-between;
-        margin-right: 2px;
+        justify-content: space-evenly;
       }
     }
 

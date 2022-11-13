@@ -32,7 +32,7 @@ enum MessageText {
   invalidPath = "Invalid format for path",
   invalidPass = "Invalid format for password",
   invalidVerify = "Passwords do not match",
-  err = "Error:",
+  err = "Error: ",
   valid = "Valid" // Only used internally
 }
 

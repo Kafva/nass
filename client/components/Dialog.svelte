@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { authInfoStore, showPassStore } from '../ts/store';
+  import { authInfoStore, showPassStore, visibleButtonsStore } from '../ts/store';
   import { fade, fly } from '../ts/util';
   import type { SvelteComponent } from "svelte";
 
@@ -47,7 +47,10 @@
 {#if btnClass != ""}
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <span role="button" class="{'nf '+ btnClass}"
-        on:click="{() => visible = true }"></span>
+        on:click="{() => { 
+          visible = true 
+          visibleButtonsStore.set("")
+  }}"></span>
 {/if}
 
 <style lang="scss">
