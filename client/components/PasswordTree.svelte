@@ -22,6 +22,7 @@
   // -----------------------------------------------
   // | <span icon/> | <span name/> | <div drawer/> |
   // -----------------------------------------------
+  // The icons space is adjusted based on the treeLevel.
   const ICON_MIN_SPACE = 0.1
   const ICON_MAX_SPACE = 0.4
  
