@@ -1,5 +1,66 @@
-import { Config, MessageText } from "./config"
+import { Config, DRAWER_MAX_SPACE, MessageText } from "./config"
+import type { ColumnLayout } from "./types"
 import { msgTextStore } from "./store"
+
+const ICON_MIN_SPACE = 0.1
+const ICON_MAX_SPACE = 0.4
+
+const DRAWER_MIN_SPACE = 0.1
+
+const ColumnLayoutToString = (layout: ColumnLayout): string => {
+  return `${layout.icon}fr ${layout.name}fr ${layout.drawer}fr`
+}
+
+// @param treeLevel root nodes are at a level 1
+const CalculateColumnLayout = (treeLevel: number, touchDistance: number): ColumnLayout => {
+  // Each row is in a grid:
+  // -----------------------------------------------
+  // | <span icon/> | <span name/> | <div drawer/> |
+  // -----------------------------------------------
+  // Instead of adjusting the left margin of the icon span we will
+  // adjust the `grid-template-columns` layout for each tree level and
+  // touches on the drawer.
+  //
+  // Increase the space occupied by the icon column as 
+  // we go deeper.
+  // --------------------------------------------------------------------------- 
+  // |  [ICON_MIN,ICON_MAX] |  remaining space |   [DRAWER_MIN,DRAWER_MAX]     |
+  // --------------------------------------------------------------------------- 
+
+  // Adjust the icon space based on the treeLevel
+  const iconColumn = Math.max(ICON_MIN_SPACE, 
+    (treeLevel / Config.maxPassDepth) * ICON_MAX_SPACE)
+
+  // The space occupied by the drawer column should increase based on the
+  // distance of the current touch event (if any)
+  //
+  // 0.0: Far left
+  // 1.0: Far right
+  //
+  // The drawerColumn should: 
+  //  * increase in width if we move  0.0 <-- 1.0  (startX - x > 0)
+  //  * decrease in width if we move  0.0 --> 1.0  (startX - x < 0)
+  //
+  let drawerColumn = DRAWER_MIN_SPACE // Default fallback
+
+  if (touchDistance < 1 && touchDistance != 0) {
+    // The touchDistance value is thus interpreted as:
+    drawerColumn = touchDistance < 0 ? 
+      //  negative: decrease the drawer space
+      Math.max(DRAWER_MIN_SPACE, DRAWER_MAX_SPACE * (1-Math.abs(touchDistance))) :
+      //  positive: increase the drawer space
+      Math.min(DRAWER_MAX_SPACE, DRAWER_MIN_SPACE * (1+touchDistance))
+  }
+  
+
+  // Remaining space
+  const nameColumn = 1 - iconColumn - drawerColumn
+
+  console.log("touch distance", touchDistance)
+  console.log("template columns", iconColumn, nameColumn, drawerColumn)
+
+  return {icon: iconColumn, name: nameColumn, drawer: drawerColumn} as ColumnLayout 
+}
 
 /**
  * Custom fly transition to avoid a CSP hack with the current Svelte
@@ -81,4 +142,5 @@ const Err = (...args: any) => {
   console.log("%c ERROR ", 'background: #ed493e; color: #f5e4f3', ...args)
 }
 
-export {fly, fade, GetHTMLElement, GetHTMLElements, CopyToClipboard, Debug, Err }
+export { fly, fade, CalculateColumnLayout, ColumnLayoutToString, 
+  GetHTMLElement, GetHTMLElements, CopyToClipboard, Debug, Err }

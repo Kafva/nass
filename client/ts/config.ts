@@ -69,4 +69,6 @@ const MessageTimeouts: { [id: string]: number } = {
 const passentryRegex = "^[-_.@/a-zA-Z0-9]{1," + Config.textMaxLen + "}$"
 const passwordRegex = "^[-§$!\"'#€%&()=?*<>_.@/a-zA-Z0-9åäöÅÄÖ]{1," + Config.textMaxLen + "}$"
 
-export { Config, MessageText, MessageIcons, MessageTimeouts, passentryRegex, passwordRegex }
+const DRAWER_MAX_SPACE = 0.4
+
+export { Config, MessageText, MessageIcons, MessageTimeouts, passentryRegex, passwordRegex, DRAWER_MAX_SPACE }

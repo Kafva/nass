@@ -1,10 +1,11 @@
 <script lang="ts">
   import { authInfoStore, foldPolicyStore, msgTextStore, queryStringStore, 
-    rootEntryStore, showPassStore, visibleButtonsStore } from '../ts/store'
+           rootEntryStore, showPassStore, visibleButtonsStore } 
+           from '../ts/store'
   import { Config, MessageText} from '../ts/config'
   import { FoldPolicy } from '../ts/types'
   import type { ApiResponse, AuthInfo, PassItem } from '../ts/types'
-  import { CopyToClipboard, Debug } from '../ts/util'
+  import { CalculateColumnLayout, ColumnLayoutToString, CopyToClipboard, Debug } from '../ts/util'
   import { ApiStatusResponse } from '../ts/types'
   import type PassEntry from '../ts/PassEntry'
   import ApiRequest from '../ts/ApiRequest'
@@ -17,38 +18,13 @@
   const isLeaf = entry.subitems.length == 0
   let open = false
 
-  // Each row is in a grid:
-  // -----------------------------------------------
-  // | <span icon/> | <span name/> | <div drawer/> |
-  // -----------------------------------------------
-  // Instead of adjusting the left margin of the icon span we will
-  // adjust the `grid-template-columns` layout for each tree level and
-  // touches on the drawer.
-  //
-  // Increase the space occupied by the icon column as 
-  // we go deeper.
-  // --------------------------------------------------------------------------- 
-  // |  [ICON_MIN,ICON_MAX] |  remaining space |   [DRAWER_MIN,DRAWER_MAX]     |
-  // --------------------------------------------------------------------------- 
-  const ICON_MIN_SPACE = 0.1
-  const ICON_MAX_SPACE = 0.6
-
-  const DRAWER_MIN_SPACE = 0.1
-
-  const treeLevel = ((entry.parents.length+1) / Config.maxPassDepth)
-  const iconColumn = Math.max(ICON_MIN_SPACE, treeLevel * ICON_MAX_SPACE)
-  const drawerColumn = DRAWER_MIN_SPACE
-  const nameColumn = 1 - iconColumn + drawerColumn
-  const gridTemplateColumns = `${iconColumn}fr ${nameColumn}fr ${drawerColumn}fr`
-
+  const treeLevel = entry.parents.length + 1
+  const columnLayout = CalculateColumnLayout(treeLevel, 0)
+  const gridTemplateColumns = ColumnLayoutToString(columnLayout)
 
   const path = entry.path()
   const api = new ApiRequest()
-  const touch = new TouchHandler(path, {
-    icon: iconColumn, // Fixed
-    name: nameColumn,
-    drawer: drawerColumn
-  })
+  const touch = new TouchHandler(path, treeLevel, columnLayout)
 
   queryStringStore.subscribe((value: string) => {
     currentQuery = value.toLowerCase()
@@ -229,14 +205,8 @@
       div.drawer {
         span {
           height: 100%;
-        }
-        span.show-pass {
-          background-color: vars.$green;
-          width: 50%;
-        }
-        span.delete-pass {
-          background-color: vars.$red;
-          width: 50%;
+          width: 100%;
+          background-color: vars.$button_bg;
         }
       }
     }

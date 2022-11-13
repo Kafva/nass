@@ -1,8 +1,8 @@
+import { CalculateColumnLayout, ColumnLayoutToString } from "./util";
+import type { ColumnLayout } from "./types";
 import { get } from "svelte/store";
 import { visibleButtonsStore } from "./store";
-
-const DRAWER_MAX_SPACE = 0.4
-const DRAWER_MIN_SPACE = 0.1
+import { DRAWER_MAX_SPACE } from "./config";
 
 // Max distance between the origin and end of a swipe for it
 // to be considered a click.
@@ -16,9 +16,10 @@ export default class TouchHandler {
      * is bound to.
      */
     private path: string,
+    private treeLevel: number,
 
     /** Default layout of items in container grid */
-    private defaultLayout: {icon: number, name: number, drawer: number},
+    private defaultLayout: ColumnLayout,
 
     /** x coordinate origin of a new touch event. */
     private startX = 0,
@@ -60,19 +61,12 @@ export default class TouchHandler {
       // The drawerColumn should: 
       //  * increase in width if we move  0.0 <-- 1.0  (startX - x > 0)
       //  * decrease in width if we move  0.0 --> 1.0  (startX - x < 0)
-
       const distance = this.startX - x 
-      // If the distance is negative, we want a small `fr` value
-      // If the distance is posisitve, we want a larger `fr` value
 
       //this.drawer().style.opacity     = `${1.0 - x}`
+      const columnLayout = CalculateColumnLayout(this.treeLevel, distance)
 
-      const drawerColumn =   distance < 0 ? DRAWER_MAX_SPACE * Math.max(-1*distance) : DRAWER_MIN_SPACE * distance
-      const nameColumn = 1 - this.defaultLayout.icon - drawerColumn
-      console.log("move()", distance, x)
-
-      this.grid!.style.gridTemplateColumns = 
-        `${this.defaultLayout.icon}fr ${nameColumn}fr ${drawerColumn}fr`
+      this.grid!.style.gridTemplateColumns = ColumnLayoutToString(columnLayout)
     }
   }
 
@@ -84,9 +78,8 @@ export default class TouchHandler {
 
       // Return the current element being touched
       // if the swipe was over a short distance (i.e. essentially a click)
-      console.log(x, this.startX, CLICK_LIMIT)
+      console.log("click limit", Math.abs(x - this.startX), CLICK_LIMIT)
       if (Math.abs(x - this.startX) <= CLICK_LIMIT) {
-        console.log("Returning click for", event.target)
         return event.target as HTMLSpanElement
       }
 
@@ -118,8 +111,7 @@ export default class TouchHandler {
 
   restoreGrid() {
     if (this.grid != null) {
-      this.grid.style.gridTemplateColumns = 
-        `${this.defaultLayout.icon}fr ${this.defaultLayout.name}fr ${this.defaultLayout.drawer}fr`
+      this.grid.style.gridTemplateColumns = ColumnLayoutToString(this.defaultLayout)
       this.drawer().style.opacity     = "0.0"
     }
   }
