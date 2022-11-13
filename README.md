@@ -18,7 +18,7 @@ yarn run test
 
 # Create subset font (i.e. exclude unused glyphs)
 pip install --user fonttools
-./scripts/fontgen.sh
+./scripts/genfont.sh
 ```
 
 ## Server

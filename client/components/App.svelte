@@ -10,7 +10,7 @@
   import Auth from './Auth.svelte'
   import Msg from './Msg.svelte'
   import ShowPass from './ShowPass.svelte'
-    import { FoldPolicy } from '../ts/types';
+  import { FoldPolicy } from '../ts/types';
 
   const tmpl = GetHTMLElement<HTMLDivElement>("#tmpl")
   let rootEntry = new PassEntry("", [], [], [])
