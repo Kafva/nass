@@ -4,10 +4,11 @@ import { visibleButtonsStore } from "./store";
 // to be considered a click.
 const CLICK_LIMIT = 0.02
 
-const MAX_OFFSET = 0.2
-const OPACITY_LOW_TIDE = 0.4;
+//const MAX_OFFSET = 0.0
+const OPACITY_LOW_TIDE = 0.3;
 const OPACITY_HIGH_TIDE = 1.0;
-const BG_OPACITY_MAX = 0.4;
+const BG_OPACITY_MAX = 0.2;
+//const BG_OPACITY_MIN = 0.0;
 const BG_COLOR = "25,25,24"
 
 /** Handler for touch events on each item in the PasswordTree */
@@ -20,7 +21,9 @@ export default class TouchHandler {
     private path: string,
 
     /** x coordinate origin of a new touch event. */
-    private startX = 0,
+    private originX = 0,
+
+    private originOpacities = {left: 0, right: 0, bg: 0},
 
     /** Grid container, the last child is always the drawer element */
     public grid: HTMLDivElement|null = null
@@ -32,17 +35,11 @@ export default class TouchHandler {
            && document.body.clientWidth <= 480
   }
 
-  private icon(): HTMLSpanElement {
-    return this.grid!.firstChild as HTMLSpanElement
-  }
-  private name(): HTMLSpanElement {
-    return this.grid!.children.item(1) as HTMLSpanElement
-  }
   /**
    * Update the position and right offset (0-100 %) of all elements in the
    * grid of the main container.
    */
-  private updateElements(position = "", right = 0) {
+  private updateOffset(position = "", right = 0) {
     if (this.grid != null) {
       for (const child  of this.grid.children) {
         const htmlChild = child as HTMLElement
@@ -53,9 +50,39 @@ export default class TouchHandler {
       }
     }
   }
+  private getOpacities(): {left: number, right: number, bg: number} {
+    const icon = this.grid!.children.item(0) as HTMLSpanElement
+    const button = (this.grid!.lastChild as HTMLElement).children.item(0) as HTMLSpanElement
+    const bg_splits = this.grid!.style.backgroundColor.split(',')   
+    const bg = bg_splits.length == 4 ? parseFloat(bg_splits[3].slice(0,-1)) : 0.0
+    return { 
+      left: parseFloat(window.getComputedStyle(icon).opacity), 
+      right: parseFloat(window.getComputedStyle(button).opacity),
+      bg: bg
+    }
+  }
 
-  private setDrawerOpacity(opacity: number) {
+  private setBgOpacity(opacity: number) {
+    this.grid!.style.backgroundColor = 
+      `rgba(${BG_COLOR},${Math.min(BG_OPACITY_MAX, opacity)})`
+  }
+
+  private setLeftOpacity(opacity: number) {
     if (this.grid != null) {
+      const bounded_opacity =
+        Math.min(OPACITY_HIGH_TIDE, Math.max(OPACITY_LOW_TIDE, opacity))
+
+      const icon = this.grid!.children.item(0) as HTMLSpanElement
+      const name = this.grid!.children.item(1) as HTMLSpanElement
+      icon.style.opacity = bounded_opacity.toString()
+      name.style.opacity = bounded_opacity.toString()
+      console.log("Left opacity:", bounded_opacity)
+    }
+  }
+
+  private setRightOpacity(opacity: number) {
+    if (this.grid != null) {
+      console.log("Right opacity:", opacity)
       for (const child of (this.grid.lastChild as HTMLElement).children) {
         (child as HTMLSpanElement).style.opacity = opacity.toString()
       }
@@ -66,78 +93,56 @@ export default class TouchHandler {
     if (!this.isMobile()) { return; }
     const touch = event.touches.item(0)
     if (touch) {
-      this.startX = touch.pageX/window.innerWidth
-      this.updateElements("relative")
+      this.originX = touch.pageX/window.innerWidth
+
+      this.setLeftOpacity(OPACITY_LOW_TIDE)
+      this.setRightOpacity(OPACITY_LOW_TIDE)
+
+      this.originOpacities = this.getOpacities()
+      this.updateOffset("relative")
 
       // Update the currently visible button, other PassEntry
       // objects will be notified of this and hide their buttons
       visibleButtonsStore.set(this.path)
+
+      console.log("originX", this.originX, "originOpacities", this.originOpacities)
     }
   }
 
-  /**
-   * Returns the distance from `startX` of the current touch
-   * 0.0: Far left
-   * 1.0: Far right
-   *
-   * A negative value indicates that startX > currentX, i.e. [<---]
-   * A positive value indicates that startX < currentX, i.e. [--->]
-   */
-  private distanceX(touch: Touch): number {
-    return touch.pageX/window.innerWidth - this.startX
-  }
 
   move(event: TouchEvent) {
     if (!this.isMobile()) { return; }
     const touch = event.touches.item(0)
     if (touch) {
+      // On the first touch save originX and set a origin value for the
+      //    bg_opacity
+      //    icon+name text
+      //    drawer
       //
-      // The intensity of the effect is based on the distance between the
-      // start and endpoint, not the actual position
+      // On each move() calculate the distance from origin and increase
+      // or decrease each element with this ammount.
       //
-      const x = this.distanceX(touch)
+      // 0.0: Far left
+      // 1.0: Far right
+      const newX = touch.pageX/window.innerWidth
+      const distance = Math.abs(newX - this.originX)
 
-      // [<---] If x < 0, we should INCREASE the right offset
-      //  We want the offset to be MAX_OFFSET when x=-0.7
-      // [--->] If x > 0, we should DECREASE the right offset
-      //  We want the offset to be MIN_OFFSET when x=0.7
-      //const offset = x < 0 ?
-      //  Math.min(MAX_OFFSET, Math.abs(x)) :
-      //  Math.min(MAX_OFFSET, 1-Math.abs(x))
-      //Math.max(0, Math.max(MAX_OFFSET, x))
+      if (newX > this.originX) { 
+        // On [--->] (fold in buttons), 
+        // decrease opacity of the rhs and increase for the lhs
+        this.setLeftOpacity(this.originOpacities.left + distance)
+        this.setRightOpacity(this.originOpacities.right - distance)
+        this.updateOffset("", -1*100*distance)
+      } else {
+        // On [<---] (fold out buttons), 
+        // decrease opacity of the lhs and increase for the rhs
+        this.setLeftOpacity(this.originOpacities.left - distance)
+        this.setRightOpacity(this.originOpacities.right + distance)
+        this.updateOffset("", 100*distance)
+      }
 
-      //const leftwards_swipe_offset = Math.min(MAX_OFFSET, Math.abs(x)) 
-
-      // The new X should be greater than the startX
-      //const rightwards_swipe_offset = -1*( touch.pageX/window.innerWidth )
-
-      //const offset = x < 0 ? leftwards_swipe_offset : rightwards_swipe_offset
-      //
-      const offset = x < 0 ? 
-        Math.min(MAX_OFFSET, Math.abs(x)) : 
-        -1*Math.min(MAX_OFFSET,Math.abs(x))
-
-      console.log("x", x)
-      console.log("offset:", offset)
-
-      // Decrease the opacity of the name and icon (up to a threshold)
-      // while increasing the opacity of the interactive button(s).
-      const opacity = [Math.abs(1.0 - x), Math.abs(x)]
-      const low = Math.max(OPACITY_LOW_TIDE, Math.min(...opacity)).toString()
-      const high = Math.max(OPACITY_LOW_TIDE, Math.max(...opacity))
-
-      this.icon().style.opacity = low
-      this.name().style.opacity = low
-      this.setDrawerOpacity(high)
-
-      this.grid!.style.backgroundColor =
-        `rgba(${BG_COLOR},${Math.min(BG_OPACITY_MAX, high)})`
-
-      // A large x should result in a small value for the right offset
-      // To have the bg color stay in place, we only move the
-      // contents of the row
-      //const offset = Math.min(MAX_OFFSET, MAX_OFFSET*(1-Math.abs(x)))
-      this.updateElements("", 100*offset)
+      // The background color should always increase and be set reset at origin
+      this.setBgOpacity(distance/4) 
     }
   }
 
@@ -145,23 +150,28 @@ export default class TouchHandler {
     if (!this.isMobile()) { return null; }
     const touch = event.changedTouches.item(0)
     if (touch) {
-      const x = Math.abs(this.distanceX(touch))
+      const newX = touch.pageX/window.innerWidth
+      const distance = Math.abs(newX - this.originX)
+
       // Return the current element being touched
       // if the swipe was over a short distance (i.e. essentially a click)
-      if (x <= CLICK_LIMIT) {
+      if (distance <= CLICK_LIMIT) {
         return event.target as HTMLSpanElement
       }
 
-      if (x > 0.5) { // Hide the buttons if the swipe ends far to the right
+      // Restore the layout if the buttons have not been
+      // fully dragged out
+      console.log("end: Right opacity:", this.getOpacities().right)
+      if (this.getOpacities().right <= 0.6) { 
         this.restoreLayout()
-      } else { // Let them remain visible if the swipe ends to the left
-        this.icon().style.opacity     = OPACITY_LOW_TIDE.toString()
-        this.name().style.opacity     = OPACITY_LOW_TIDE.toString()
+      } else { // Let them remain visible they partially transparent
 
-        this.grid!.style.backgroundColor = `rgba(${BG_COLOR},${BG_OPACITY_MAX})`
-        this.setDrawerOpacity(OPACITY_HIGH_TIDE)
+        //this.grid!.style.backgroundColor = `rgba(${BG_COLOR},${BG_OPACITY_MAX})`
+        //this.setButtonsOpacity(OPACITY_HIGH_TIDE)
+        //this.icon().style.opacity     = OPACITY_LOW_TIDE.toString()
+        //this.name().style.opacity     = OPACITY_LOW_TIDE.toString()
 
-        this.updateElements("", 100*MAX_OFFSET)
+        //this.updateOffset("", 100*MAX_OFFSET)
       }
     }
 
@@ -170,13 +180,10 @@ export default class TouchHandler {
 
   restoreLayout() {
     if (this.grid != null) {
-      this.updateElements("inherit", 0)
-
-      this.icon().style.opacity     = OPACITY_HIGH_TIDE.toString()
-      this.name().style.opacity     = OPACITY_HIGH_TIDE.toString()
-
-      this.grid!.style.backgroundColor = `rgba(${BG_COLOR},0.0)`
-      this.setDrawerOpacity(0.0)
+      this.setBgOpacity(0.0)
+      this.setLeftOpacity(1.0)
+      this.setRightOpacity(0.0)
+      this.updateOffset("inherit", 0)
     }
   }
 }
