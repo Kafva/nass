@@ -106,12 +106,16 @@ export default class TouchHandler {
       //  Math.min(MAX_OFFSET, 1-Math.abs(x))
       //Math.max(0, Math.max(MAX_OFFSET, x))
 
-      const leftwards_swipe_offset = Math.min(MAX_OFFSET, Math.abs(x)) 
+      //const leftwards_swipe_offset = Math.min(MAX_OFFSET, Math.abs(x)) 
 
       // The new X should be greater than the startX
-      const rightwards_swipe_offset = -1*( this.startX + (touch.pageX/window.innerWidth) )
+      //const rightwards_swipe_offset = -1*( touch.pageX/window.innerWidth )
 
-      const offset = x < 0 ? leftwards_swipe_offset : rightwards_swipe_offset
+      //const offset = x < 0 ? leftwards_swipe_offset : rightwards_swipe_offset
+      //
+      const offset = x < 0 ? 
+        Math.min(MAX_OFFSET, Math.abs(x)) : 
+        -1*Math.min(MAX_OFFSET,Math.abs(x))
 
       console.log("x", x)
       console.log("offset:", offset)
