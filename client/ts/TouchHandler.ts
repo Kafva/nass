@@ -4,7 +4,7 @@ import { visibleButtonsStore } from "./store";
 // to be considered a click.
 const CLICK_LIMIT = 0.02
 
-const MAX_OFFSET = 90
+const MAX_OFFSET = 0.2
 const OPACITY_LOW_TIDE = 0.4;
 const OPACITY_HIGH_TIDE = 1.0;
 const BG_OPACITY_MAX = 0.4;
@@ -39,7 +39,7 @@ export default class TouchHandler {
     return this.grid!.children.item(1) as HTMLSpanElement
   }
   /**
-   * Update the position and right offset of all elements in the
+   * Update the position and right offset (0-100 %) of all elements in the
    * grid of the main container.
    */
   private updateElements(position = "", right = 0) {
@@ -49,7 +49,7 @@ export default class TouchHandler {
         if (position != "") {
           htmlChild.style.position = position
         }
-        htmlChild.style.right = `${right}px`
+        htmlChild.style.right = `${right}%`
       }
     }
   }
@@ -79,15 +79,29 @@ export default class TouchHandler {
     if (!this.isMobile()) { return; }
     const touch = event.touches.item(0)
     if (touch) {
+      //
+      // The intensity of the effect is based on the distance between the
+      // start and endpoint, not the actual position
+      //
       // 0.0: Far left
       // 1.0: Far right
-      //
-      // If startX is large, the swipe started far to the right
-      const x = Math.max(0.0, touch.pageX/window.innerWidth) 
+      const x = touch.pageX/window.innerWidth - this.startX
+
+
+      // [<---] If x < 0, we should INCREASE the right offset
+      //  We want the offset to be MAX_OFFSET when x=-0.7
+      // [--->] If x > 0, we should DECREASE the right offset
+      //  We want the offset to be MIN_OFFSET when x=0.7
+      const offset = x < 0 ?
+        Math.min(MAX_OFFSET, Math.abs(x)) :
+        Math.max(0, 0.7 - x)
+
+      console.log("x", touch.pageX/window.innerWidth)
+      console.log("offset:", offset)
 
       // Decrease the opacity of the name and icon (up to a threshold)
       // while increasing the opacity of the interactive button(s).
-      const opacity = [1.0 - Math.abs(x), Math.abs(x)]
+      const opacity = [Math.abs(1.0 - x), Math.abs(x)]
       const low = Math.max(OPACITY_LOW_TIDE, Math.min(...opacity)).toString()
       const high = Math.max(OPACITY_LOW_TIDE, Math.max(...opacity))
 
@@ -95,14 +109,14 @@ export default class TouchHandler {
       this.name().style.opacity     = low
       this.setDrawerOpacity(high)
 
-      this.grid!.style.backgroundColor = 
+      this.grid!.style.backgroundColor =
         `rgba(${BG_COLOR},${Math.min(BG_OPACITY_MAX, high)})`
 
       // A large x should result in a small value for the right offset
       // To have the bg color stay in place, we only move the
       // contents of the row
-      const offset = Math.min(MAX_OFFSET, MAX_OFFSET*Math.abs(1-x))
-      this.updateElements("", offset)
+      //const offset = Math.min(MAX_OFFSET, MAX_OFFSET*(1-Math.abs(x)))
+      this.updateElements("", 100*offset)
     }
   }
 
@@ -127,7 +141,7 @@ export default class TouchHandler {
         this.grid!.style.backgroundColor = `rgba(${BG_COLOR},${BG_OPACITY_MAX})`
         this.setDrawerOpacity(OPACITY_HIGH_TIDE)
 
-        this.updateElements("", MAX_OFFSET)
+        this.updateElements("", 100*MAX_OFFSET)
       }
     }
 
