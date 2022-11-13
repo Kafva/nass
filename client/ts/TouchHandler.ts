@@ -38,9 +38,22 @@ export default class TouchHandler {
   private name(): HTMLSpanElement {
     return this.grid!.children.item(1) as HTMLSpanElement
   }
-  private drawer(): HTMLDivElement {
-    return this.grid!.lastChild as HTMLDivElement
+  /**
+   * Update the position and right offset of all elements in the
+   * grid of the main container.
+   */
+  private updateElements(position = "", right = 0) {
+    if (this.grid != null) {
+      for (const child  of this.grid.children) {
+        const htmlChild = child as HTMLElement
+        if (position != "") {
+          htmlChild.style.position = position
+        }
+        htmlChild.style.right = `${right}px`
+      }
+    }
   }
+
   private setDrawerOpacity(opacity: number) {
     if (this.grid != null) {
       for (const child of (this.grid.lastChild as HTMLElement).children) {
@@ -54,11 +67,7 @@ export default class TouchHandler {
     const touch = event.touches.item(0)
     if (touch) {
       this.startX = touch.pageX/window.innerWidth
-
-      //this.grid!.style.position = "relative";
-      this.icon().style.position =  "relative"
-      this.name().style.position =  "relative"
-      this.drawer().style.position =  "relative"
+      this.updateElements("relative")
 
       // Update the currently visible button, other PassEntry
       // objects will be notified of this and hide their buttons
@@ -90,16 +99,10 @@ export default class TouchHandler {
         `rgba(${BG_COLOR},${Math.min(BG_OPACITY_MAX, high)})`
 
       // A large x should result in a small value for the right offset
-      //this.grid!.style.right = 
-      //  `${Math.min(MAX_OFFSET, MAX_OFFSET*Math.abs(1-x))}px`
-
       // To have the bg color stay in place, we only move the
       // contents of the row
-      const offset = `${Math.min(MAX_OFFSET, MAX_OFFSET*Math.abs(1-x))}px`
-      this.icon().style.right = offset
-      this.name().style.right = offset
-      this.drawer().style.right = offset
-        
+      const offset = Math.min(MAX_OFFSET, MAX_OFFSET*Math.abs(1-x))
+      this.updateElements("", offset)
     }
   }
 
@@ -124,10 +127,7 @@ export default class TouchHandler {
         this.grid!.style.backgroundColor = `rgba(${BG_COLOR},${BG_OPACITY_MAX})`
         this.setDrawerOpacity(OPACITY_HIGH_TIDE)
 
-        const offset = `${MAX_OFFSET}px`
-        this.icon().style.right = offset
-        this.name().style.right = offset
-        this.drawer().style.right = offset
+        this.updateElements("", MAX_OFFSET)
       }
     }
 
@@ -136,17 +136,7 @@ export default class TouchHandler {
 
   restoreGrid() {
     if (this.grid != null) {
-      //this.grid!.style.position = "inherit";
-      //this.grid.style.right = "0px"
-      
-      this.icon().style.position =  "inherit"
-      this.name().style.position =  "inherit"
-      this.drawer().style.position =  "inherit"
-
-      this.icon().style.right =  "0px"
-      this.name().style.right =  "0px"
-      this.drawer().style.right =  "0px"
-
+      this.updateElements("inherit", 0)
 
       this.icon().style.opacity     = OPACITY_HIGH_TIDE.toString()
       this.name().style.opacity     = OPACITY_HIGH_TIDE.toString()
