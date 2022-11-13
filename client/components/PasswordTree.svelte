@@ -1,7 +1,7 @@
 <script lang="ts">
   import { authInfoStore, foldPolicyStore, msgTextStore, queryStringStore, 
-           rootEntryStore, showPassStore, visibleButtonsStore } 
-           from '../ts/store'
+    rootEntryStore, showPassStore, visibleButtonsStore } 
+    from '../ts/store'
   import { Config, MessageText} from '../ts/config'
   import { FoldPolicy } from '../ts/types'
   import type { ApiResponse, AuthInfo, PassItem } from '../ts/types'
@@ -48,12 +48,12 @@
 
   foldPolicyStore.subscribe((value: FoldPolicy) => {
     switch (value) {
-      case FoldPolicy.allOpen:
-        open = true
-        break
-      case FoldPolicy.allClosed:
-        open = false
-        break
+    case FoldPolicy.allOpen:
+      open = true
+      break
+    case FoldPolicy.allClosed:
+      open = false
+      break
     }
   })
 
@@ -97,12 +97,12 @@
   }
 
   const handleMainClick = () => {
-     if (isLeaf) {
-       handleGetPass(true)
-     } else {
-       foldPolicyStore.set(FoldPolicy.localControl)
-       open = !open
-     }
+    if (isLeaf) {
+      handleGetPass(true)
+    } else {
+      foldPolicyStore.set(FoldPolicy.localControl)
+      open = !open
+    }
   }
 
   const runIfNotMobile = (f: Function, ...args: any) => {

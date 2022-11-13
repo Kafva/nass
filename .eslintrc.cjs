@@ -30,7 +30,8 @@ module.exports = {
     "no-extra-semi": "warn",
     "indent": ["error", 2],
     "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/no-non-null-assertion": "off"
+    "@typescript-eslint/no-non-null-assertion": "off",
+    "@typescript-eslint/ban-types": "off"
   },
   ignorePatterns: [
     "node_modules",

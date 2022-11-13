@@ -82,7 +82,7 @@
     return MessageText.valid
   }
 
- /**
+/**
   * Update the suggestion <span/> with matches from the tree based
   * on user input to the path <input/>
   */
