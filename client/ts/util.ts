@@ -43,7 +43,11 @@ const CalculateColumnLayout = (treeLevel: number, touchDistance: number): Column
   //
   let drawerColumn = DRAWER_MIN_SPACE // Default fallback
 
-  if (touchDistance < 1 && touchDistance != 0) {
+  if (touchDistance != 0) {
+
+    //if (touchDistance >= 1) {
+    //}
+
     // The touchDistance value is thus interpreted as:
     drawerColumn = touchDistance < 0 ? 
       //  negative: decrease the drawer space

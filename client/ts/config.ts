@@ -71,4 +71,5 @@ const passwordRegex = "^[-§$!\"'#€%&()=?*<>_.@/a-zA-Z0-9åäöÅÄÖ]{1," + C
 
 const DRAWER_MAX_SPACE = 0.4
 
-export { Config, MessageText, MessageIcons, MessageTimeouts, passentryRegex, passwordRegex, DRAWER_MAX_SPACE }
+export { Config, MessageText, MessageIcons, MessageTimeouts, passentryRegex, 
+         passwordRegex, DRAWER_MAX_SPACE }

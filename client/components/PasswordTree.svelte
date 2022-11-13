@@ -173,6 +173,7 @@
     border-color: rgba(0,0,0,0.0);
 
     div.drawer {
+      border-radius: 5%;
       display: inline-flex;
       // Hide drawer icons without changing geometry
       opacity: 0;
@@ -206,7 +207,6 @@
         span {
           height: 100%;
           width: 100%;
-          background-color: vars.$button_bg;
         }
       }
     }

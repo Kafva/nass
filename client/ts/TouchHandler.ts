@@ -1,12 +1,16 @@
 import { CalculateColumnLayout, ColumnLayoutToString } from "./util";
 import type { ColumnLayout } from "./types";
+import { DRAWER_MAX_SPACE } from "./config";
 import { get } from "svelte/store";
 import { visibleButtonsStore } from "./store";
-import { DRAWER_MAX_SPACE } from "./config";
 
 // Max distance between the origin and end of a swipe for it
 // to be considered a click.
 const CLICK_LIMIT = 0.02
+
+const OPACITY_LOW_TIDE = 0.4;
+const OPACITY_HIGH_TIDE = 1.0;
+const BG_OPACITY_MAX = 0.4;
 
 /** Handler for touch events on each item in the PasswordTree */
 export default class TouchHandler {
@@ -34,6 +38,12 @@ export default class TouchHandler {
            && document.body.clientWidth <= 480
   }
 
+  private icon(): HTMLSpanElement {
+    return this.grid!.firstChild as HTMLSpanElement
+  }
+  private name(): HTMLSpanElement {
+    return this.grid!.children.item(1) as HTMLSpanElement
+  }
   private drawer(): HTMLDivElement {
     return this.grid!.lastChild as HTMLDivElement
   }
@@ -63,7 +73,18 @@ export default class TouchHandler {
       //  * decrease in width if we move  0.0 --> 1.0  (startX - x < 0)
       const distance = this.startX - x 
 
-      //this.drawer().style.opacity     = `${1.0 - x}`
+      // Decrease the opacity of the name and icon (up to a threshold)
+      // while increasing the opacity of the interactive buttons
+      const opac = [1.0 - Math.abs(x), Math.abs(x)]
+      const low = Math.max(OPACITY_LOW_TIDE, Math.min(...opac)).toString()
+      const high = Math.max(OPACITY_LOW_TIDE, Math.max(...opac))
+
+      this.icon().style.opacity     = low
+      this.name().style.opacity     = low
+
+      this.grid!.style.backgroundColor = `rgba(25,25,24,${Math.min(BG_OPACITY_MAX, high)})`
+      this.drawer().style.opacity   = high.toString()
+
       const columnLayout = CalculateColumnLayout(this.treeLevel, distance)
 
       this.grid!.style.gridTemplateColumns = ColumnLayoutToString(columnLayout)
@@ -94,11 +115,20 @@ export default class TouchHandler {
         this.restoreGrid()
       } else { // Let them remain visible if the swipe ends to the left
 
-        //this.drawer().style.opacity     = "1.0"
+
+        this.icon().style.opacity     = OPACITY_LOW_TIDE.toString()
+        this.name().style.opacity     = OPACITY_LOW_TIDE.toString()
+
+        this.grid!.style.backgroundColor = `rgba(25,25,24,${BG_OPACITY_MAX})`
+        this.drawer().style.opacity   = OPACITY_HIGH_TIDE.toString()
+
         const nameColumn = 1 - this.defaultLayout.icon - DRAWER_MAX_SPACE
 
-        this.grid!.style.gridTemplateColumns = 
-          `${this.defaultLayout.icon}fr ${nameColumn}fr ${DRAWER_MAX_SPACE}fr`
+        this.grid!.style.gridTemplateColumns = ColumnLayoutToString({ 
+          icon: this.defaultLayout.icon, 
+          name: nameColumn, 
+          drawer: DRAWER_MAX_SPACE
+        })
 
         // Update the currently visible button, other PassEntry
         // objects will be notified of this and hide their buttons
@@ -112,7 +142,12 @@ export default class TouchHandler {
   restoreGrid() {
     if (this.grid != null) {
       this.grid.style.gridTemplateColumns = ColumnLayoutToString(this.defaultLayout)
-      this.drawer().style.opacity     = "0.0"
+
+      this.icon().style.opacity     = OPACITY_HIGH_TIDE.toString()
+      this.name().style.opacity     = OPACITY_HIGH_TIDE.toString()
+
+      this.grid!.style.backgroundColor = "rgba(25,25,24,0.0)"
+      this.drawer().style.opacity      = "0.0"
     }
   }
 }
