@@ -166,6 +166,7 @@
     white-space: nowrap;
     padding: 4px 0 4px 0;
     margin: 2px 0 5px 0;
+    @include vars.mobile { border-radius: 5%; }
 
     // Always show the border (translucently)
     // to avoid geometry changes on :hover()
@@ -173,41 +174,43 @@
     border-color: rgba(0,0,0,0.0);
 
     div.drawer {
-      border-radius: 5%;
       display: inline-flex;
+
       // Hide drawer icons without changing geometry
-      opacity: 0;
-      align-items: center;
-      span {
-        display: inline-block;
-      }
-    }
-
-    @include vars.desktop-hover {
-      border-color: vars.$lilac;
-      // Display buttons on the direct child
-      // when the parent element is hovered
-      div.drawer > span.nf {
+      span.nf {
         color: vars.$white;
+        opacity: 0;
       }
-    }
-
-    // == Desktop ==
-    @include vars.desktop-hover {
-      span.nf:not(.row-icon) {
-        &:hover {
-          color: vars.$lilac;
-        }
-      }
-    }
-    
-    // == Mobile ==
-    @include vars.mobile {
-      div.drawer {
+      // == Mobile ==
+      @include vars.mobile {
         span {
+          display: inline-block;
           height: 100%;
           width: 100%;
         }
+      }
+      // == Desktop ==
+      @include vars.desktop {
+        justify-content: space-between;
+        margin-right: 2px;
+      }
+    }
+
+    // == Desktop hover ==
+    @include vars.desktop {
+      &:hover {
+        // Display buttons on the direct child
+        // when the parent element is hovered
+        border-color: vars.$lilac;
+
+        div.drawer > span.nf {
+          opacity: 1.0;
+        }
+      }
+
+      span.nf:not(.row-icon):hover {
+        opacity: 1.0;
+        color: vars.$lilac;
       }
     }
   }
