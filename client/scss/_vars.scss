@@ -22,6 +22,8 @@ $font_large: 22px;
 $font_medium: 18px;
 $font_small: 14px;
 
+$font_large_mobile: 26px;
+
 $tree_width: 400px;
 $tree_width_mobile: 100%;
 
@@ -81,9 +83,11 @@ $cover_z: 9;
 
 // Shared style for <span/> buttons
 @mixin button-style() {
-  font-size: $font_large;
   margin: 10px 15px 10px 15px;
   float: right;
+
+  font-size: $font_large;
+  @include mobile { font-size: $font_large_mobile; }
 
   @include desktop-hover {
     color: $lilac;

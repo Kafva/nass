@@ -193,6 +193,7 @@
       // == Mobile ==
       @include vars.mobile {
         span {
+          font-size: vars.$font_large_mobile;
           display: inline-block;
           height: 100%;
           width: 100%;
