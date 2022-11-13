@@ -40,30 +40,49 @@ export default class TouchHandler {
            && document.body.clientWidth <= 480
   }
 
+  //private updateFontSize() {
+  //  for (const child of this.grid.children) {
+  //      const htmlChild = child as HTMLElement
+  //      htmlChild.style.fontSize
+  //  }
+
+  //}
+
   /**
-   * Update the position and right offset (0-100 %) of all elements in the
+   * Update the position and right offset (-100, 100 %) of all elements in the
    * grid of the main container.
    */
   private updateOffset(position = "", right = 0) {
     if (this.grid != null) {
-      for (const child  of this.grid.children) {
+      for (const child of this.grid.children) {
         const htmlChild = child as HTMLElement
         if (position != "") {
           htmlChild.style.position = position
         }
         htmlChild.style.right = `${right}%`
+
+        //// Update font size for buttons in the drawer
+        //if (htmlChild.parentElement?.classList.contains("drawer")) {
+        //  if (right > 0) { // [<---]
+        //    htmlChild.style.fontSize = `${22*(right/100)}px`
+        //  }
+        //  else if (right < 0) { // [--->]
+        //    htmlChild.style.fontSize = `${22*((1-right)/100)}px`
+        //  }
+        //  // right == 0 is skipped
+        //}
       }
     }
   }
   private getOpacities(): {left: number, right: number, bg: number} {
-    const icon = this.grid!.children.item(0) as HTMLSpanElement
+    const name = this.grid!.children.item(1) as HTMLSpanElement
     const button =
       (this.grid!.lastChild as HTMLElement).children.item(0) as HTMLSpanElement
     const bg_splits = this.grid!.style.backgroundColor.split(',')
     const bg = bg_splits.length == 4 ?
       parseFloat(bg_splits[3].slice(0,-1)) : 0.0
     return {
-      left: parseFloat(window.getComputedStyle(icon).opacity),
+      left: parseFloat(window.getComputedStyle(name).opacity),
       right: parseFloat(window.getComputedStyle(button).opacity),
       bg: bg
     }
@@ -79,8 +98,8 @@ export default class TouchHandler {
       const bounded_opacity =
         Math.min(1.0, Math.max(OPACITY_LOW_TIDE, opacity))
 
-      const icon = this.grid!.children.item(0) as HTMLSpanElement
-      const name = this.grid!.children.item(1) as HTMLSpanElement
+      const icon = this.grid.children.item(0) as HTMLSpanElement
+      const name = this.grid.children.item(1) as HTMLSpanElement
       // !! Hide the icon completely to avoid clipping !!
       icon.style.opacity = opacity != 1.0 ? "0.0" : opacity.toString()
       name.style.opacity = bounded_opacity.toString()
@@ -135,6 +154,7 @@ export default class TouchHandler {
         this.setLeftOpacity(this.originOpacities.left - distance)
         this.setRightOpacity(this.originOpacities.right + distance)
         this.updateOffset("", 100*distance)
+
       }
 
       // The background color should have its opacity increased
@@ -153,12 +173,11 @@ export default class TouchHandler {
       // Return the current element being touched
       // if the swipe was over a short distance (i.e. essentially a click)
       if (distance <= CLICK_LIMIT) {
+        this.restoreLayout()
         return event.target as HTMLSpanElement
       }
 
       // Restore the layout if the rhs has high transparency.
-      // If the transparency is low and the swipe was in the [<---] direction,
-      // maintain the state from move().
       if (this.getOpacities().right >= 0.5) {
         return null
       }
