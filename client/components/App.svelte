@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { authInfoStore, foldPolicyStore, rootEntryStore, showPassStore } from '../ts/store'
+  import { authInfoStore, foldPolicyStore, rootEntryStore, showPassStore, visibleButtonsStore } from '../ts/store'
   import { Debug, GetHTMLElement } from '../ts/util'
   import PassEntry from '../ts/PassEntry'
   import Search from './Search.svelte'
@@ -30,6 +30,10 @@
   // import { MessageText } from '../ts/config';
   // setTimeout(()=>msgTextStore.set([MessageText.pathOverlap, ""]), 1000)
 </script>
+
+<!-- Hide focused button (if any) when the body is clicked (only relevant on
+     mobile) -->
+<svelte:body on:click="{() => visibleButtonsStore.set('')}"/>
 
 <Msg/>
 
