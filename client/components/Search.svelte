@@ -17,5 +17,6 @@
     margin-top: 1vh;
     margin-bottom: 1vh;
     padding: 15px 0 15px 0;
+    width: 100%;
   }
 </style>

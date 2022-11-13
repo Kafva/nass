@@ -20,7 +20,7 @@
   @include vars.mobile {
     // The rows should fill the entire X-axis on mobile
     width: vars.$tree_width_mobile;
-    @include vars.centering(vars.$tree_width_mobile);
+    margin: 0;
   }
 
 

@@ -82,8 +82,8 @@ $cover_z: 9;
 // Shared style for <span/> buttons
 @mixin button-style() {
   font-size: $font_large;
+  margin: 10px 15px 10px 15px;
   float: right;
-  margin: 10px 15px 0 0;
 
   @include desktop-hover {
     color: $lilac;
