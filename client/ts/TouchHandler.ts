@@ -1,6 +1,3 @@
-import { CalculateColumnLayout, ColumnLayoutToString } from "./util";
-import type { ColumnLayout } from "./types";
-import { DRAWER_MAX_SPACE } from "./config";
 import { get } from "svelte/store";
 import { visibleButtonsStore } from "./store";
 
@@ -12,6 +9,8 @@ const OPACITY_LOW_TIDE = 0.4;
 const OPACITY_HIGH_TIDE = 1.0;
 const BG_OPACITY_MAX = 0.4;
 
+const MAX_MARGIN = 90
+
 /** Handler for touch events on each item in the PasswordTree */
 export default class TouchHandler {
   constructor(
@@ -20,10 +19,6 @@ export default class TouchHandler {
      * is bound to.
      */
     private path: string,
-    private treeLevel: number,
-
-    /** Default layout of items in container grid */
-    private defaultLayout: ColumnLayout,
 
     /** x coordinate origin of a new touch event. */
     private startX = 0,
@@ -44,8 +39,12 @@ export default class TouchHandler {
   private name(): HTMLSpanElement {
     return this.grid!.children.item(1) as HTMLSpanElement
   }
-  private drawer(): HTMLDivElement {
-    return this.grid!.lastChild as HTMLDivElement
+  private setDrawerOpacity(opacity: number) {
+    if (this.grid != null) {
+      for (const child of (this.grid.lastChild as HTMLElement).children) {
+        (child as HTMLSpanElement).style.opacity = opacity.toString()
+      }
+    }
   }
 
   start(event: TouchEvent) {
@@ -54,7 +53,6 @@ export default class TouchHandler {
     const touch = event.touches.item(0)
     if (touch) {
       this.startX = touch.pageX/window.innerWidth
-      this.drawer().style.opacity = "1.0"
     }
   }
 
@@ -68,11 +66,6 @@ export default class TouchHandler {
       // If startX is large, the swipe started far to the right
       const x = Math.max(0.0, touch.pageX/window.innerWidth) 
 
-      // The drawerColumn should: 
-      //  * increase in width if we move  0.0 <-- 1.0  (startX - x > 0)
-      //  * decrease in width if we move  0.0 --> 1.0  (startX - x < 0)
-      const distance = this.startX - x 
-
       // Decrease the opacity of the name and icon (up to a threshold)
       // while increasing the opacity of the interactive buttons
       const opac = [1.0 - Math.abs(x), Math.abs(x)]
@@ -81,13 +74,16 @@ export default class TouchHandler {
 
       this.icon().style.opacity     = low
       this.name().style.opacity     = low
+      this.setDrawerOpacity(high)
 
-      this.grid!.style.backgroundColor = `rgba(25,25,24,${Math.min(BG_OPACITY_MAX, high)})`
-      this.drawer().style.opacity   = high.toString()
+      this.grid!.style.backgroundColor = 
+        `rgba(25,25,24,${Math.min(BG_OPACITY_MAX, high)})`
 
-      const columnLayout = CalculateColumnLayout(this.treeLevel, distance)
+      this.grid!.style.position = "relative";
 
-      this.grid!.style.gridTemplateColumns = ColumnLayoutToString(columnLayout)
+      // If x is large... we want the right margin to be small
+      this.grid!.style.right = 
+        `${Math.min(MAX_MARGIN, MAX_MARGIN*Math.abs(1-x))}px`
     }
   }
 
@@ -120,16 +116,10 @@ export default class TouchHandler {
         this.name().style.opacity     = OPACITY_LOW_TIDE.toString()
 
         this.grid!.style.backgroundColor = `rgba(25,25,24,${BG_OPACITY_MAX})`
-        this.drawer().style.opacity   = OPACITY_HIGH_TIDE.toString()
+        this.setDrawerOpacity(OPACITY_HIGH_TIDE)
 
-        const nameColumn = 1 - this.defaultLayout.icon - DRAWER_MAX_SPACE
-
-        this.grid!.style.gridTemplateColumns = ColumnLayoutToString({ 
-          icon: this.defaultLayout.icon, 
-          name: nameColumn, 
-          drawer: DRAWER_MAX_SPACE
-        })
-
+        this.grid!.style.position = "relative";
+        this.grid!.style.right = `${MAX_MARGIN}px`
         // Update the currently visible button, other PassEntry
         // objects will be notified of this and hide their buttons
         visibleButtonsStore.set(this.path)
@@ -141,13 +131,14 @@ export default class TouchHandler {
 
   restoreGrid() {
     if (this.grid != null) {
-      this.grid.style.gridTemplateColumns = ColumnLayoutToString(this.defaultLayout)
+      this.grid!.style.position = "inherit";
+      this.grid.style.right = "0px"
 
       this.icon().style.opacity     = OPACITY_HIGH_TIDE.toString()
       this.name().style.opacity     = OPACITY_HIGH_TIDE.toString()
 
       this.grid!.style.backgroundColor = "rgba(25,25,24,0.0)"
-      this.drawer().style.opacity      = "0.0"
+      this.setDrawerOpacity(0.0)
     }
   }
 }

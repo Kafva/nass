@@ -5,7 +5,7 @@
   import { Config, MessageText} from '../ts/config'
   import { FoldPolicy } from '../ts/types'
   import type { ApiResponse, AuthInfo, PassItem } from '../ts/types'
-  import { CalculateColumnLayout, ColumnLayoutToString, CopyToClipboard, Debug } from '../ts/util'
+  import { CopyToClipboard, Debug } from '../ts/util'
   import { ApiStatusResponse } from '../ts/types'
   import type PassEntry from '../ts/PassEntry'
   import ApiRequest from '../ts/ApiRequest'
@@ -18,13 +18,22 @@
   const isLeaf = entry.subitems.length == 0
   let open = false
 
-  const treeLevel = entry.parents.length + 1
-  const columnLayout = CalculateColumnLayout(treeLevel, 0)
-  const gridTemplateColumns = ColumnLayoutToString(columnLayout)
+  // Each row is in a grid:
+  // -----------------------------------------------
+  // | <span icon/> | <span name/> | <div drawer/> |
+  // -----------------------------------------------
+  const ICON_MIN_SPACE = 0.1
+  const ICON_MAX_SPACE = 0.4
+ 
+  const treeLevel = ((entry.parents.length+1) / Config.maxPassDepth)
+  const iconColumn = Math.max(ICON_MIN_SPACE, treeLevel * ICON_MAX_SPACE)
+  const nameColumn = 2 * ((1 - iconColumn) / 3)
+  const drawerColumn = 1 * ((1 - iconColumn) / 3)
+  const gridTemplateColumns = `${iconColumn}fr ${nameColumn}fr ${drawerColumn}fr`
 
   const path = entry.path()
   const api = new ApiRequest()
-  const touch = new TouchHandler(path, treeLevel, columnLayout)
+  const touch = new TouchHandler(path, treeLevel)
 
   queryStringStore.subscribe((value: string) => {
     currentQuery = value.toLowerCase()

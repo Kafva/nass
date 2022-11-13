@@ -32,12 +32,6 @@ interface PassItem {
   password: string
 }
 
-interface ColumnLayout {
-  icon: number 
-  name: number
-  drawer: number
-}
 
-
-export type { ApiResponse, AuthInfo, PassItem, ColumnLayout }
+export type { ApiResponse, AuthInfo, PassItem }
 export { ApiStatusResponse, FoldPolicy }
