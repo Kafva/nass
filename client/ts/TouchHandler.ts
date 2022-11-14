@@ -16,11 +16,12 @@ const BG_OPACITY_MAX = 0.2;
 const BG_COLOR = "25,25,24"
 
 /** 
-  * Minimum font size of buttons on the rhs, 
-  * should be equal to `vars.$medium_font_size` 
+  * Maximum font size of buttons on the rhs, 
+  * should be equal to `vars.$font_icon_high_mobile`.
   */
-const MIN_FONT_SIZE = 18
 const MAX_FONT_SIZE = 28
+const MIN_FONT_SIZE = 18
+const MAGNIFIER_MULTIPLIER = 15
 
 /** Handler for touch events on each item in the PasswordTree */
 export default class TouchHandler {
@@ -154,7 +155,7 @@ export default class TouchHandler {
         this.setRightOpacity(this.originOpacities.right - distance)
         this.setOffset("", -1*100*distance)
         // Decrease rhs font size
-        this.setFontSize(this.originFontSize - 10*distance)
+        this.setFontSize(this.originFontSize - MAGNIFIER_MULTIPLIER*distance)
       } else {
         // On [<---] (fold out buttons),
         // decrease opacity of the lhs and increase for the rhs
@@ -162,7 +163,7 @@ export default class TouchHandler {
         this.setRightOpacity(this.originOpacities.right + distance)
         this.setOffset("", 100*distance)
         // Increase rhs font size
-        this.setFontSize(this.originFontSize + 10*distance)
+        this.setFontSize(this.originFontSize + MAGNIFIER_MULTIPLIER*distance)
       }
 
       // The background color should have its opacity increased

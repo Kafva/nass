@@ -176,7 +176,17 @@
     white-space: nowrap;
     padding: 4px 0 4px 0;
     margin: 2px 0 5px 0;
-    @include vars.mobile { border-radius: 5%; }
+    @include vars.mobile { 
+      border-radius: 5%; 
+      // Increase height on mobile to avoid cluttered UI
+      height: 5vh;
+    }
+
+    span {
+      // Vertical centering
+      display: inline-flex;
+      align-items: center;
+    }
 
     // Always show the border (translucently)
     // to avoid geometry changes on :hover()
@@ -194,12 +204,13 @@
       // == Mobile ==
       @include vars.mobile {
         span {
-          // The instal font size for buttons should not be to big
+          // The initial font size for buttons should not be to big
           // since we use a magnifier effect on touchmove().
-          font-size: vars.$font_medium;
-          display: inline-block;
+          font-size: vars.$font_icon_low_mobile;
           height: 100%;
           width: 100%;
+          // We want the padding to be fairly large so that touch events do not
+          // need to be too exact.
         }
       }
       // == Desktop ==
