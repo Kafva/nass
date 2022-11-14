@@ -171,7 +171,7 @@
     @include vars.mobile {
       border-radius: 5%;
       // Increase height on mobile to avoid cluttered UI
-      height: 5vh;
+      height: 10vh;
     }
 
     & > span {
