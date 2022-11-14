@@ -194,7 +194,9 @@
       // == Mobile ==
       @include vars.mobile {
         span {
-          font-size: vars.$font_large_mobile;
+          // The instal font size for buttons should not be to big
+          // since we use a magnifier effect on touchmove().
+          font-size: vars.$font_medium;
           display: inline-block;
           height: 100%;
           width: 100%;
