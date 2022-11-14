@@ -15,8 +15,8 @@ const OPACITY_LOW_TIDE = 0.3;
 const BG_OPACITY_MAX = 0.2;
 const BG_COLOR = "25,25,24"
 
-/** 
-  * Maximum font size of buttons on the rhs, 
+/**
+  * Maximum font size of buttons on the rhs,
   * should be equal to `vars.$font_icon_high_mobile`.
   */
 const MAX_FONT_SIZE = 28
@@ -41,36 +41,38 @@ export default class TouchHandler {
     /** Opacity values at the start of a  new touch event. */
     private originOpacities = {left: 0, right: 0, bg: 0},
 
+    /** Left hand side of grid container */
+    public lhs: HTMLSpanElement|null = null,
+
+    /** Right hand side of grid container */
+    public rhs: HTMLDivElement|null = null,
+
     /** Grid container, the last child is always the buttons container */
     public grid: HTMLDivElement|null = null
+
   ){}
 
   private getOpacities(): {left: number, right: number, bg: number} {
-    const lhs = this.grid!.children.item(0) as HTMLSpanElement
-    const button =
-      (this.grid!.lastChild as HTMLElement).children.item(0) as HTMLSpanElement
     const bg_splits = this.grid!.style.backgroundColor.split(',')
     const bg = bg_splits.length == 4 ?
       parseFloat(bg_splits[3].slice(0,-1)) : 0.0
     return {
-      left: parseFloat(window.getComputedStyle(lhs).opacity),
-      right: parseFloat(window.getComputedStyle(button).opacity),
+      left: this.lhs != null ?
+        parseFloat(window.getComputedStyle(this.lhs).opacity) : 0.0,
+      right: this.rhs != null ?
+        parseFloat(window.getComputedStyle(this.rhs).opacity) : 0.0,
       bg: bg
     }
   }
 
   /** Get the font size of the rhs in pixels. */
   private getFontSize(): number {
-    if (this.grid != null) {
-      const button = this.grid.lastChild!.firstChild
-      if (button instanceof HTMLElement) {
-        const font_split = window.getComputedStyle(button).fontSize.split('px')
-        return font_split.length == 2 ? parseInt(font_split[0]) : this.originFontSize
-      } else {
-        console.log("Not a HTMLElement", button)
-      }
+    if (this.rhs != null) {
+      const font_split = window.getComputedStyle(this.rhs).fontSize.split('px')
+      return font_split.length == 2 ?
+        parseInt(font_split[0]) : 0
     }
-    return this.originFontSize
+    return 0
   }
 
   /**
@@ -78,21 +80,22 @@ export default class TouchHandler {
    * grid of the main container.
    */
   private setOffset(position = "", right = 0) {
-    if (this.grid != null) {
-      for (const child of this.grid.children) {
-        if (position != "") {
-          (child as HTMLElement).style.position = position
-        }
-        (child as HTMLElement).style.right = `${right}%`
+    if (this.lhs != null && this.rhs != null) {
+      if (position != "") {
+        this.lhs.style.position = position
+        this.rhs.style.position = position
       }
+      this.lhs.style.right = `${right}%`
+      this.rhs.style.right = `${right}%`
+      console.log("Setting right offset", `${right}%`)
     }
   }
 
+  /** Set the font size of the rhs in pixels. */
   private setFontSize(size: number) {
     const bounded_size = Math.max(MIN_FONT_SIZE, Math.min(MAX_FONT_SIZE, size))
-    for (const child of (this.grid!.lastChild as HTMLElement).children) {
-      (child as HTMLSpanElement).style.fontSize = `${bounded_size}px`
-    }
+    this.rhs!.style.fontSize = `${bounded_size}px`
+    //console.log("Setting font size", `${bounded_size}px`)
   }
 
   private setBgOpacity(opacity: number) {
@@ -101,21 +104,12 @@ export default class TouchHandler {
   }
 
   private setLeftOpacity(opacity: number) {
-    if (this.grid != null) {
-      const bounded_opacity =
-        Math.min(1.0, Math.max(OPACITY_LOW_TIDE, opacity))
-
-      const lhs = this.grid.children.item(0) as HTMLSpanElement
-      lhs.style.opacity = bounded_opacity.toString()
-    }
+    const bounded_opacity = Math.min(1.0, Math.max(OPACITY_LOW_TIDE, opacity))
+    this.lhs!.style.opacity = bounded_opacity.toString()
   }
 
   private setRightOpacity(opacity: number) {
-    if (this.grid != null) {
-      for (const child of (this.grid.lastChild as HTMLElement).children) {
-        (child as HTMLSpanElement).style.opacity = opacity.toString()
-      }
-    }
+     this.rhs!.style.opacity = opacity.toString()
   }
 
   start(event: TouchEvent) {
@@ -146,7 +140,7 @@ export default class TouchHandler {
       // 1.0: Far right
       const newX = touch.pageX/window.innerWidth
       const distance = Math.min(MAX_DISTANCE,  Math.abs(newX - this.originX))
-      console.log(newX > this.originX ? "--->" : "<---", newX, `d=${distance}`)
+      // console.log(newX > this.originX ? "--->" : "<---", newX, `d=${distance}`)
 
       if (newX > this.originX) {
         // On [--->] (fold IN buttons),

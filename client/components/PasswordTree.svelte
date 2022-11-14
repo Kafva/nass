@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { authInfoStore, foldPolicyStore, msgTextStore, queryStringStore, 
-    rootEntryStore, showPassStore, visibleButtonsStore } 
+  import { authInfoStore, foldPolicyStore, msgTextStore, queryStringStore,
+    rootEntryStore, showPassStore, visibleButtonsStore }
     from '../ts/store'
   import { Config, MessageText} from '../ts/config'
   import { FoldPolicy } from '../ts/types'
@@ -128,14 +128,16 @@
     >
       <!-- on:click() events are used on desktop and disabled in favor of
       ontouch* on mobile -->
-      <span role="button" class="{ isLeaf ? Config.passwordIcon : 
-          (open ? Config.dropdownOpen : Config.dropdownClosed) }" 
+      <span role="button" class="{ isLeaf ? Config.passwordIcon :
+          (open ? Config.dropdownOpen : Config.dropdownClosed) }"
             on:click="{() => runIfNotMobile(handleMainClick) }"
-            style:margin-left={marginLeft}>
+            style:margin-left={marginLeft}
+            bind:this={touch.lhs}>
+
         {entry.name}
       </span>
 
-      <div class="buttons">
+      <div class="buttons" bind:this={touch.rhs}>
         {#if isLeaf}
           <span role="button" class="{Config.showPassword} show-pass"
                 on:click="{() => runIfNotMobile(handleGetPass, false) }"/>
@@ -166,8 +168,8 @@
     white-space: nowrap;
     padding: 4px 0 4px 0;
     margin: 2px 0 5px 0;
-    @include vars.mobile { 
-      border-radius: 5%; 
+    @include vars.mobile {
+      border-radius: 5%;
       // Increase height on mobile to avoid cluttered UI
       height: 5vh;
     }
@@ -192,20 +194,16 @@
       justify-content: space-evenly;
 
       // Hide buttons icons without changing geometry
-      span.nf {
-        color: vars.$white;
-        opacity: 0;
-      }
+      color: vars.$white;
+      opacity: 0;
+
       // == Mobile ==
       @include vars.mobile {
         span {
-          // The initial font size for buttons should not be to big
-          // since we use a magnifier effect on touchmove().
-          font-size: vars.$font_icon_low_mobile;
+          // The font size is controlled by the parent in TouchHandler
+          font-size: inherit;
           height: 100%;
           width: 100%;
-          // We want the padding to be fairly large so that touch events do not
-          // need to be too exact.
         }
       }
     }
@@ -217,13 +215,12 @@
         // when the parent element is hovered
         border-color: vars.$lilac;
 
-        div.buttons > span.nf {
+        div.buttons {
           opacity: 1.0;
         }
       }
 
       div.buttons > span.nf:hover {
-        opacity: 1.0;
         color: vars.$lilac;
       }
     }
