@@ -115,7 +115,7 @@
       on:touchmove="{(e) => touch.move(e) }"
       on:touchend="{(e) => {
         const btn = touch.end(e)
-        if (btn != null) {
+        if (btn != null && $visibleButtonsStore != "") {
           if (btn.classList.contains('delete-pass')) {
             handleDelPass()
           } else if (btn.classList.contains('show-pass')) {
@@ -123,6 +123,9 @@
           } else {
             handleMainClick()
           }
+
+          // Un-focus the current row after a click
+          visibleButtonsStore.set("")
         }
       }}"
     >

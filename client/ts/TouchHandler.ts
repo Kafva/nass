@@ -125,10 +125,6 @@ export default class TouchHandler {
       this.originOpacities = this.getOpacities()
       this.originFontSize = this.getFontSize()
       this.setOffset("relative")
-
-      // Update the currently visible button, other PassEntry
-      // objects will be notified of this and hide their buttons
-      visibleButtonsStore.set(this.path)
     }
   }
 
@@ -176,16 +172,23 @@ export default class TouchHandler {
       // Return the current element being touched
       // if the swipe was over a short distance (i.e. essentially a click)
       if (distance <= CLICK_LIMIT) {
-        this.restoreLayout()
+        // !! Caller needs to reset `visibleButtonsStore` after this !!
         return event.target as HTMLSpanElement
       }
 
-      // Restore the layout if the rhs has high transparency.
+      // Restore the layout if the rhs is highly transparent.
       if (this.getOpacities().right >= 0.5) {
-        return null
+        // Update the currently visible button, other PassEntry
+        // objects will be notified of this and hide their buttons
+        //
+        // !! Note we do this on end() rather than start() so that
+        // we can deny "clicks" on buttons that occur at start() or
+        // during move() !!
+        //
+        visibleButtonsStore.set(this.path)
+      } else {
+        this.restoreLayout()
       }
-
-      this.restoreLayout()
     }
 
     return null
@@ -197,6 +200,7 @@ export default class TouchHandler {
            && document.body.clientWidth <= 480 // !! vars.$mobile_max_width !!
   }
 
+  /** This is triggered when `visibleButtonsStore`is set to a new value */
   restoreLayout() {
     if (this.grid != null) {
       this.setBgOpacity(0.0)
