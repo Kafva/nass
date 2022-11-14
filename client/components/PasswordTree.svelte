@@ -19,22 +19,15 @@
   let open = false
 
   // Each row is in a grid:
-  // -----------------------------------------------
-  // | <span icon/> | <span name/> | <div drawer/> |
-  // -----------------------------------------------
-  // The icons space is adjusted based on the treeLevel.
-  const ICON_MIN_SPACE = 0.1
-  const ICON_MAX_SPACE = 0.4
- 
-  const treeLevel = ((entry.parents.length+1) / Config.maxPassDepth)
-  const iconColumn = Math.max(ICON_MIN_SPACE, treeLevel * ICON_MAX_SPACE)
-  const drawerColumn = 1 * ((1 - iconColumn) / 4)
-  const nameColumn = 1 - iconColumn - drawerColumn
-  const gridTemplateColumns = `${iconColumn}fr ${nameColumn}fr ${drawerColumn}fr`
+  // --------------------------------
+  // | <span name/> | <div buttons/> |
+  // --------------------------------
+  // Increase the left-justification as we go to deeper levels
+  const marginLeft = `${(entry.parents.length) * 20}px`
 
   const path = entry.path()
   const api = new ApiRequest()
-  const touch = new TouchHandler(path, treeLevel)
+  const touch = new TouchHandler(path)
 
   queryStringStore.subscribe((value: string) => {
     currentQuery = value.toLowerCase()
@@ -118,7 +111,6 @@
     <div
       class="row"
       bind:this={touch.grid}
-      style:grid-template-columns={gridTemplateColumns}
       on:touchstart="{(e) => touch.start(e) }"
       on:touchmove="{(e) => touch.move(e) }"
       on:touchend="{(e) => {
@@ -136,17 +128,14 @@
     >
       <!-- on:click() events are used on desktop and disabled in favor of
       ontouch* on mobile -->
-      <span role="button"
-        class="{ isLeaf ? Config.passwordIcon : 
-          (open ? Config.dropdownOpen : Config.dropdownClosed)} row-icon"
-        on:click="{() => runIfNotMobile(handleMainClick) }"
-      />
-      <span role="button" class="name" 
-            on:click="{() => runIfNotMobile(handleMainClick) }">
+      <span role="button" class="{ isLeaf ? Config.passwordIcon : 
+          (open ? Config.dropdownOpen : Config.dropdownClosed) }" 
+            on:click="{() => runIfNotMobile(handleMainClick) }"
+            style:margin-left={marginLeft}>
         {entry.name}
       </span>
 
-      <div class="drawer">
+      <div class="buttons">
         {#if isLeaf}
           <span role="button" class="{Config.showPassword} show-pass"
                 on:click="{() => runIfNotMobile(handleGetPass, false) }"/>
@@ -171,6 +160,7 @@
   div.row {
     @include vars.fade-in(0.5s);
     display: grid;
+    grid-template-columns: 0.7fr 0.3fr;
     text-align: center;
     font-size: vars.$font_medium;
     white-space: nowrap;
@@ -186,6 +176,10 @@
       // Vertical centering
       display: inline-flex;
       align-items: center;
+      &::before {
+        // Spacing between text and icon
+        margin: 20px;
+      }
     }
 
     // Always show the border (translucently)
@@ -193,10 +187,11 @@
     border-bottom: solid 1px;
     border-color: rgba(0,0,0,0.0);
 
-    div.drawer {
+    div.buttons {
       display: inline-flex;
+      justify-content: space-evenly;
 
-      // Hide drawer icons without changing geometry
+      // Hide buttons icons without changing geometry
       span.nf {
         color: vars.$white;
         opacity: 0;
@@ -213,10 +208,6 @@
           // need to be too exact.
         }
       }
-      // == Desktop ==
-      @include vars.desktop {
-        justify-content: space-evenly;
-      }
     }
 
     // == Desktop hover ==
@@ -226,12 +217,12 @@
         // when the parent element is hovered
         border-color: vars.$lilac;
 
-        div.drawer > span.nf {
+        div.buttons > span.nf {
           opacity: 1.0;
         }
       }
 
-      span.nf:not(.row-icon):hover {
+      div.buttons > span.nf:hover {
         opacity: 1.0;
         color: vars.$lilac;
       }

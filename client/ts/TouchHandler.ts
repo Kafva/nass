@@ -41,19 +41,19 @@ export default class TouchHandler {
     /** Opacity values at the start of a  new touch event. */
     private originOpacities = {left: 0, right: 0, bg: 0},
 
-    /** Grid container, the last child is always the drawer element */
+    /** Grid container, the last child is always the buttons container */
     public grid: HTMLDivElement|null = null
   ){}
 
   private getOpacities(): {left: number, right: number, bg: number} {
-    const name = this.grid!.children.item(1) as HTMLSpanElement
+    const lhs = this.grid!.children.item(0) as HTMLSpanElement
     const button =
       (this.grid!.lastChild as HTMLElement).children.item(0) as HTMLSpanElement
     const bg_splits = this.grid!.style.backgroundColor.split(',')
     const bg = bg_splits.length == 4 ?
       parseFloat(bg_splits[3].slice(0,-1)) : 0.0
     return {
-      left: parseFloat(window.getComputedStyle(name).opacity),
+      left: parseFloat(window.getComputedStyle(lhs).opacity),
       right: parseFloat(window.getComputedStyle(button).opacity),
       bg: bg
     }
@@ -66,6 +66,8 @@ export default class TouchHandler {
       if (button instanceof HTMLElement) {
         const font_split = window.getComputedStyle(button).fontSize.split('px')
         return font_split.length == 2 ? parseInt(font_split[0]) : this.originFontSize
+      } else {
+        console.log("Not a HTMLElement", button)
       }
     }
     return this.originFontSize
@@ -103,11 +105,8 @@ export default class TouchHandler {
       const bounded_opacity =
         Math.min(1.0, Math.max(OPACITY_LOW_TIDE, opacity))
 
-      const icon = this.grid.children.item(0) as HTMLSpanElement
-      const name = this.grid.children.item(1) as HTMLSpanElement
-      // !! Hide the icon completely to avoid clipping !!
-      icon.style.opacity = opacity != 1.0 ? "0.0" : opacity.toString()
-      name.style.opacity = bounded_opacity.toString()
+      const lhs = this.grid.children.item(0) as HTMLSpanElement
+      lhs.style.opacity = bounded_opacity.toString()
     }
   }
 
@@ -147,6 +146,7 @@ export default class TouchHandler {
       // 1.0: Far right
       const newX = touch.pageX/window.innerWidth
       const distance = Math.min(MAX_DISTANCE,  Math.abs(newX - this.originX))
+      console.log(newX > this.originX ? "--->" : "<---", newX, `d=${distance}`)
 
       if (newX > this.originX) {
         // On [--->] (fold IN buttons),
@@ -200,7 +200,7 @@ export default class TouchHandler {
   /** Platform check based on viewport width and UA */
   isMobile(): boolean {
     return navigator.userAgent.match(/iPhone|iPad|Android/i) != null
-           && document.body.clientWidth <= 480
+           && document.body.clientWidth <= 480 // !! vars.$mobile_max_width !!
   }
 
   restoreLayout() {
