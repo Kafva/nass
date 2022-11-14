@@ -87,7 +87,7 @@ export default class TouchHandler {
       }
       this.lhs.style.right = `${right}%`
       this.rhs.style.right = `${right}%`
-      console.log("Setting right offset", `${right}%`)
+      // console.log("Setting right offset", `${right}%`)
     }
   }
 
@@ -95,7 +95,7 @@ export default class TouchHandler {
   private setFontSize(size: number) {
     const bounded_size = Math.max(MIN_FONT_SIZE, Math.min(MAX_FONT_SIZE, size))
     this.rhs!.style.fontSize = `${bounded_size}px`
-    //console.log("Setting font size", `${bounded_size}px`)
+    // console.log("Setting font size", `${bounded_size}px`)
   }
 
   private setBgOpacity(opacity: number) {

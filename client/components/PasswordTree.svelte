@@ -174,7 +174,7 @@
       height: 5vh;
     }
 
-    span {
+    & > span {
       // Vertical centering
       display: inline-flex;
       align-items: center;
@@ -190,6 +190,7 @@
     border-color: rgba(0,0,0,0.0);
 
     div.buttons {
+      // Horizontal alignment
       display: inline-flex;
       justify-content: space-evenly;
 
@@ -200,6 +201,10 @@
       // == Mobile ==
       @include vars.mobile {
         span {
+          // Vertical centering
+          display: inline-flex;
+          align-items: center;
+
           // The font size is controlled by the parent in TouchHandler
           font-size: inherit;
           height: 100%;
