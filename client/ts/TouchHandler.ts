@@ -17,6 +17,11 @@ const MAX_DISTANCE = 0.5
  */
 const KEEP_OPEN_FROM_OPACITY = 0.5
 
+// Percentage of the screen that a swipe is allowed to move
+// in the Y direction will not losing focus. It is preferable
+// for this to be low in regards to the UX of vertical scrolling.
+const Y_FOCUS_THRESHOLD = 0.1
+
 /** Lowest allowed value for text opacity */
 const OPACITY_LOW_TIDE = 0.3;
 
@@ -41,8 +46,8 @@ export default class TouchHandler {
      */
     private path: string,
 
-    /** x coordinate origin of a new touch event. */
-    private originX = 0,
+    /** (x,y) coordinate origin of a new touch event. */
+    private originPos = {x: 0, y: 0},
 
     /** Font size of the rhs buttons upon a new touch event in px. */
     private originFontSize = 0,
@@ -58,7 +63,6 @@ export default class TouchHandler {
 
     /** Grid container, the last child is always the buttons container */
     public grid: HTMLDivElement|null = null
-
   ){}
 
   private getOpacities(): {left: number, right: number, bg: number} {
@@ -124,7 +128,8 @@ export default class TouchHandler {
     const touch = event.touches.item(0)
     if (touch) {
       // Save origin position and opacity
-      this.originX = touch.pageX/window.innerWidth
+      this.originPos.x = touch.pageX/window.innerWidth
+      this.originPos.y = touch.pageY/window.innerHeight
 
       this.setLeftOpacity(OPACITY_LOW_TIDE)
       this.setRightOpacity(OPACITY_LOW_TIDE)
@@ -142,9 +147,16 @@ export default class TouchHandler {
       // 0.0: Far left
       // 1.0: Far right
       const newX = touch.pageX/window.innerWidth
-      const distance = Math.min(MAX_DISTANCE,  Math.abs(newX - this.originX))
+      const distance = Math.min(MAX_DISTANCE,  Math.abs(newX - this.originPos.x))
 
-      if (newX > this.originX) {
+      // Abort row operations if the movement is a vertical scroll
+      const verticalScroll = Math.abs(touch.pageY/window.innerHeight - this.originPos.y)
+      if (verticalScroll >= Y_FOCUS_THRESHOLD) {
+        this.restoreLayout()
+        return
+      }
+
+      if (newX > this.originPos.x) {
         // On [--->] (fold IN buttons),
         // decrease opacity of the rhs and increase for the lhs
         this.setLeftOpacity(this.originOpacities.left + distance)
@@ -173,7 +185,7 @@ export default class TouchHandler {
     const touch = event.changedTouches.item(0)
     if (touch) {
       const newX = touch.pageX/window.innerWidth
-      const distance = Math.abs(newX - this.originX)
+      const distance = Math.abs(newX - this.originPos.x)
 
       // Return the current element being touched
       // if the swipe was over a short distance (i.e. essentially a click)
