@@ -72,6 +72,12 @@ const CopyToClipboard = async (value: string) => {
   }
 }
 
+/** Platform check based on viewport width and UA. */
+const IsMobile = (): boolean => {
+  return navigator.userAgent.match(/iPhone|iPad|Android/i) != null
+         && document.body.clientWidth <= 480 // !! vars.$mobile_max_width !!
+}
+
 const Debug = (...args: any) => {
   if (Config.debugLogs) {
     console.log("%c DEBUG ", 'background: #2b71e0; color: #f5e4f3', ...args)
@@ -81,4 +87,4 @@ const Err = (...args: any) => {
   console.log("%c ERROR ", 'background: #ed493e; color: #f5e4f3', ...args)
 }
 
-export { fly, fade, GetHTMLElement, GetHTMLElements, CopyToClipboard, Debug, Err }
+export { fly, fade, GetHTMLElement, GetHTMLElements, CopyToClipboard, IsMobile, Debug, Err }

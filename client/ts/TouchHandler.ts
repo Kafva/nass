@@ -1,3 +1,4 @@
+import { IsMobile } from "./util";
 import { visibleButtonsStore } from "./store";
 
 /**
@@ -22,6 +23,7 @@ const BG_COLOR = "25,25,24"
 const MAX_FONT_SIZE = 28
 const MIN_FONT_SIZE = 18
 const MAGNIFIER_MULTIPLIER = 15
+
 
 /** Handler for touch events on each item in the PasswordTree */
 export default class TouchHandler {
@@ -113,7 +115,7 @@ export default class TouchHandler {
   }
 
   start(event: TouchEvent) {
-    if (!this.isMobile()) { return; }
+    if (!IsMobile()) { return; }
     const touch = event.touches.item(0)
     if (touch) {
       // Save origin position and opacity
@@ -129,7 +131,7 @@ export default class TouchHandler {
   }
 
   move(event: TouchEvent) {
-    if (!this.isMobile()) { return; }
+    if (!IsMobile()) { return; }
     const touch = event.touches.item(0)
     if (touch) {
       // 0.0: Far left
@@ -163,7 +165,7 @@ export default class TouchHandler {
   }
 
   end(event: TouchEvent): HTMLSpanElement|null {
-    if (!this.isMobile()) { return null; }
+    if (!IsMobile()) { return null; }
     const touch = event.changedTouches.item(0)
     if (touch) {
       const newX = touch.pageX/window.innerWidth
@@ -181,7 +183,7 @@ export default class TouchHandler {
         // Update the currently visible button, other PassEntry
         // objects will be notified of this and hide their buttons
         //
-        // !! Note we do this on end() rather than start() so that
+        // !! NOTE: we do this on end() rather than start() so that
         // we can deny "clicks" on buttons that occur at start() or
         // during move() !!
         //
@@ -194,13 +196,8 @@ export default class TouchHandler {
     return null
   }
 
-  /** Platform check based on viewport width and UA */
-  isMobile(): boolean {
-    return navigator.userAgent.match(/iPhone|iPad|Android/i) != null
-           && document.body.clientWidth <= 480 // !! vars.$mobile_max_width !!
-  }
 
-  /** This is triggered when `visibleButtonsStore`is set to a new value */
+  /** This is triggered when `visibleButtonsStore`is set to a new value. */
   restoreLayout() {
     if (this.grid != null) {
       this.setBgOpacity(0.0)

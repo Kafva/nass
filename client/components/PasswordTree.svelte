@@ -5,7 +5,7 @@
   import { Config, MessageText} from '../ts/config'
   import { FoldPolicy } from '../ts/types'
   import type { ApiResponse, AuthInfo, PassItem } from '../ts/types'
-  import { CopyToClipboard, Debug } from '../ts/util'
+  import { CopyToClipboard, Debug, IsMobile } from '../ts/util'
   import { ApiStatusResponse } from '../ts/types'
   import type PassEntry from '../ts/PassEntry'
   import ApiRequest from '../ts/ApiRequest'
@@ -100,7 +100,7 @@
   }
 
   const runIfNotMobile = (f: Function, ...args: any) => {
-    if (!touch.isMobile()) f(...args)
+    if (!IsMobile()) f(...args)
   }
 </script>
 
@@ -115,7 +115,7 @@
       on:touchmove="{(e) => touch.move(e) }"
       on:touchend="{(e) => {
         const btn = touch.end(e)
-        if (btn != null && $visibleButtonsStore != "") {
+        if (btn != null && $visibleButtonsStore == path) {
           if (btn.classList.contains('delete-pass')) {
             handleDelPass()
           } else if (btn.classList.contains('show-pass')) {
@@ -201,13 +201,13 @@
       color: vars.$white;
       opacity: 0;
 
-      // == Mobile ==
-      @include vars.mobile {
-        span {
-          // Vertical centering
-          display: inline-flex;
-          align-items: center;
+      span {
+        // Vertical centering
+        display: inline-flex;
+        align-items: center;
 
+        // == Mobile ==
+        @include vars.mobile {
           // The font size is controlled by the parent in TouchHandler
           font-size: inherit;
           height: 100%;
