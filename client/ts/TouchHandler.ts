@@ -10,6 +10,13 @@ const CLICK_LIMIT = 0.02
 /** Maximum allowed distance to move from the origin */
 const MAX_DISTANCE = 0.5
 
+
+/**
+ * The opacity required upon the rhs for it to remain open
+ * after a swipe motion.
+ */
+const KEEP_OPEN_FROM_OPACITY = 0.5
+
 /** Lowest allowed value for text opacity */
 const OPACITY_LOW_TIDE = 0.3;
 
@@ -89,7 +96,6 @@ export default class TouchHandler {
       }
       this.lhs.style.right = `${right}%`
       this.rhs.style.right = `${right}%`
-      // console.log("Setting right offset", `${right}%`)
     }
   }
 
@@ -97,7 +103,6 @@ export default class TouchHandler {
   private setFontSize(size: number) {
     const bounded_size = Math.max(MIN_FONT_SIZE, Math.min(MAX_FONT_SIZE, size))
     this.rhs!.style.fontSize = `${bounded_size}px`
-    // console.log("Setting font size", `${bounded_size}px`)
   }
 
   private setBgOpacity(opacity: number) {
@@ -138,7 +143,6 @@ export default class TouchHandler {
       // 1.0: Far right
       const newX = touch.pageX/window.innerWidth
       const distance = Math.min(MAX_DISTANCE,  Math.abs(newX - this.originX))
-      // console.log(newX > this.originX ? "--->" : "<---", newX, `d=${distance}`)
 
       if (newX > this.originX) {
         // On [--->] (fold IN buttons),
@@ -179,7 +183,7 @@ export default class TouchHandler {
       }
 
       // Restore the layout if the rhs is highly transparent.
-      if (this.getOpacities().right >= 0.5) {
+      if (this.getOpacities().right >= KEEP_OPEN_FROM_OPACITY) {
         // Update the currently visible button, other PassEntry
         // objects will be notified of this and hide their buttons
         //

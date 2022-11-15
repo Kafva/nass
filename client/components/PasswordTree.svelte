@@ -123,9 +123,14 @@
           } else {
             handleMainClick()
           }
-
-          // Un-focus the current row after a click
+        }
+        // Un-focus the current row after a click.
+        // We do this even if `visibleButtonsStore` is not set to the current
+        // path since this will be unset when touching a zero-opacity button.
+        if (btn != null) {
           visibleButtonsStore.set("")
+          // FIXME: this should not need to be manually called
+          touch.restoreLayout()
         }
       }}"
     >
