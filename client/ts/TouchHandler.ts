@@ -165,7 +165,7 @@ export default class TouchHandler {
         // Decrease rhs font size
         this.setFontSize(this.originFontSize - MAGNIFIER_MULTIPLIER*distance)
       } else {
-        // On [<---] (fold out buttons),
+        // On [<---] (fold OUT buttons),
         // decrease opacity of the lhs and increase for the rhs
         this.setLeftOpacity(this.originOpacities.left - distance)
         this.setRightOpacity(this.originOpacities.right + distance)
@@ -213,7 +213,7 @@ export default class TouchHandler {
   }
 
 
-  /** This is triggered when `visibleButtonsStore`is set to a new value. */
+  /** This is triggered when `visibleButtonsStore` is set to a new value. */
   restoreLayout() {
     if (this.grid != null) {
       this.setBgOpacity(0.0)

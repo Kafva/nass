@@ -43,7 +43,7 @@
   </div>
 {/if}
 
-<!-- Some dialogs (like the password prompt) do  not need activation button -->
+<!-- Some dialogs (like the password prompt) do not need an activation button -->
 {#if btnClass != ""}
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <span role="button" class="{'nf '+ btnClass}"
