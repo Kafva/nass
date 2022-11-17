@@ -7,7 +7,7 @@
 <input type="text" placeholder="Search..." bind:value={$queryStringStore}
        on:focus="{() => { 
         foldPolicyStore.set(FoldPolicy.allOpen) 
-        visibleButtonsStore.set("")
+        visibleButtonsStore.set('')
 }}"/>
 
 <style lang="scss">

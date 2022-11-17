@@ -49,7 +49,7 @@
   <span role="button" class="{'nf '+ btnClass}"
         on:click="{() => { 
           visible = true 
-          visibleButtonsStore.set("")
+          visibleButtonsStore.set('')
   }}"></span>
 {/if}
 

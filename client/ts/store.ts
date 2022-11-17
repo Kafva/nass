@@ -43,5 +43,11 @@ export const foldPolicyStore = writable<FoldPolicy>(FoldPolicy.localControl)
 /**
  * Path to the `PassEntry` (if any) that currently has the show/delete
  * buttons visible.
+ *
+ * This is explicirly unset when:
+ *  A dialog button (like <Help/>) is clicked
+ *  The <svelte:body/> is clicked
+ *  The <Search/> gains focus
+ *  A touchend() event that was considered a click is detected
  */
 export const visibleButtonsStore = writable<string>("")

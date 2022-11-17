@@ -50,7 +50,7 @@
   </label>
 
   <div>
-    <span class="{Config.passwordPrompt}"/>
+    <span class="nf {Config.passwordPrompt}"/>
     <input type="password"
       on:keydown="{handleKeyDown}"
       bind:value={passInput}

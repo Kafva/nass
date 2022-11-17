@@ -13,13 +13,13 @@ class Config {
   static readonly maxPassDepth = 6
 
   // Icon classes
-  static readonly dropdownClosed = 'nf nf-fa-angle_right'
-  static readonly dropdownOpen = 'nf nf-fa-angle_down'
-  static readonly passwordIcon = 'nf nf-mdi-key'
-  static readonly passwordPrompt = 'nf nf-fa-angle_double_right'
+  static readonly dropdownClosed = 'nf-fa-angle_right'
+  static readonly dropdownOpen = 'nf-fa-angle_down'
+  static readonly passwordIcon = 'nf-mdi-key'
+  static readonly passwordPrompt = 'nf-fa-angle_double_right'
 
-  static readonly showPassword = 'nf nf-oct-eye'
-  static readonly deleteIcon = 'nf nf-fa-minus'
+  static readonly showPassword = 'nf-oct-eye'
+  static readonly deleteIcon = 'nf-fa-minus'
 }
 
 /** Predefined text for <Msg/> messages */

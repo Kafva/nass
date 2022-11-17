@@ -33,7 +33,7 @@
     currentQuery = value.toLowerCase()
   })
 
-  // Restore the grid layout if another path has visible buttons
+  // Restore the row layout if another path has visible buttons
   visibleButtonsStore.subscribe((value: string) => {
     if (value != path || value == "") {
       touch.restoreLayout()
@@ -102,6 +102,37 @@
   const runIfNotMobile = (f: Function, ...args: any) => {
     if (!IsMobile()) f(...args)
   }
+
+  const handleTouchEnd = (event: TouchEvent) => {
+    const btn = touch.end(event)
+    // Only handle touchend() as a click if the current path
+    // is considered to have visible buttons
+    if (btn != null && $visibleButtonsStore == path) {
+      if (btn.classList.contains(Config.deleteIcon)) {
+        handleDelPass()
+      } else if (btn.classList.contains(Config.showPassword)) {
+        handleGetPass(false)
+      } else {
+        handleMainClick()
+      }
+    }
+    // Un-focus the current row after a click.
+    // We do this even if `visibleButtonsStore` is not set to the current
+    // path since this will be unset when touching a zero-opacity button.
+    if (btn != null) {
+      // NOTE: the .subscriber() block for visibleButtonsStore
+      // (which calls .restoreLayout()) will only be triggered
+      // from .set('') if the provided value is different from the current.
+      // We therefore need an explicit call to restoreLayout as a fallback.
+      if ($visibleButtonsStore != '') {
+        visibleButtonsStore.set('')
+      } else {
+        touch.restoreLayout()
+      }
+    }
+
+  }
+
 </script>
 
 {#if entry.matchesQuery(currentQuery)}
@@ -113,30 +144,11 @@
       bind:this={touch.grid}
       on:touchstart="{(e) => touch.start(e) }"
       on:touchmove="{(e) => touch.move(e) }"
-      on:touchend="{(e) => {
-        const btn = touch.end(e)
-        if (btn != null && $visibleButtonsStore == path) {
-          if (btn.classList.contains('delete-pass')) {
-            handleDelPass()
-          } else if (btn.classList.contains('show-pass')) {
-            handleGetPass(false)
-          } else {
-            handleMainClick()
-          }
-        }
-        // Un-focus the current row after a click.
-        // We do this even if `visibleButtonsStore` is not set to the current
-        // path since this will be unset when touching a zero-opacity button.
-        if (btn != null) {
-          visibleButtonsStore.set("")
-          // FIXME: this should not need to be manually called
-          touch.restoreLayout()
-        }
-      }}"
+      on:touchend="{(e) => handleTouchEnd(e) }"
     >
       <!-- on:click() events are used on desktop and disabled in favor of
       ontouch* on mobile -->
-      <span role="button" class="{ isLeaf ? Config.passwordIcon :
+      <span role="button" class="nf { isLeaf ? Config.passwordIcon :
           (open ? Config.dropdownOpen : Config.dropdownClosed) }"
             on:click="{() => runIfNotMobile(handleMainClick) }"
             style:margin-left={marginLeft}
@@ -147,10 +159,10 @@
 
       <div class="buttons" bind:this={touch.rhs}>
         {#if isLeaf}
-          <span role="button" class="{Config.showPassword} show-pass"
+          <span role="button" class="nf {Config.showPassword}"
                 on:click="{() => runIfNotMobile(handleGetPass, false) }"/>
         {/if}
-        <span role="button" class="{Config.deleteIcon} delete-pass"
+        <span role="button" class="nf {Config.deleteIcon}"
               on:click="{() => runIfNotMobile(handleDelPass)}" />
       </div>
     </div>
