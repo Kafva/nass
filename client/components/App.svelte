@@ -42,7 +42,7 @@
 
 <Msg/>
 
-<Dialog component={Help}    btnClass="nf-mdi-help"/>
+<Dialog component={Help}    btnClass="nf-mdi-help" percent={20}/>
 <Dialog component={AddPass} btnClass="nf-fa-plus"/>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->

@@ -6,6 +6,8 @@
   // The component to render inside of the modal
   export let component: typeof SvelteComponent;
   export let btnClass: string;
+  // Top offset after `fly`
+  export let percent: number = 60
 
   let visible = false;
 
@@ -36,7 +38,7 @@
   <div id="modalCover" transition:fade="{{ limit: 0.5, duration: 400 }}"
        on:click="{hideDialog}"/>
 
-  <div id="dialog" transition:fly="{{ percent: 60, duration: 400 }}">
+  <div id="dialog" transition:fly="{{ percent: percent, duration: 400 }}">
     <!-- bind: is used to have the parent react to any changes that
     the child makes to 'visible' -->
     <svelte:component this={component} bind:visible={visible}/>
@@ -88,5 +90,8 @@
   // Buttons float to the corner
   span.nf {
     @include vars.button-style;
+    @include vars.mobile {
+      font-size: vars.$font_icon_high_mobile;
+    }
   }
 </style>

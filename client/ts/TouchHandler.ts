@@ -34,7 +34,7 @@ const BG_COLOR = "25,25,24"
   */
 const MAX_FONT_SIZE = 28
 const MIN_FONT_SIZE = 18
-const MAGNIFIER_MULTIPLIER = 15
+const MAGNIFIER_MULTIPLIER = 25
 
 
 /** Handler for touch events on each item in the PasswordTree */
