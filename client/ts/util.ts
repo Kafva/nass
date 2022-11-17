@@ -8,7 +8,7 @@ import { msgTextStore } from "./store"
  * This method expects the element in question to be off-screen by default.
  */
 const fly = function(node: HTMLElement, {
-  from = 'top', vh = 30, delay = 0, duration = 1000
+  from = 'top', percent = 30, delay = 0, duration = 1000
 }) {
   return {
     delay,
@@ -22,7 +22,8 @@ const fly = function(node: HTMLElement, {
       //   100% (downwards): element should start above the top of the viewport
       //  -100% (downwards): element should start below the bottom of the viewport
       //
-      node.style.setProperty("transform", `translateY(${from == 'top' ? '' : '-'}${t * vh}vh)`)
+      node.style.setProperty("transform",
+        `translateY(${from == 'top' ? '' : '-'}${t * percent}%)`)
       node.style.setProperty("opacity", `${t}`)
     }
   }
@@ -79,7 +80,7 @@ const IsMobile = (): boolean => {
 }
 
 const Debug = (...args: any) => {
-  if (Config.debugLogs) {
+  if (Config.debug) {
     console.log("%c DEBUG ", 'background: #2b71e0; color: #f5e4f3', ...args)
   }
 }

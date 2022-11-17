@@ -28,7 +28,8 @@
 
 {#if message.length != 0}
   <!-- svelte-ignore a11y-click-events-have-key-events -->
-  <div role="button" transition:fly="{{ from: 'bottom', vh: 8, duration: 200 }}"
+  <div role="button"
+       transition:fly="{{ from: 'bottom', percent: 125, duration: 200 }}"
        on:click="{()=> msgTextStore.set(['','']) }">
        <p title={message}>
         <span class="{'nf '+ iconClass}"/> {message}
@@ -73,8 +74,9 @@
     }
 
     // Messages appear at the bottom of the screen so that they
-    // do not overlap with the search bar
-    top: calc(100vh - vars.$msg_width);
+    // do not overlap with the search bar.
+    // The fly-effect uses a percentage >100% because of the placement.
+    top: 100%;
   }
 </style>
 

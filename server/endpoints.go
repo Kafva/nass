@@ -162,7 +162,8 @@ func DelPass(res http.ResponseWriter, req *http.Request) {
 
   fspath := CONFIG.Passwordstore+"/"+passPath
   if IsDir(fspath) || IsFile(fspath+".gpg") {
-    _, err := exec.Command(CONFIG.PassBinary, "rm", "--force", passPath).Output()
+    _, err := exec.Command(CONFIG.PassBinary, "rm", "--recursive", "--force",
+                           passPath).Output()
     if err != nil {
       ErrorResponse(res, "Failed to remove password",
                     http.StatusInternalServerError)

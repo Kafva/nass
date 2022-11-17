@@ -8,7 +8,7 @@ import { rootDummy } from './data'
 import { tick } from 'svelte'
 
 Config.useMockApi = true
-Config.debugLogs = false
+Config.debug = false
 
 let pathInput: HTMLInputElement
 let passwordInput: HTMLInputElement

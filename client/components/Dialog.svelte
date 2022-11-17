@@ -36,7 +36,7 @@
   <div id="modalCover" transition:fade="{{ limit: 0.5, duration: 400 }}"
        on:click="{hideDialog}"/>
 
-  <div id="dialog" transition:fly="{{ vh: 10, duration: 400 }}">
+  <div id="dialog" transition:fly="{{ percent: 60, duration: 400 }}">
     <!-- bind: is used to have the parent react to any changes that
     the child makes to 'visible' -->
     <svelte:component this={component} bind:visible={visible}/>
@@ -47,8 +47,8 @@
 {#if btnClass != ""}
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <span role="button" class="{'nf '+ btnClass}"
-        on:click="{() => { 
-          visible = true 
+        on:click="{() => {
+          visible = true
           visibleButtonsStore.set('')
   }}"></span>
 {/if}
@@ -80,7 +80,7 @@
 
     // Position the dialog off-screen by default, the `fly`
     // animation will move it into place.
-    top: -5vh;
+    top: -5%;
 
     @include vars.fixed-centering(vars.$dialog_width, $dialog_padding);
   }
