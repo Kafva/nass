@@ -107,19 +107,22 @@
     const btn = touch.end(event)
     // Only handle touchend() as a click if the current path
     // is considered to have visible buttons
-    if (btn != null && $visibleButtonsStore == path) {
-      if (btn.classList.contains(Config.deleteIcon)) {
-        handleDelPass()
-      } else if (btn.classList.contains(Config.showPassword)) {
-        handleGetPass(false)
+    Debug(`(visibleButtonsStore='${$visibleButtonsStore}') Clicked onto`, btn)
+    if (btn != null) {
+      // Clicks onto the main hitbox are disabled if the buttons are visible
+      if ($visibleButtonsStore == path) {
+        if (btn.classList.contains(Config.deleteIcon)) {
+          handleDelPass()
+        } else if (btn.classList.contains(Config.showPassword)) {
+          handleGetPass(false)
+        }
       } else {
         handleMainClick()
       }
-    }
-    // Un-focus the current row after a click.
-    // We do this even if `visibleButtonsStore` is not set to the current
-    // path since this will be unset when touching a zero-opacity button.
-    if (btn != null) {
+      // Un-focus the current row after a click.
+      // We do this even if `visibleButtonsStore` is not set to the current
+      // path since this will be unset when touching a zero-opacity button.
+      //
       // NOTE: the .subscriber() block for visibleButtonsStore
       // (which calls .restoreLayout()) will only be triggered
       // from .set('') if the provided value is different from the current.
@@ -130,7 +133,6 @@
         touch.restoreLayout()
       }
     }
-
   }
 
 </script>
