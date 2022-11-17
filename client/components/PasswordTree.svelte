@@ -107,7 +107,9 @@
     const btn = touch.end(event)
     // Only handle touchend() as a click if the current path
     // is considered to have visible buttons
-    Debug(`(visibleButtonsStore='${$visibleButtonsStore}') Clicked onto`, btn)
+    Debug(
+      `(visibleButtonsStore='${$visibleButtonsStore}') touchend() as click onto`, 
+       btn?.classList)
     if (btn != null) {
       // Clicks onto the main hitbox are disabled if the buttons are visible
       if ($visibleButtonsStore == path) {

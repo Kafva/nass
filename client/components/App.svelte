@@ -11,6 +11,7 @@
   import Msg from './Msg.svelte'
   import ShowPass from './ShowPass.svelte'
   import { FoldPolicy } from '../ts/types';
+  import { Config } from '../ts/config';
 
   const tmpl = GetHTMLElement<HTMLDivElement>("#tmpl")
   let rootEntry = new PassEntry("", [], [], [])
@@ -29,6 +30,10 @@
 
   // import { MessageText } from '../ts/config';
   // setTimeout(()=>msgTextStore.set([MessageText.pathOverlap, ""]), 1000)
+
+  if (Config.debugLogs) {
+    Config.dump()
+  }
 </script>
 
 <!-- Hide focused button (if any) when the body is clicked -->
@@ -40,11 +45,11 @@
 <Dialog component={AddPass} btnClass="nf-fa-plus"/>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<span role="button" 
-      class="nf {$foldPolicyStore == FoldPolicy.allOpen ? 'nf-oct-fold' : 
+<span role="button"
+      class="nf {$foldPolicyStore == FoldPolicy.allOpen ? 'nf-oct-fold' :
                                                           'nf-oct-unfold'}"
       on:click="{() =>
-          foldPolicyStore.set($foldPolicyStore == FoldPolicy.allOpen ? 
+          foldPolicyStore.set($foldPolicyStore == FoldPolicy.allOpen ?
                               FoldPolicy.allClosed : FoldPolicy.allOpen)
       }"
 />

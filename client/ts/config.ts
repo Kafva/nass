@@ -20,6 +20,16 @@ class Config {
 
   static readonly showPassword = 'nf-oct-eye'
   static readonly deleteIcon = 'nf-fa-minus'
+
+  static dump() {
+    const dictArr = 
+      Object.entries(this).map((tpl) => { return { [tpl[0]]: tpl[1] }; })
+    // Join the [{key: value}, ...] array into one object
+    const flatDict = dictArr.reduce( (prev, next) => { 
+      return Object.assign(prev, next);  },
+    {})
+    console.table(flatDict)
+  }
 }
 
 /** Predefined text for <Msg/> messages */

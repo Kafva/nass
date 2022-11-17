@@ -74,7 +74,7 @@
 
     // Messages appear at the bottom of the screen so that they
     // do not overlap with the search bar
-    top: 100vh;
+    top: calc(100vh - vars.$msg_width);
   }
 </style>
 

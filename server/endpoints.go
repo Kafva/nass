@@ -130,9 +130,11 @@ func AddPass(res http.ResponseWriter, req *http.Request) {
   if cmd.ProcessState.ExitCode() == 0 && generate {
     // Respond with generated passphrase
     WriteResponse(res, StatusSuccess, "", passphrase)
+    Info("Generated passphrase for '" + passPath + "'")
 
   } else if cmd.ProcessState.ExitCode() == 0 {
     WriteResponse(res, StatusSuccess, "", "")
+    Info("Added passphrase for '" + passPath + "'")
 
   } else {
     ErrorResponse(res, "Failed to insert password",
@@ -166,6 +168,7 @@ func DelPass(res http.ResponseWriter, req *http.Request) {
                     http.StatusInternalServerError)
       return
     }
+    Info("Deleted: '" + passPath + "'")
   } else {
     ErrorResponse(res, "Invalid path", http.StatusBadRequest)
     return
