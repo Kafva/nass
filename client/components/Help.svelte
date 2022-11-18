@@ -11,8 +11,9 @@
 <ul>
   <li>Latin alphanumerics and <code>[-_.@/]</code> are allowed in path names (1-{Config.textMaxLen} characters).</li>
   <li><code>'/'</code> can be used to create folders up to a depth of {Config.maxPassDepth}.</li>
-  <li>Passwords are stored in a git repository, i.e. even if an entry is deleted it can be trivially recovered from the history.</li>
-  <li>Authentication requests are triggered sporadically based on if a cached PIN is available.</li>
+  <li>Passwords are stored in a Git repository, i.e. even if an entry is deleted it can be recovered from the history.</li>
+  <li>Authentication requests are triggered sporadically based on if a cached
+  password is available.</li>
 </ul>
 
 <style lang="scss">

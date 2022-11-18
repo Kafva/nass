@@ -187,6 +187,13 @@
       font-size: vars.$font_small;
       display: grid;
       grid-template-columns: 0.5fr 1fr;
+      align-items: center;
+
+      input[type="checkbox"] {
+        height: 60%;
+        width: 100%;
+      }
+
       label,input {
         margin-top: 10px;
       }

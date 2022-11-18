@@ -13,7 +13,6 @@
   export let entry: PassEntry
   let currentQuery = ""
   let showButtons = false
-  let row: HTMLDivElement
 
   const isRoot = entry.name == ""
   const isLeaf = entry.subitems.length == 0
@@ -103,7 +102,7 @@
   <!-- The root entry has an empty name -->
   {#if !isRoot }
     <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <div class="row" bind:this={row}
+    <div class="row"
          style:background-color="{ showButtons ? 'rgba(25, 25, 24, 0.2)' : 'transparent' }">
       <span role="button" class="nf { isLeaf ? Config.passwordIcon :
           (open ? Config.dropdownOpen : Config.dropdownClosed) }"
