@@ -9,10 +9,10 @@
   import { ApiStatusResponse } from '../ts/types'
   import type PassEntry from '../ts/PassEntry'
   import ApiRequest from '../ts/ApiRequest'
-  import TouchHandler from '../ts/TouchHandler'
 
   export let entry: PassEntry
   let currentQuery = ""
+  let showButtons = false
 
   const isRoot = entry.name == ""
   const isLeaf = entry.subitems.length == 0
@@ -27,7 +27,6 @@
 
   const path = entry.path()
   const api = new ApiRequest()
-  const touch = new TouchHandler(path)
 
   queryStringStore.subscribe((value: string) => {
     currentQuery = value.toLowerCase()
@@ -35,9 +34,8 @@
 
   // Restore the row layout if another path has visible buttons
   visibleButtonsStore.subscribe((value: string) => {
-    if (value != path || value == "") {
-      touch.restoreLayout()
-    }
+    showButtons = path == value
+    console.log(path, ":", value, showButtons)
   })
 
   foldPolicyStore.subscribe((value: FoldPolicy) => {
@@ -91,49 +89,12 @@
   }
 
   const handleMainClick = () => {
-    if (isLeaf) {
-      handleGetPass(true)
-    } else {
+    if (!isLeaf) {
       foldPolicyStore.set(FoldPolicy.localControl)
       open = !open
     }
-  }
-
-  const runIfNotMobile = (f: Function, ...args: any) => {
-    if (!IsMobile()) f(...args)
-  }
-
-  const handleTouchEnd = (event: TouchEvent) => {
-    const btn = touch.end(event)
-    // Only handle touchend() as a click if the current path
-    // is considered to have visible buttons
-    Debug(
-      `(visibleButtonsStore='${$visibleButtonsStore}') touchend() as click onto`,
-       btn?.classList)
-    if (btn != null) {
-      // Clicks onto the main hitbox are disabled if the buttons are visible
-      if ($visibleButtonsStore == path) {
-        if (btn.classList.contains(Config.deleteIcon)) {
-          handleDelPass()
-        } else if (btn.classList.contains(Config.showPassword)) {
-          handleGetPass(false)
-        }
-      } else {
-        handleMainClick()
-      }
-      // Un-focus the current row after a click.
-      // We do this even if `visibleButtonsStore` is not set to the current
-      // path since this will be unset when touching a zero-opacity button.
-      //
-      // NOTE: the .subscriber() block for visibleButtonsStore
-      // (which calls .restoreLayout()) will only be triggered
-      // from .set('') if the provided value is different from the current.
-      // We therefore need an explicit call to restoreLayout as a fallback.
-      if ($visibleButtonsStore != '') {
-        visibleButtonsStore.set('')
-      } else {
-        touch.restoreLayout()
-      }
+    if (IsMobile()) {
+      visibleButtonsStore.set(path)
     }
   }
 </script>
@@ -144,30 +105,28 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div
       class="row"
-      bind:this={touch.grid}
-      on:touchstart="{(e) => touch.start(e) }"
-      on:touchmove="{(e) => touch.move(e) }"
-      on:touchend="{(e) => handleTouchEnd(e) }"
+      style:backgroundColor="{ showButtons ?
+                              'rgba(25,25,24,0.5)' : 'transparent'}"
     >
-      <!-- on:click() events are used on desktop and disabled in favor of
-      ontouch* on mobile -->
       <span role="button" class="nf { isLeaf ? Config.passwordIcon :
           (open ? Config.dropdownOpen : Config.dropdownClosed) }"
-            on:click="{() => runIfNotMobile(handleMainClick) }"
-            style:margin-left={marginLeft}
-            bind:this={touch.lhs}>
-
+            on:click="{handleMainClick}"
+            style:margin-left={marginLeft}>
         {entry.name}
       </span>
 
-      <div class="buttons" bind:this={touch.rhs}>
-        {#if isLeaf}
-          <span role="button" class="nf {Config.showPassword}"
-                on:click="{() => runIfNotMobile(handleGetPass, false) }"/>
-        {/if}
-        <span role="button" class="nf {Config.deleteIcon}"
-              on:click="{() => runIfNotMobile(handleDelPass)}" />
-      </div>
+      {#if showButtons || !IsMobile()}
+        <div class="buttons">
+          {#if isLeaf}
+            <span role="button" class="nf {Config.clipboardIcon}"
+                  on:click="{() => handleGetPass(true) }"/>
+            <span role="button" class="nf {Config.showPassword}"
+                  on:click="{() => handleGetPass(false) }"/>
+          {/if}
+          <span role="button" class="nf {Config.deleteIcon}"
+                on:click="{handleDelPass}" />
+        </div>
+      {/if}
     </div>
   {/if}
 
@@ -219,7 +178,9 @@
 
       // Hide buttons icons without changing geometry
       color: vars.$white;
-      opacity: 0;
+      @include vars.desktop {
+        opacity: 0;
+      }
 
       span {
         // Vertical centering
@@ -228,8 +189,8 @@
 
         // == Mobile ==
         @include vars.mobile {
-          // The font size is controlled by the parent in TouchHandler
-          font-size: inherit;
+          @include vars.fade-in(0.5s);
+          font-size: vars.$font_icon_high_mobile;
           height: 100%;
           width: 100%;
         }

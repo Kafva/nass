@@ -38,7 +38,13 @@
 </script>
 
 <!-- Hide focused button (if any) when the body is clicked -->
-<svelte:body on:click="{() => { if (IsMobile()) visibleButtonsStore.set('') }}"/>
+<svelte:body on:click="{(event) => { 
+  // TODO check if #root
+  console.log(event.target.tagName.toLowerCase())
+  if (IsMobile() && event.target.tagName.toLowerCase() == 'body') { 
+    visibleButtonsStore.set('') 
+  }
+}}"/>
 
 <Msg/>
 
