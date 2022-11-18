@@ -7,7 +7,7 @@
   export let component: typeof SvelteComponent;
   export let btnClass: string;
   // Top offset after `fly`
-  export let percent: number = 60
+  export let percent = 60
 
   let visible = false;
 

@@ -28,9 +28,9 @@
     Debug("Updated tree", rootEntry)
   })
 
-  // import { MessageText } from '../ts/config';
-  // import { msgTextStore } from '../ts/store'
-  // setTimeout(()=>msgTextStore.set([MessageText.pathOverlap, ""]), 1000)
+  import { MessageText } from '../ts/config';
+  import { msgTextStore } from '../ts/store'
+  setTimeout(()=>msgTextStore.set([MessageText.pathOverlap, ""]), 1000)
 
   if (Config.debug) {
     Config.dump()
@@ -38,11 +38,10 @@
 </script>
 
 <!-- Hide focused button (if any) when the body is clicked -->
-<svelte:body on:click="{(event) => { 
-  // TODO check if #root
-  console.log(event.target.tagName.toLowerCase())
-  if (IsMobile() && event.target.tagName.toLowerCase() == 'body') { 
-    visibleButtonsStore.set('') 
+<svelte:body on:click="{(event) => {
+  // @ts-expect-error: EventTarget does not have an 'id' attribute
+  if (IsMobile() && event.target.id == 'root') {
+    visibleButtonsStore.set('')
   }
 }}"/>
 
@@ -64,9 +63,9 @@
 <Search/>
 
 {#if $authInfoStore.path != ""}
-  <Dialog component={Auth}     btnClass=""/>
+  <Dialog component={Auth}     btnClass="" percent={150}/>
 {:else if $showPassStore.path != ""}
-  <Dialog component={ShowPass} btnClass=""/>
+  <Dialog component={ShowPass} btnClass="" percent={150}/>
 {/if}
 
 <!-- With #key the password tree will be re-created from scratch when changes

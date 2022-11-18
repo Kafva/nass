@@ -54,7 +54,7 @@
 
     @include vars.mobile {
       width: vars.$msg_width_mobile;
-      @include vars.fixed-centering(vars.$msg_width_mobile, 20px);
+      @include vars.fixed-centering(vars.$msg_width_mobile, 0px);
     }
 
     p {

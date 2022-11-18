@@ -13,6 +13,7 @@
   export let entry: PassEntry
   let currentQuery = ""
   let showButtons = false
+  let row: HTMLDivElement
 
   const isRoot = entry.name == ""
   const isLeaf = entry.subitems.length == 0
@@ -34,8 +35,11 @@
 
   // Restore the row layout if another path has visible buttons
   visibleButtonsStore.subscribe((value: string) => {
-    showButtons = path == value
-    console.log(path, ":", value, showButtons)
+    showButtons = value == path
+    if (row != null) {
+      row.style.backgroundColor = showButtons ? 'rgba(25, 25, 24, 0.2)' :
+                                                'transparent'
+    }
   })
 
   foldPolicyStore.subscribe((value: FoldPolicy) => {
@@ -103,11 +107,7 @@
   <!-- The root entry has an empty name -->
   {#if !isRoot }
     <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <div
-      class="row"
-      style:backgroundColor="{ showButtons ?
-                              'rgba(25,25,24,0.5)' : 'transparent'}"
-    >
+    <div class="row" bind:this={row}>
       <span role="button" class="nf { isLeaf ? Config.passwordIcon :
           (open ? Config.dropdownOpen : Config.dropdownClosed) }"
             on:click="{handleMainClick}"
@@ -144,7 +144,7 @@
   div.row {
     @include vars.fade-in(0.5s);
     display: grid;
-    grid-template-columns: 0.7fr 0.3fr;
+    grid-template-columns: 0.65fr 0.35fr;
     text-align: center;
     font-size: vars.$font_medium;
     white-space: nowrap;
