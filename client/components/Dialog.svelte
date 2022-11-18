@@ -8,6 +8,7 @@
   export let btnClass: string;
   // Top offset after `fly`
   export let percent = 60
+  export let dialogClass = ""
 
   let visible = false;
 
@@ -38,7 +39,8 @@
   <div id="modalCover" transition:fade="{{ limit: 0.5, duration: 400 }}"
        on:click="{hideDialog}"/>
 
-  <div id="dialog" transition:fly="{{ percent: percent, duration: 400 }}">
+  <div id="dialog" class="{dialogClass}"
+       transition:fly="{{ percent: percent, duration: 400 }}">
     <!-- bind: is used to have the parent react to any changes that
     the child makes to 'visible' -->
     <svelte:component this={component} bind:visible={visible}/>
@@ -76,8 +78,16 @@
     background-color: vars.$dialog_bg;
     color: vars.$white;
     padding: $dialog_padding;
+
+    // Override for <ShowPass/>
     border: 1px solid vars.$lilac;
     border-radius: 5%;
+
+    &.show-pass {
+      border: 5px solid vars.$lilac;
+      border-radius: 0%;
+    }
+
     width: vars.$dialog_width;
 
     // Position the dialog off-screen by default, the `fly`

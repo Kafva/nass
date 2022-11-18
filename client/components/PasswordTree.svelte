@@ -36,10 +36,6 @@
   // Restore the row layout if another path has visible buttons
   visibleButtonsStore.subscribe((value: string) => {
     showButtons = value == path
-    if (row != null) {
-      row.style.backgroundColor = showButtons ? 'rgba(25, 25, 24, 0.2)' :
-                                                'transparent'
-    }
   })
 
   foldPolicyStore.subscribe((value: FoldPolicy) => {
@@ -107,7 +103,8 @@
   <!-- The root entry has an empty name -->
   {#if !isRoot }
     <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <div class="row" bind:this={row}>
+    <div class="row" bind:this={row}
+         style:background-color="{ showButtons ? 'rgba(25, 25, 24, 0.2)' : 'transparent' }">
       <span role="button" class="nf { isLeaf ? Config.passwordIcon :
           (open ? Config.dropdownOpen : Config.dropdownClosed) }"
             on:click="{handleMainClick}"

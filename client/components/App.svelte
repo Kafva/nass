@@ -65,7 +65,7 @@
 {#if $authInfoStore.path != ""}
   <Dialog component={Auth}     btnClass="" percent={150}/>
 {:else if $showPassStore.path != ""}
-  <Dialog component={ShowPass} btnClass="" percent={150}/>
+  <Dialog component={ShowPass} btnClass="" percent={150} dialogClass="show-pass"/>
 {/if}
 
 <!-- With #key the password tree will be re-created from scratch when changes

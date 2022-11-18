@@ -25,9 +25,6 @@
 
 <style lang="scss">
   @use "../scss/vars";
-  :global(div#dialog) {
-    background-color: vars.$black;
-  }
 
   div {
     text-align: center;
@@ -38,8 +35,8 @@
 
     span {
        &:first-child {
-          text-decoration: underline;
           margin-bottom: 10px;
+          border-bottom: 2px solid vars.$lilac;
        }
        &:nth-child(2) {
          font-size: vars.$font_small;
