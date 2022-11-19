@@ -8,7 +8,14 @@ import (
   "os/exec"
   "regexp"
   "strings"
+  "sync"
 )
+
+// Lock to prevent concurrent invocations of `pass` by different users.
+// Should be taken for `/get` operations as well as write operations
+// to avoid multiple GPG authentication prompts.
+var DB_LOCK sync.Mutex
+
 
 /*
 1. Try to reveal the password using a cached pin:
@@ -55,7 +62,10 @@ func GetPass(res http.ResponseWriter, req *http.Request) {
     )
   }
 
+  DB_LOCK.Lock()
   bytes, err := cmd.CombinedOutput()
+  DB_LOCK.Unlock()
+
   output := strings.TrimSpace(string(bytes))
 
   if err != nil && output == GPG_FAIL_STRING {
@@ -117,6 +127,10 @@ func AddPass(res http.ResponseWriter, req *http.Request) {
     ErrorResponse(res, "Failed to open stdin", http.StatusInternalServerError)
     return
   }
+
+  DB_LOCK.Lock()
+  defer DB_LOCK.Unlock()
+
   err = cmd.Start()
   if err != nil {
     ErrorResponse(res, "Failed to run "+CONFIG.PassBinary,
@@ -163,8 +177,10 @@ func DelPass(res http.ResponseWriter, req *http.Request) {
 
   fspath := CONFIG.Passwordstore+"/"+passPath
   if IsDir(fspath) || IsFile(fspath+".gpg") {
+    DB_LOCK.Lock()
     _, err := exec.Command(CONFIG.PassBinary, "rm", "--recursive", "--force",
                            passPath).Output()
+    DB_LOCK.Unlock()
     if err != nil {
       ErrorResponse(res, "Failed to remove password",
                     http.StatusInternalServerError)
