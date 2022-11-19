@@ -29,12 +29,12 @@ cleanup(){
 }
 success(){ printf " \033[32m✓ \033[0m\n"; }
 
-curl_POST(){
+POST(){
   local res=$(curl -s --interface $1 -d "pass=$2" -X POST -L \
     "http://$NASS_IP:5678/get?path=$PASS_PATH" | jq -rM '.status')
   [ "$res" = "$3" ] || die "\nFailed 'POST $1 $2': got status: '$res'"
 }
-curl_GET(){
+GET(){
   local res=$(curl -s --interface $1 -X GET -L \
     "http://$NASS_IP:5678/get?path=$PASS_PATH" | jq -rM '.status')
   [ "$res" = "$2" ] || die "\nFailed 'GET $1': got status: '$res'"
@@ -47,30 +47,30 @@ sudo ip addr add $JANE_IP/24 dev $IFACE
 
 
 info "Authenticate successfully as John"
-curl_POST $JOHN_IP john success
+POST $JOHN_IP john success
 success
 
 info "Waiting for $WAIT_TIME sec...\n"
 sleep $WAIT_TIME
 
 info "John's request should NOT require re-authentication"
-curl_GET $JOHN_IP success
+GET $JOHN_IP success
 success
 
 sleep 1
 
 info "Jane's request should require authentication"
-curl_GET $JANE_IP retry
+GET $JANE_IP retry
 success
 
 
 info "Authenticate as John and immediately try as Jane without authentication"
-curl_POST $JOHN_IP john success
-curl_GET $JANE_IP retry
-curl_GET $JANE_IP retry
-curl_POST $JANE_IP wrong failed
-curl_GET $JANE_IP retry
-curl_GET $JOHN_IP success
+POST $JOHN_IP john success
+GET $JANE_IP retry
+GET $JANE_IP retry
+POST $JANE_IP wrong failed
+GET $JANE_IP retry
+GET $JOHN_IP success
 success
 
 cleanup

@@ -4,7 +4,7 @@
   import { msgTextStore, rootEntryStore } from '../ts/store';
   import { ApiStatusResponse } from '../ts/types';
   import type { ApiResponse } from '../ts/types';
-  import { fade, IsLikelySafari } from '../ts/util';
+  import { fade, IsLikelySafari, IsMobile } from '../ts/util';
   export let visible: boolean;
 
   export let generatePass = true // This is allowed as a prop to simplify tests
@@ -119,6 +119,11 @@
     case 'Enter':
       event.preventDefault()
       validateSubmit()
+      // Force unfocus on enter, this is required on mobile
+      // since the keyboard will otherwise obscure alerts
+      if (IsMobile()) {
+        pathInputElement.blur()
+      }
       break;
     // Auto-complete in path input
     case 'Tab':
@@ -139,7 +144,6 @@
 <span class="suggest nf {Config.suggestIcon}"
       bind:this="{suggestElement}">{suggestFallback}</span>
 <form method="dialog" autocomplete="off" on:submit|preventDefault={validateSubmit}>
-
   <div class="form-item">
     <label for="path">Path:</label>
     <div>
