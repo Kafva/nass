@@ -97,7 +97,7 @@ case "$1" in
     build_image
     docker exec -it $CONTAINER ${2:-/bin/bash}
   ;;
-  logs)
+  log*)
     docker ps --format "{{.Names}}"|grep -q "^$CONTAINER$" ||
       die "Not running: $CONTAINER"
 

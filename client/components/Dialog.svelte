@@ -1,13 +1,13 @@
 <script lang="ts">
   import { authInfoStore, showPassStore, visibleButtonsStore } from '../ts/store';
-  import { fade, fly } from '../ts/util';
+  import { fade, fly, IsMobile } from '../ts/util';
   import type { SvelteComponent } from "svelte";
 
   // The component to render inside of the modal
   export let component: typeof SvelteComponent;
   export let btnClass: string;
   // Top offset after `fly`
-  export let percent = 60
+  export let percent = IsMobile() ? 30 : 60
   export let dialogClass = ""
 
   let visible = false;

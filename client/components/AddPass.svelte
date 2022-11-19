@@ -4,7 +4,7 @@
   import { msgTextStore, rootEntryStore } from '../ts/store';
   import { ApiStatusResponse } from '../ts/types';
   import type { ApiResponse } from '../ts/types';
-  import { fade } from '../ts/util';
+  import { fade, IsLikelySafari } from '../ts/util';
   export let visible: boolean;
 
   export let generatePass = true // This is allowed as a prop to simplify tests
@@ -14,6 +14,8 @@
   let passInput: string
   let verifyInput: string
   const api = new ApiRequest()
+  const safari = IsLikelySafari()
+  const suggestFallback = "..."
 
   const validateSubmit = () => {
     // Automatically remove trailing and leading '/'
@@ -84,17 +86,16 @@
 
 /**
   * Update the suggestion <span/> with matches from the tree based
-  * on user input to the path <input/>
+  * on user input to the path <input/>.
   */
   const keyUp = () => {
     // Clear placeholder when the input is empty
     if (pathInput == null || pathInput == "") {
-      suggestElement.innerText = ""
+      suggestElement.innerText = suggestFallback
       return
     }
 
-    let match = ""
-
+    let match = suggestFallback
     for (const subpath of $rootEntryStore.subpaths) {
       // Limit the autocomplete matching to non-leaf nodes
       // Paths entered with a leading slash will not get autocompletion
@@ -102,20 +103,15 @@
 
       const nonLeaf = subpath.slice(0, subpath.lastIndexOf('/'))
       // Use the first match
-      if (nonLeaf.startsWith(pathInput)) {
+      if (pathInput.startsWith(nonLeaf) || nonLeaf.startsWith(pathInput)) {
         match = nonLeaf
         break
       }
     }
-
-    // The suggest <span/> is placed over the actual <input/>
-    // we therefore need to indent it with a corresponding number of
-    // characters to avoid clipping.
-    match = match != "" ? match + "/" : ""
-
-    suggestElement.innerText = match.slice(pathInput.length)
     suggestElement.setAttribute("data-match", match)
-    suggestElement.style.textIndent = `${pathInput.length * 0.6}em`
+    suggestElement.innerText = match != suggestFallback ?
+                                        match + "/" + suggestFallback :
+                                        suggestFallback
   }
 
   const keyDown = (event: KeyboardEvent) => {
@@ -140,18 +136,21 @@
 </script>
 
 
+<span class="suggest nf {Config.suggestIcon}"
+      bind:this="{suggestElement}">{suggestFallback}</span>
 <form method="dialog" autocomplete="off" on:submit|preventDefault={validateSubmit}>
+
   <div class="form-item">
     <label for="path">Path:</label>
-
     <div>
-      <span class="suggest" bind:this="{suggestElement}"></span>
-      <input spellcheck="false" type="text" name="path" bind:value={pathInput}
+      <input spellcheck="false" autocapitalize="off" autocorrect="off" type="text" name="path"
+             bind:value={pathInput}
              bind:this="{pathInputElement}" on:keydown={keyDown} on:keyup={keyUp}>
     </div>
 
     <label for="generate">Generate:</label>
-    <input type="checkbox" name="generate" bind:checked={generatePass}>
+    <input type="checkbox" name="generate" bind:checked={generatePass}
+           class:safari={safari}>
   </div>
 
   {#if !generatePass}
@@ -180,6 +179,18 @@
 <style lang="scss">
   @use "../scss/vars";
 
+  span.suggest {
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    color: vars.$white;
+    opacity: 0.7;
+    &::before {
+      font-size: vars.$font_large;
+      margin: 10px;
+    }
+  }
+
   form {
     text-align: center;
 
@@ -207,15 +218,12 @@
             border-bottom: 2px solid;
             border-color: transparent;
         }
-      }
-
-      div > span.suggest {
-        font-size: inherit;
-        color: vars.$white;
-        opacity: 0.7;
-        position: absolute;
-        top: 16%;
-        margin-left: 2px;
+        &[name="generate"].safari {
+          // Checkbox is not automatically centered in Safari
+          display: inline-block;
+          margin-left: 40%;
+          vertical-align: center;
+        }
       }
     }
 

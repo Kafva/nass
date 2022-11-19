@@ -28,9 +28,10 @@
     Debug("Updated tree", rootEntry)
   })
 
-  import { MessageText } from '../ts/config';
-  import { msgTextStore } from '../ts/store'
-  setTimeout(()=>msgTextStore.set([MessageText.pathOverlap, ""]), 1000)
+  //import { MessageText } from '../ts/config';
+  //import { msgTextStore } from '../ts/store'
+  //setTimeout(()=>msgTextStore.set([MessageText.pathOverlap, ""]), 1000)
+
 
   if (Config.debug) {
     Config.dump()
