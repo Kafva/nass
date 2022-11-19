@@ -1,13 +1,13 @@
 package server
 
 import (
-	"net/http"
-	"net/http/httptest"
-	"os"
-	"runtime/debug"
-	"strconv"
-	"strings"
-	"testing"
+  "net/http"
+  "net/http/httptest"
+  "os"
+  "runtime/debug"
+  "strconv"
+  "strings"
+  "testing"
 )
 
 const USERNAME = "tester"
@@ -27,7 +27,7 @@ func assert_validatePath(t *testing.T, res http.ResponseWriter,
 }
 
 // Test if password validation of `value` results in the `expected` output
-func assert_validatePassword(t *testing.T, res http.ResponseWriter, 
+func assert_validatePassword(t *testing.T, res http.ResponseWriter,
                              value string, expected string) {
   validated :=  validatePassword(res, value)
 

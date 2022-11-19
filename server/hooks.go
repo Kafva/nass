@@ -1,12 +1,12 @@
 package server
 
 import (
-	"encoding/json"
-	"io/fs"
-	"net/http"
-	"path/filepath"
-	"strings"
-	"text/template"
+  "encoding/json"
+  "io/fs"
+  "net/http"
+  "path/filepath"
+  "strings"
+  "text/template"
 )
 
 // Return 404 for any request that ends on a '/'
@@ -71,11 +71,11 @@ func TemplateHook(next http.Handler) http.Handler {
   })
 }
 
-func WriteResponse(res http.ResponseWriter, status ResponseStatus, 
+func WriteResponse(res http.ResponseWriter, status ResponseStatus,
                    desc string, value string) {
-  data, err := json.Marshal(JsonResponse { 
-    Status: status, 
-    Desc: strings.TrimSpace(desc), 
+  data, err := json.Marshal(JsonResponse {
+    Status: status,
+    Desc: strings.TrimSpace(desc),
     Value: strings.TrimSpace(value),
   })
   if err == nil {

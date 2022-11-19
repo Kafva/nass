@@ -1,5 +1,5 @@
 import PassEntry from "../ts/PassEntry"
-// Acquired from devtools with  
+// Acquired from devtools with
 //
 //  console.log(JSON.stringify(rootEntry)) | jq -rM
 //

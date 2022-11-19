@@ -5,8 +5,8 @@
 
 <!-- '$' is used to pass a store as writable. -->
 <input type="text" placeholder="Search..." bind:value={$queryStringStore}
-       on:focus="{() => { 
-        foldPolicyStore.set(FoldPolicy.allOpen) 
+       on:focus="{() => {
+        foldPolicyStore.set(FoldPolicy.allOpen)
         visibleButtonsStore.set('')
 }}"/>
 

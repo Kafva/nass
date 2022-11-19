@@ -82,7 +82,7 @@ const IsMobile = (): boolean => {
 /**
  * Used as a conditional for if elements should have the `.safari` class to
  * apply browser specific styling.
- * Firefox:   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:107.0) Gecko/20100101 Firefox/107.0" 
+ * Firefox:   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:107.0) Gecko/20100101 Firefox/107.0"
  * Chrome:    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36"
  * Safari:    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Safari/605.1.15"
  */
@@ -100,5 +100,5 @@ const Err = (...args: any) => {
   console.log("%c ERROR ", 'background: #ed493e; color: #f5e4f3', ...args)
 }
 
-export { fly, fade, GetHTMLElement, GetHTMLElements, CopyToClipboard, 
+export { fly, fade, GetHTMLElement, GetHTMLElements, CopyToClipboard,
   IsMobile, IsLikelySafari, Debug, Err }
