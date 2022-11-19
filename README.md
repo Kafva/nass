@@ -8,11 +8,15 @@
 ```bash
 ./scripts/genkey.sh $name $email $master_password
 ```
+> Backup up the exported `./keys`!
+
 2. Generate a `users.yml` configuration and Wireguard resources with [scripts/genconf.sh](/scripts/genconf.sh)
 ```bash
-./scripts/genconf.sh $user1 $user2 ...
+./scripts/genconf.sh $(curl -s ifconfig.co) $user1 $user2 ...
 ```
-
+3. Generate a self-signed certificate for the server 
+  - Place the CA certificate at `./dist/ca.crt`
+  - Place the server certificate and key under `./tls/server.{crt,key}`
 
 
 ## Client
