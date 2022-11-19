@@ -54,11 +54,11 @@ wg_gen nass $NASS_IP $NASS_PUBLIC_PORT
 i=100
 for username in ${@:2}; do
   wg_gen $username $WG_NET.$i $WG_PORT
-  
+
   # Add to users.yml
   printf -- "- name: $username\n  origins:\n    - $WG_NET.$i\n" >> \
     "$OUTPUT/users.yml"
-  
+
   # Append server to each user configuration
   cat << EOF >> "$OUTPUT/wireguard/$username.cfg"
 [Peer] # nass

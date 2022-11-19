@@ -7,3 +7,5 @@ color: true
 
 single_user: true
 tls_enabled: false
+tls_cert: tls/server.crt
+tls_key: tls/server.key

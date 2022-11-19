@@ -8,13 +8,14 @@
 ```bash
 ./scripts/genkey.sh $name $email $master_password
 ```
-> Backup up the exported `./keys`!
+and backup up the exported `./keys`.
 
 2. Generate a `users.yml` configuration and Wireguard resources with [scripts/genconf.sh](/scripts/genconf.sh)
 ```bash
 ./scripts/genconf.sh $(curl -s ifconfig.co) $user1 $user2 ...
 ```
-3. Generate a self-signed certificate for the server 
+
+3. Generate a self-signed certificate for the server
   - Place the CA certificate at `./dist/ca.crt`
   - Place the server certificate and key under `./tls/server.{crt,key}`
 
@@ -72,5 +73,5 @@ go test -v --run $test_name ./server
 ```
 
 ## Notes
-* Overlapping directory and file names are __not__ supported, e.g. `/a/b.gpg` 
+* Overlapping directory and file names are __not__ supported, e.g. `/a/b.gpg`
 and `/a.gpg` are not allowed to exist at the same time.
