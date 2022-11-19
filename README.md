@@ -2,6 +2,19 @@
 <img width=42 height=42 src="./public/assets/icon.png">&nbsp;&nbsp; nass
 </h1>
 
+
+## Deployment
+1. Create keys for each user with [scripts/genkey.sh](/scripts/genkey.sh)
+```bash
+./scripts/genkey.sh $name $email $master_password
+```
+2. Generate a `users.yml` configuration and Wireguard resources with [scripts/genconf.sh](/scripts/genconf.sh)
+```bash
+./scripts/genconf.sh $user1 $user2 ...
+```
+
+
+
 ## Client
 The client uses Svelte which is somewhat overkill, plain Typescript would likely
 have worked as well if not better.

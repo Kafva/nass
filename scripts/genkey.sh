@@ -4,13 +4,13 @@
 #   gpg --full-generate-key
 die(){ printf "$1\n" >&2 ; exit 1; }
 info(){ printf "\033[34m!>\033[0m $1\n" >&2; }
-usage="usage: $(basename $0) <name> <email>"
+usage="usage: $(basename $0) <name> <email> [passphrase]"
 
 [ -z "$2" ] && die "$usage"
 
 NAME="$1"
 EMAIL=$2
-PASSPHRASE=${PASSPHRASE:-xd}
+PASSPHRASE=${3:-xd}
 EXPORT_DIR=keys
 GPG_PARAMS=$(mktemp)
 GPG_BATCH=(
@@ -43,3 +43,6 @@ gpg ${GPG_BATCH[@]} --export-secret-keys $KEYID > "$EXPORT_DIR/$NAME.gpg" &&
 # Decryption without pass:
 #   gpg --output - --decrypt .../password.gpg
 
+# To remove from keychain
+#   gpg --delete-secret-keys $KEYID
+#   gpg --delete-keys $KEYID
