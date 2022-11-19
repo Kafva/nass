@@ -82,7 +82,7 @@
           useClipboard: useClipboard
         } as AuthInfo)
         break;
-      default: // Errors are handled internally by `api`
+      default: // Errors and auth failures are handled internally by `api`
       }
     })
   }

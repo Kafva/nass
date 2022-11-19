@@ -1,11 +1,12 @@
 <script lang="ts">
   import { MessageIcons, MessageTimeouts } from "../ts/config";
   import { msgTextStore } from "../ts/store";
-  import { fly } from "../ts/util";
+  import { fly, IsMobile } from "../ts/util";
 
   let message = ""
   let iconClass = ""
   let timeoutID: any = null
+  let percent = IsMobile() ? 125 : 140
 
   msgTextStore.subscribe( (value:[string,string]) => {
     const timeout = MessageTimeouts[value[0]] || -1
@@ -29,7 +30,7 @@
 {#if message.length != 0}
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div role="button"
-       transition:fly="{{ from: 'bottom', percent: 125, duration: 200 }}"
+       transition:fly="{{ from: 'bottom', percent: percent, duration: 200 }}"
        on:click="{()=> msgTextStore.set(['','']) }">
        <p title={message}>
         <span class="{'nf '+ iconClass}"/> {message}
@@ -50,7 +51,7 @@
     border: 2px dotted vars.$lilac;
 
     width: vars.$msg_width;
-    @include vars.fixed-centering(vars.$msg_width, 20px);
+    @include vars.fixed-centering(vars.$msg_width, 0px);
 
     @include vars.mobile {
       width: vars.$msg_width_mobile;

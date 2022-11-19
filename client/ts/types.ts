@@ -1,6 +1,7 @@
 enum ApiStatusResponse {
   retry = "retry",
   success = "success",
+  failed = "failed",
   error = "error"
 }
 

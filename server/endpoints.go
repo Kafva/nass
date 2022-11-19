@@ -63,12 +63,13 @@ func GetPass(res http.ResponseWriter, req *http.Request) {
     // 'GPG_FAIL_STRING' as their password
     if req.Method == http.MethodGet {
       WriteResponse(res, StatusRetry,
-                    "Retry with PIN entry in POST request", "")
+                    "Retry with password in POST request", "")
     } else {
-      ErrorResponse(res, "Incorrect PIN entry", http.StatusBadRequest)
+      WriteResponse(res, StatusFailed, "Incorrect password", "")
     }
   } else if err == nil {
     // Reply with decrypted password
+    Info("Replying with password for '"+passPath+"'"+" to " + req.RemoteAddr)
     WriteResponse(res, StatusSuccess, "", output)
   } else {
     // Fallback for errors other than 'GPG_FAIL_STRING'

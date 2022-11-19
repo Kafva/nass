@@ -31,6 +31,9 @@ export default class ApiRequest {
 
     if (apiRes.status == ApiStatusResponse.error) {
       msgTextStore.set([MessageText.err, apiRes.desc])
+
+    } else if (apiRes.status == ApiStatusResponse.failed) {
+      msgTextStore.set([MessageText.failed, apiRes.desc])
     }
     return apiRes
   }

@@ -18,6 +18,7 @@ type ResponseStatus string
 const (
   StatusRetry ResponseStatus = "retry"
   StatusSuccess = "success"
+  StatusFailed = "failed"
   StatusError = "error"
 )
 

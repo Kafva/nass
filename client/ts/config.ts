@@ -18,7 +18,7 @@ class Config {
   static readonly passwordIcon = 'nf-mdi-key'
   static readonly passwordPrompt = 'nf-fa-angle_double_right'
   static readonly clipboardIcon = 'nf-mdi-clipboard_outline'
-  static readonly suggestIcon = 'nf-custom-folder'
+  static readonly suggestIcon = 'nf-custom-folder_open'
 
   static readonly showPassword = 'nf-oct-eye'
   static readonly deleteIcon = 'nf-fa-minus'
@@ -44,6 +44,7 @@ enum MessageText {
   invalidPath = "Invalid format for path",
   invalidPass = "Invalid format for password",
   invalidVerify = "Passwords do not match",
+  failed = "Failed: ", // Only used for incorrect password entry
   err = "Error: ",
   valid = "Valid" // Only used internally
 }
@@ -53,6 +54,7 @@ const MessageIcons: { [id: string]: string } = {
   [MessageText.clipboard]: "nf-mdi-clipboard_check",
   [MessageText.added]: "nf-mdi-key_plus",
   [MessageText.deleted]: "nf-mdi-key_minus",
+  [MessageText.failed]: "nf-oct-issue_opened",
   [MessageText.err]: "nf-oct-issue_opened",
   [MessageText.pathOverlap]: "nf-mdi-textbox",
   [MessageText.invalidNesting]: "nf-mdi-textbox",
@@ -69,6 +71,7 @@ const MessageTimeouts: { [id: string]: number } = {
   [MessageText.clipboard]: 4000,
   [MessageText.added]: 4000,
   [MessageText.deleted]: 4000,
+  [MessageText.failed]: 8_000,
   [MessageText.err]: 10_000,
   [MessageText.pathOverlap]: 4000,
   [MessageText.invalidNesting]: 4000,
