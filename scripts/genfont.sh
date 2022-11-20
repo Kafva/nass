@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 : '''
-Subset a TTF file to only contain extended ASCII and 
+Subset a TTF file to only contain extended ASCII and
 the glyphs that are actually used in the application.
 Also create a .min.css file with classes for each glyph.
 '''
@@ -12,9 +12,9 @@ command -v pyftsubset &> /dev/null || die "Missing pyftsubset"
 [ -z "$1" ] && die "$usage"
 
 INPUT=${1}
-FULL_FONT=${2:-./fonts/meslo-nerd-fonts.ttf}
-TTF=${3:-./public/assets/meslo-nass.ttf}
-MIN_CSS=${4:-./public/assets/nerd-fonts-nass.min.css}
+FULL_FONT=${2:-fonts/meslo-nerd-fonts.ttf}
+TTF=${3:-fonts/meslo-nass.ttf}
+MIN_CSS=${4:-fonts/nerd-fonts-nass.min.css}
 
 readonly FONT_FAMILY="Meslo"
 readonly GLYPH_INDEX=./fonts/nerdfonts.raw
@@ -34,10 +34,12 @@ echo "==============================="
 
 
 # == Generate CSS ==
+# The URL of the font should be relative to the project root and should
+# not be under ./public since vite will make a new copy of the font there.
 cat << EOF > $CSS
 @font-face {
   font-family: "$FONT_FAMILY";
-  src: url("$(basename $TTF)") format("truetype");
+  src: url("/$TTF)") format("truetype");
   font-weight: 400;
   font-style: normal;
 }

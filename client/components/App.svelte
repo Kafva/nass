@@ -77,6 +77,7 @@ occur, this simplifies the update logic. -->
 
 <style lang="scss">
   @use "../scss/vars";
+  @import "../../fonts/nerd-fonts-nass.min.css";
   @import "../scss/global";
 
   span.nf {
