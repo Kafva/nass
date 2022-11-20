@@ -4,32 +4,40 @@
 
 
 ## Deployment
-1. Create a release build, the output is placed under `./arm64`
-```bash
-./scripts/release.sh
-```
 
-2. Create keys for each user with [scripts/genkey.sh](/scripts/genkey.sh)
+1. Create keys for each user with [scripts/genkey.sh](/scripts/genkey.sh)
 ```bash
 ./scripts/genkey.sh "$name" "$email" "$master_password"
 ```
 and backup up the exported `./keys`.
 
-3. Generate a `users.yml` configuration and Wireguard resources with
-[scripts/genconf.sh](/scripts/genconf.sh)
+2. Generate a `users.yml` configuration and Wireguard resources with
+[scripts/genconf.sh](/scripts/genconf.sh), output is placed under `./net`.
 ```bash
 ./scripts/genconf.sh $(curl -s ifconfig.co) $user1 $user2 ...
 ```
 
-4. Generate a self-signed certificate for the server
+
+3. Create a release build, the output is placed under `./arm64` and copies
+the relevant files from `./keys` and `./net`.
+```bash
+./scripts/release.sh
+```
+
+4. Generate a self-signed certificate for the server (`CN=nass`)
   - Place the CA certificate at `./arm64/dist/ca.crt`
   - Place the server certificate and key under `./arm64/tls/server.{crt,key}`
 
-5. Modify the server configuration, `./arm64/conf/nass.yml`, if neccessary
+6. Use the `nass` role, this will create the application user and configure
+wireguard.
 
-6. Use the `nass` role.
-
-7. Import the keys for each user as the `nass` application user
+7. As the `nass` application user, import each user's key
+```bash
+./importkey.sh $user1
+./importkey.sh $user2
+...
+```
+8. Launch the service via reboot or `rc-service nass start`
 
 
 

@@ -36,7 +36,7 @@ check_deps wg
 #==============================================================================#
 
 readonly NASS_PUBLIC_IP=$1
-readonly NASS_PUBLIC_PORT=51282
+readonly NASS_PORT=51285
 readonly WG_PORT=51280
 readonly WG_NET=10.0.77
 readonly NASS_IP=$WG_NET.1
@@ -48,8 +48,23 @@ readonly OUTPUT=./net
 mkdir -p "$OUTPUT/wireguard"
 printf '' > "$OUTPUT/users.yml"
 
+# == Application config ==
+cat << EOF > $OUTPUT/nass.yml
+bind_address: $NASS_IP
+port: 5678
+password_store: ~/.password-store
+
+debug: true
+color: true
+
+single_user: false
+tls_enabled: true
+tls_cert: tls/server.crt
+tls_key: tls/server.key
+EOF
+
 # == Wireguard configuration (server) ==
-wg_gen nass $NASS_IP $NASS_PUBLIC_PORT
+wg_gen nass $NASS_IP $NASS_PORT
 
 i=100
 for username in ${@:2}; do
@@ -63,7 +78,7 @@ for username in ${@:2}; do
   cat << EOF >> "$OUTPUT/wireguard/$username.cfg"
 [Peer] # nass
 PublicKey = $(cat "$OUTPUT/wireguard/nass.pub")
-Endpoint = $NASS_PUBLIC_IP:$WG_PORT
+Endpoint = $NASS_PUBLIC_IP:$NASS_PORT
 AllowedIPs = $NASS_IP/32
 PersistentKeepalive = 25
 EOF

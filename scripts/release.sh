@@ -16,19 +16,19 @@ mkdir -p $OUT/{conf,tls}
 # Extract build results
 docker cp $container:/nass/nass $OUT/nass
 docker cp $container:/nass/dist $OUT
-
-docker rm -v $container
+docker rm $container
 
 # The $OUT directory will be the home directory of the application
 # user in deployment.
 mkdir -m 700 $OUT/{.password-store,.gnupg,wireguard}
 
-cp -v conf/release.yml       $OUT/conf/nass.yml
+cp -v net/nass.yml           $OUT/conf/nass.yml
 cp -v net/users.yml          $OUT/conf
 cp -v conf/gitconfig         $OUT/.gitconfig
 cp -v conf/gpg-agent.conf    $OUT/.gnupg
 cp -rv keys                  $OUT
 cp -v net/wireguard/nass*    $OUT/wireguard
+cp -v scripts/importkey.sh   $OUT
 
 
 # Automatically fetch self-signed certs if available
