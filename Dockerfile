@@ -1,8 +1,8 @@
-FROM docker.io/golang:alpine3.16 as builder
+FROM docker.io/alpine:3.16 as builder
 ARG GOARCH
 
 # Build dependencies
-RUN apk add -U git npm py3-fonttools bash
+RUN apk add -U go git npm py3-fonttools bash
 
 WORKDIR /nass
 

@@ -6,7 +6,7 @@ die(){ printf "$1\n" >&2 ; exit 1; }
 
 build_image(){
   docker images --format '{{.Repository}}'|rg -q "^(localhost/)?nass$" ||
-    docker build --rm --tag=nass .
+    docker build --rm --tag=nass --build-arg GOARCH="" .
 
   docker images --format '{{.Repository}}'|rg -q "^(localhost/)?${IMAGE}$" ||
     docker build -f Dockerfile.dev --rm --tag=${IMAGE} .
@@ -56,6 +56,7 @@ find . \
     docker cp client $CONTAINER:/nass/ 2> /dev/null
     docker cp server $CONTAINER:/nass/ 2> /dev/null
     docker cp public $CONTAINER:/nass/ 2> /dev/null
+    docker cp fonts $CONTAINER:/nass/ 2> /dev/null
     docker cp conf $CONTAINER:/nass/ 2> /dev/null
     docker cp scripts $CONTAINER:/nass/ 2> /dev/null
     docker exec -u root $CONTAINER chown -R nass:nass /nass

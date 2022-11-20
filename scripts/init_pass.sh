@@ -30,7 +30,7 @@ DB=(
 
 # Create development keys
 for u in ${USERS[@]}; do
-  PASSPHRASE="${u}" ./scripts/genkey.sh $u $u@kafva.one
+  ./scripts/genkey.sh $u $u@kafva.one "$u"
 
   # Initalise password store with dummy data
   gpg --import keys/${u}.gpg

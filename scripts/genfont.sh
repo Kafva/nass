@@ -13,7 +13,7 @@ command -v pyftsubset &> /dev/null || die "Missing pyftsubset"
 
 INPUT=${1}
 FULL_FONT=${2:-fonts/meslo-nerd-fonts.ttf}
-TTF=${3:-fonts/meslo-nass.ttf}
+TTF=${3:-./public/assets/meslo-nass.ttf}
 MIN_CSS=${4:-fonts/nerd-fonts-nass.min.css}
 
 readonly FONT_FAMILY="Meslo"
@@ -34,12 +34,13 @@ echo "==============================="
 
 
 # == Generate CSS ==
-# The URL of the font should be relative to the project root and should
-# not be under ./public since vite will make a new copy of the font there.
+# NOTE: we do not directly include the TTF font into vite's build process
+# it is resolved at runtime by using the /app/assets endpoint in the app.
+# I.e. there should not be an extra ttf file with a hash under ./dist/assets
 cat << EOF > $CSS
 @font-face {
   font-family: "$FONT_FAMILY";
-  src: url("/$TTF)") format("truetype");
+  src: url("/app/assets/$(basename $TTF))") format("truetype");
   font-weight: 400;
   font-style: normal;
 }
