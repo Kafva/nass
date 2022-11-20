@@ -23,6 +23,7 @@ PrivateKey = $(cat "$privkey")
 Address = $2
 ListenPort = $WG_PORT
 DNS = $WG_DNS
+PostUp = ping -c1 $NASS_IP
 
 EOF
 
@@ -83,7 +84,7 @@ AllowedIPs = $NASS_IP/32
 PersistentKeepalive = 25
 EOF
 
-  # Append each user tot the server configuration
+  # Append each user to the server configuration
   cat << EOF >> "$OUTPUT/wireguard/nass.cfg"
 [Peer] # $username
 PublicKey = $(cat "$OUTPUT/wireguard/$username.pub")
