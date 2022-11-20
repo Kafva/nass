@@ -1,13 +1,17 @@
 FROM docker.io/golang:alpine3.16 as builder
+ARG GOARCH
 
 # Build dependencies
-RUN apk add -U git npm
+RUN apk add -U git npm py3-fonttools bash
 
 WORKDIR /nass
 
 COPY . .
 RUN go get -u
-RUN go build
+RUN GOARCH=${GOARCH} go build
+
+# Create subset font (i.e. exclude unused glyphs)
+RUN ./scripts/genfont.sh client
 
 RUN npm i -g yarn vite
 RUN yarn

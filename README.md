@@ -4,26 +4,44 @@
 
 
 ## Deployment
-1. Create keys for each user with [scripts/genkey.sh](/scripts/genkey.sh)
+1. Create release build under `./arm64`
+```bash
+./scripts/release.sh
+```
+
+2. Create keys for each user with [scripts/genkey.sh](/scripts/genkey.sh)
 ```bash
 ./scripts/genkey.sh $name $email $master_password
 ```
 and backup up the exported `./keys`.
 
-2. Generate a `users.yml` configuration and Wireguard resources with [scripts/genconf.sh](/scripts/genconf.sh)
+3. Generate a `users.yml` configuration and Wireguard resources with [scripts/genconf.sh](/scripts/genconf.sh)
 ```bash
 ./scripts/genconf.sh $(curl -s ifconfig.co) $user1 $user2 ...
 ```
 
-3. Generate a self-signed certificate for the server
-  - Place the CA certificate at `./dist/ca.crt`
-  - Place the server certificate and key under `./tls/server.{crt,key}`
+4. Generate a self-signed certificate for the server
+  - Place the CA certificate at `./arm64/dist/ca.crt`
+  - Place the server certificate and key under `./arm64/tls/server.{crt,key}`
 
+5. Modify the server configuration, `./arm64/conf/nass.yml`, if neccessary
+
+
+
+
+
+
+
+
+
+---
 
 ## Client
-The client uses Svelte which is somewhat overkill, plain Typescript would likely
-have worked as well if not better.
 ```bash
+# Create subset font (i.e. exclude unused glyphs)
+pip install --user fonttools
+./scripts/genfont.sh client
+
 npm i -g vite yarn
 yarn && vite build
 
@@ -32,23 +50,16 @@ yarn run lint
 
 # Client tests
 yarn run test
-
-
-# Create subset font (i.e. exclude unused glyphs)
-pip install --user fonttools
-./scripts/genfont.sh
 ```
 
 ## Server
 The container configurations should work with both Docker and Podman.
-
 ```bash
 # Release
 docker build --rm --tag=nass .
 docker run -p 5678:5678 -d nass
 
 #== Development ==#
-
 # Start `watch` rebuild in Docker
 ./scripts/docker_dev.sh fullclean
 

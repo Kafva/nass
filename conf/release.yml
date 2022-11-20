@@ -1,0 +1,12 @@
+bind_address: 0.0.0.0
+port: 5678
+password_store: ~/.password-store
+
+debug: true
+color: true
+
+single_user: false
+tls_enabled: true
+tls_cert: tls/server.crt
+tls_key: tls/server.key
+

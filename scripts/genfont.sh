@@ -12,19 +12,15 @@ command -v pyftsubset &> /dev/null || die "Missing pyftsubset"
 [ -z "$1" ] && die "$usage"
 
 INPUT=${1}
-FULL_FONT=${2:-public/assets/meslo-nerd-fonts.ttf}
+FULL_FONT=${2:-./fonts/meslo-nerd-fonts.ttf}
 TTF=${3:-./public/assets/meslo-nass.ttf}
 MIN_CSS=${4:-./public/assets/nerd-fonts-nass.min.css}
 
 readonly FONT_FAMILY="Meslo"
-GLYPH_INDEX=/tmp/nerdfonts.raw
+readonly GLYPH_INDEX=./fonts/nerdfonts.raw
 MATCHED_GLYPHS=$(mktemp)
 CSS=$(mktemp)
 SUBSET=$(mktemp)
-
-[ -f $GLYPH_INDEX ] || curl -L \
-    https://gist.github.com/Kafva/0d143e61eb9c8e10c7ca297aec0701cf/raw/9186cc806887600bbd5127b86f61b66d41b20f5a/nerdfonts.raw \
-    > $GLYPH_INDEX || die "Failed to fetch glyph index"
 
 # Determine the unicode value of each glyph from a lookup table
 while read -r line; do
