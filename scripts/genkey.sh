@@ -11,7 +11,7 @@ usage="usage: $(basename $0) <name> <email> [passphrase]"
 NAME="$1"
 EMAIL=$2
 PASSPHRASE=${3:-xd}
-EXPORT_DIR=keys
+EXPORT_DIR=arm64/keys
 GPG_PARAMS=$(mktemp)
 GPG_BATCH=(
   --batch --yes --pinentry-mode loopback
@@ -43,6 +43,8 @@ gpg ${GPG_BATCH[@]} --export-secret-keys $KEYID > "$EXPORT_DIR/$NAME.gpg" &&
 # Decryption without pass:
 #   gpg --output - --decrypt .../password.gpg
 
-# To remove from keychain
-#   gpg --delete-secret-keys $KEYID
-#   gpg --delete-keys $KEYID
+if [ -n "$ONLY_EXPORT" ]; then
+  gpg --delete-secret-keys $KEYID
+  gpg --delete-keys $KEYID
+fi
+

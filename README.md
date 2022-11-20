@@ -27,9 +27,9 @@ and backup up the exported `./keys`.
 
 5. Modify the server configuration, `./arm64/conf/nass.yml`, if neccessary
 
-6. Use the `nass` role to complete the setup.
+6. Use the `nass` role.
 
-
+7. Import the keys for each user as the `nass` application user
 
 
 

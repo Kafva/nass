@@ -31,11 +31,7 @@ DB=(
 # Create development keys
 for u in ${USERS[@]}; do
   ./scripts/genkey.sh $u $u@kafva.one "$u"
-
-  # Initalise password store with dummy data
-  gpg --import keys/${u}.gpg
-  KEYID=$(gpg --show-keys keys/${u}.gpg | grep "^ ")
-  pass init --path="$u" $KEYID
+  ./scripts/importkey.sh "$u"
 done
 
 i=0
@@ -50,7 +46,6 @@ for entry in ${DB[@]}; do
 
   [ "$password" = "$plaintext" ] ||
     die "Decryption error: '$password' != '$plaintext'"
-
 
   i=$((i+1))
 done
