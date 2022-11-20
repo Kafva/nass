@@ -9,7 +9,7 @@ public/assets/meslo-nass.ttf
 .cache
 .ash_history
 keys
-nass
+/nass
 .ssh
 .dart_tool
 pubspec.lock

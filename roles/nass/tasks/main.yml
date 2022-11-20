@@ -1,0 +1,92 @@
+# This role assumes that ~/Repos/nass/arm64 contains a complete
+# arm64 build of `nass`.
+#
+# This role will:
+# 1. Create an application user and unpack the deployment configuration
+# 2. Activate the provided 'arm64/wireguard/nass.cfg' configuration on wg1
+#
+# It will NOT:
+#  * Add a resolution for the 'nass' domain name, the server that is running
+#  is set as the default resolver and a dnsmasq entry needs to be manually added
+#   address=/nass/10.0.1.77.1
+#  * Configure necessary nftable rules
+- name: Nass server setup
+  tags:
+    - nass
+  vars:
+    nass_dir: ~/Repos/nass
+    release_build: '{{nass_dir}}/arm64'
+    nass_home: /srv/nass
+  block:
+  # The acl package is needed to support `become_user`
+  # https://docs.ansible.com/ansible-core/2.13/user_guide/become.html#risks-of-becoming-an-unprivileged-user
+  - name: As root
+    block:
+    - name: Install runtime dependencies
+      community.general.apk:
+        name:
+          - pass
+          - gpg-agent
+          - git
+          - acl
+        state: present
+        update_cache: true
+
+    - name: Create the nass user
+      user:
+        name: nass
+        shell: /sbin/nologin
+        home: '{{nass_home}}'
+        comment: Nass user
+        state: present
+
+    - name: Remove artifacts from previous builds
+      shell:
+        cmd: "bash -c 'rm -rf {{nass_home}}/{dist,nass,conf,tls,.gitconfig,.gnupg,wireguard,importkey.sh}'"
+
+    - name: Copy over release build
+      copy:
+        src:  '{{release_build}}/'
+        dest: '{{nass_home}}'
+        owner: nass
+        group: nass
+
+    - name: Make binary executable
+      file:
+        path: '{{nass_home}}/nass'
+        state: file
+        owner: nass
+        group: nass
+        mode: "700"
+
+    - name: Fix any ownership issues
+      shell:
+        cmd: "chown -R nass:nass {{nass_home}}"
+
+    - name: Install OpenRC service
+      copy:
+        src: '{{nass_dir}}/conf/nass.sh'
+        dest: /etc/init.d/nass
+        mode: 0755
+    - name: Enable service
+      shell:
+        cmd: "rc-update add nass default"
+        creates: /etc/runlevels/default/nass
+
+    # The wireguard role will automatically enable wg1 if it exists
+    - name: Copy over Wireguard configuration
+      copy:
+        src: '{{release_build}}/wireguard/nass.cfg'
+        dest: /etc/wireguard/wg1.conf
+        owner: root
+        group: root
+        mode: 0600
+  become: true
+
+- name: Initialize git repository
+  become: true
+  become_user: nass
+  shell:
+    chdir: '{{nass_home}}'
+    cmd: "pass git init"
+    creates: '{{nass_home}}/.password-store/.git'

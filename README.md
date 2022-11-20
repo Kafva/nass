@@ -17,7 +17,6 @@ and backup up the exported `./keys`.
 ./scripts/genconf.sh $(curl -s ifconfig.co) $user1 $user2 ...
 ```
 
-
 3. Create a release build, the output is placed under `./arm64` and copies
 the relevant files from `./keys` and `./net`.
 ```bash
@@ -28,8 +27,8 @@ the relevant files from `./keys` and `./net`.
   - Place the CA certificate at `./arm64/dist/ca.crt`
   - Place the server certificate and key under `./arm64/tls/server.{crt,key}`
 
-6. Use the `nass` role, this will create the application user and configure
-wireguard.
+6. Configure the server with an application user and the resources from `./arm64`
+using [roles/nass](/roles/nass/tasks/main.yml).
 
 7. As the `nass` application user, import each user's key
 ```bash
@@ -37,11 +36,7 @@ wireguard.
 ./importkey.sh $user2
 ...
 ```
-8. Launch the service via reboot or `rc-service nass start`
-
-
-
-
+8. Reboot to launch the service
 
 ---
 
