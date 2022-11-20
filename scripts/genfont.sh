@@ -40,7 +40,7 @@ echo "==============================="
 cat << EOF > $CSS
 @font-face {
   font-family: "$FONT_FAMILY";
-  src: url("/app/assets/$(basename $TTF))") format("truetype");
+  src: url("/app/assets/$(basename $TTF)") format("truetype");
   font-weight: 400;
   font-style: normal;
 }

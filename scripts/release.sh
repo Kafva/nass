@@ -7,6 +7,7 @@ NAME=nass_$GOARCH
 
 rm -rf $OUT
 
+docker rmi $NAME
 docker build --rm --tag=$NAME --build-arg GOARCH=$GOARCH .
 container=$(docker create $NAME)
 

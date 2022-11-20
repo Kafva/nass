@@ -78,7 +78,7 @@ occur, this simplifies the update logic. -->
 <style lang="scss">
   @use "../scss/vars";
   // Include the nerd-font symbols here rather than in the HTML
-  // to avoid a seperate file from being created.
+  // to avoid a separate file from being created.
   @import "../../fonts/nerd-fonts-nass.min.css";
   @import "../scss/global";
 
