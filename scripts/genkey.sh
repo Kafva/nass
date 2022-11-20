@@ -4,14 +4,15 @@
 #   gpg --full-generate-key
 die(){ printf "$1\n" >&2 ; exit 1; }
 info(){ printf "\033[34m!>\033[0m $1\n" >&2; }
-usage="usage: $(basename $0) <name> <email> [passphrase]"
+usage="usage: [KEEP=] $(basename $0) <name> <email> [passphrase]"
 
 [ -z "$2" ] && die "$usage"
 
 NAME="$1"
 EMAIL=$2
 PASSPHRASE=${3:-xd}
-EXPORT_DIR=arm64/keys
+KEEP=${KEEP:-false}
+EXPORT_DIR=./keys
 GPG_PARAMS=$(mktemp)
 GPG_BATCH=(
   --batch --yes --pinentry-mode loopback
@@ -43,7 +44,8 @@ gpg ${GPG_BATCH[@]} --export-secret-keys $KEYID > "$EXPORT_DIR/$NAME.gpg" &&
 # Decryption without pass:
 #   gpg --output - --decrypt .../password.gpg
 
-if [ -n "$ONLY_EXPORT" ]; then
+# Delete from local keychain by default
+if ! $KEEP; then
   gpg --delete-secret-keys $KEYID
   gpg --delete-keys $KEYID
 fi

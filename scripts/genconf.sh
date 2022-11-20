@@ -41,12 +41,12 @@ readonly WG_PORT=51280
 readonly WG_NET=10.0.77
 readonly NASS_IP=$WG_NET.1
 readonly WG_DNS=$NASS_IP
-readonly OUTPUT=./arm64
+readonly OUTPUT=./net
 
 #==============================================================================#
 
-mkdir -p "$OUTPUT/{wireguard,conf}"
-printf '' > "$OUTPUT/conf/users.yml"
+mkdir -p "$OUTPUT/wireguard"
+printf '' > "$OUTPUT/users.yml"
 
 # == Wireguard configuration (server) ==
 wg_gen nass $NASS_IP $NASS_PUBLIC_PORT
@@ -57,7 +57,7 @@ for username in ${@:2}; do
 
   # Add to users.yml
   printf -- "- name: $username\n  origins:\n    - $WG_NET.$i\n" >> \
-    "$OUTPUT/conf/users.yml"
+    "$OUTPUT/users.yml"
 
   # Append server to each user configuration
   cat << EOF >> "$OUTPUT/wireguard/$username.cfg"

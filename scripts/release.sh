@@ -21,8 +21,19 @@ docker rm -v $container
 
 # The $OUT directory will be the home directory of the application
 # user in deployment.
-mkdir -m 700 $OUT/{.password-store,.gnupg}
+mkdir -m 700 $OUT/{.password-store,.gnupg,wireguard}
 
 cp -v conf/release.yml       $OUT/conf/nass.yml
+cp -v net/users.yml          $OUT/conf
 cp -v conf/gitconfig         $OUT/.gitconfig
 cp -v conf/gpg-agent.conf    $OUT/.gnupg
+cp -rv keys                  $OUT
+cp -v net/wireguard/nass*    $OUT/wireguard
+
+
+# Automatically fetch self-signed certs if available
+if [ -d ~/.secret/selfsigned/nassca ]; then
+  cp -v ~/.secret/selfsigned/nassca/nass.key $OUT/tls/server.key
+  cp -v ~/.secret/selfsigned/nassca/nass.crt $OUT/tls/server.crt
+  cp -v ~/.secret/ssl/nassca/certs/ca.crt    $OUT/dist
+fi
