@@ -4,18 +4,19 @@
 
 
 ## Deployment
-1. Create release build under `./arm64`
+1. Create a release build, the output is placed under `./arm64`
 ```bash
 ./scripts/release.sh
 ```
 
 2. Create keys for each user with [scripts/genkey.sh](/scripts/genkey.sh)
 ```bash
-./scripts/genkey.sh $name $email $master_password
+./scripts/genkey.sh "$name" "$email" "$master_password"
 ```
 and backup up the exported `./keys`.
 
-3. Generate a `users.yml` configuration and Wireguard resources with [scripts/genconf.sh](/scripts/genconf.sh)
+3. Generate a `users.yml` configuration and Wireguard resources with
+[scripts/genconf.sh](/scripts/genconf.sh)
 ```bash
 ./scripts/genconf.sh $(curl -s ifconfig.co) $user1 $user2 ...
 ```
@@ -26,7 +27,7 @@ and backup up the exported `./keys`.
 
 5. Modify the server configuration, `./arm64/conf/nass.yml`, if neccessary
 
-
+6. Use the `nass` role to complete the setup.
 
 
 
