@@ -21,7 +21,7 @@ wg_gen() {
 [Interface]
 PrivateKey = $(cat "$privkey")
 Address = $2
-ListenPort = $3
+ListenPort = $WG_PORT
 DNS = $WG_DNS
 
 EOF
@@ -35,9 +35,9 @@ check_deps wg
 
 #==============================================================================#
 
+# We use a non-standard WG port to avoid collisions with existing networks
 readonly NASS_PUBLIC_IP=$1
-readonly NASS_PORT=51285
-readonly WG_PORT=51280
+readonly WG_PORT=51285
 readonly WG_NET=10.0.77
 readonly NASS_IP=$WG_NET.1
 readonly WG_DNS=$NASS_IP
@@ -64,11 +64,11 @@ tls_key: tls/server.key
 EOF
 
 # == Wireguard configuration (server) ==
-wg_gen nass $NASS_IP $NASS_PORT
+wg_gen nass $NASS_IP
 
 i=100
 for username in ${@:2}; do
-  wg_gen $username $WG_NET.$i $WG_PORT
+  wg_gen $username $WG_NET.$i
 
   # Add to users.yml
   printf -- "- name: $username\n  origins:\n    - $WG_NET.$i\n" >> \
