@@ -52,7 +52,7 @@
         - { path: '.password-store', state: directory, mode: 700 }
         - { path: '.gnupg',          state: directory, mode: 700 }
 
-    - name: Ensure correct owner
+    - name: Ensure correct ownership
       shell:
         cmd: "chown -R nass:nass {{nass_home}}"
 
@@ -76,10 +76,10 @@
         mode: 0600
     become: true
 
-   - name: Initialize git repository
-     become: true
-     become_user: nass
-     shell:
-       chdir: '{{nass_home}}'
-       cmd: "pass git init"
-       creates: '{{nass_home}}/.password-store/.git'
+  - name: Initialize git repository
+    become: true
+    become_user: nass
+    shell:
+      chdir: '{{nass_home}}'
+      cmd: "pass git init"
+      creates: '{{nass_home}}/.password-store/.git'
