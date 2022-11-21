@@ -13,6 +13,7 @@ TGZ=$OUT.tgz
 IMAGE_NAME=nass_$GOARCH
 APP_USER_HOME=/srv/nass
 APP_USER=$(basename $APP_USER_HOME)
+WG_IFACE=wg1
 TARGET=$1
 #==============================================================================#
 
@@ -30,27 +31,28 @@ if ${2:-false}; then
   docker cp $container:/nass/nass $OUT/nass
   docker cp $container:/nass/dist $OUT
   docker rm $container
-
-  # The $OUT directory will be the home directory of the application
-  # user in deployment.
-  mkdir -m 700 $OUT/{.password-store,.gnupg,wireguard}
-
-  cp -v net/nass.yml           $OUT/conf/nass.yml
-  cp -v net/users.yml          $OUT/conf
-  cp -v conf/gitconfig         $OUT/.gitconfig
-  cp -v conf/gpg-agent.conf    $OUT/.gnupg
-  cp -rv keys                  $OUT
-  cp -v net/wireguard/nass*    $OUT/wireguard
-  cp -v scripts/importkey.sh   $OUT
-
-
-  # Automatically fetch self-signed certs if available
-  if [ -d ~/.secret/selfsigned/nassca ]; then
-    cp -v ~/.secret/selfsigned/nassca/nass.key $OUT/tls/server.key
-    cp -v ~/.secret/selfsigned/nassca/nass.crt $OUT/tls/server.crt
-    cp -v ~/.secret/ssl/nassca/certs/ca.crt    $OUT/dist
-  fi
 fi
+
+# The $OUT directory will be the home directory of the application
+# user in deployment.
+mkdir -p -m 700 $OUT/{.password-store,.gnupg,wireguard}
+
+cp net/nass.yml           $OUT/conf/nass.yml
+cp net/users.yml          $OUT/conf
+cp conf/gitconfig         $OUT/.gitconfig
+cp conf/gpg-agent.conf    $OUT/.gnupg
+cp -r keys                $OUT
+cp net/wireguard/nass*    $OUT/wireguard
+cp scripts/importkey.sh   $OUT
+
+
+# Automatically fetch self-signed certs if available
+if [ -d ~/.secret/selfsigned/nassca ]; then
+  cp -v ~/.secret/selfsigned/nassca/nass.key $OUT/tls/server.key
+  cp -v ~/.secret/selfsigned/nassca/nass.crt $OUT/tls/server.crt
+  cp -v ~/.secret/ssl/nassca/certs/ca.crt    $OUT/dist
+fi
+
 
 #==============================================================================#
 if ${3:-false}; then
@@ -72,10 +74,15 @@ if ${4:-false}; then
   tar czf $TGZ $OUT
   rsync $TGZ $TARGET:/tmp/$TGZ
 
-  ssh -t $TARGET "doas -u $APP_USER \
+  # Update all application files and the wg interface configuration.
+  # If ./genconf.sh is re-ran (with the same input), it is enough
+  # to re-run the sync step for things to work.
+  ssh -t $TARGET "$BECOME_METHOD -u $APP_USER \
     tar -xzf /tmp/$TGZ -o -m -C $APP_USER_HOME --overwrite \
       --strip-components 1; \
-    rm /tmp/$TGZ"
-
+      rm /tmp/$TGZ
+      $BECOME_METHOD cp $APP_USER_HOME/wireguard/nass.cfg \
+        /etc/wireguard/$WG_IFACE.conf
+      "
   rm $TGZ
 fi

@@ -1,13 +1,6 @@
 #!/usr/bin/env bash
 # Generate a users.yml along with corresponding Wireguard configurations.
 die(){ printf "$1\n" >&2 ; exit 1; }
-info(){ printf "\033[34m!>\033[0m $1\n" >&2; }
-err(){ printf "\033[31m!>\033[0m $1\n" >&2; }
-check_deps(){
-  for pkg in ${@}; do
-    which $pkg &> /dev/null || die "Missing '$pkg'"
-  done
-}
 wg_gen() {
   local privkey="$OUTPUT/wireguard/$1.key"
   local pubkey="$OUTPUT/wireguard/$1.pub"
@@ -21,23 +14,17 @@ Address = $2
 ListenPort = $WG_PORT
 EOF
 
-# Only set DNS and ping test for clients
-if [ "$3" = client ]; then
-  cat << EOF >> "$OUTPUT/wireguard/$1.cfg"
-DNS = $WG_DNS
-PostUp = ping -c1 $NASS_IP
-
-EOF
-else
+  # Only set DNS for clients
+  # The PostUp directive is not supported for iOS clients
+  if [ "$3" = client ]; then
+    printf "DNS = $WG_DNS\n" >> "$OUTPUT/wireguard/$1.cfg"
+  fi
   echo >> "$OUTPUT/wireguard/$1.cfg"
-fi
 
 }
 
 usage="usage: $(basename $0) <nass public IP> <usernames ...>"
 [ -z "$1" ] && die "$usage"
-
-check_deps wg
 
 #==============================================================================#
 

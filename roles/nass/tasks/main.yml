@@ -9,7 +9,8 @@
 #  * Add a resolution for the 'nass' domain name, the server that is running
 #  is set as the default resolver and a dnsmasq entry needs to be manually added
 #   address=/nass/10.0.1.77.1
-#  * Configure necessary nftable rules
+#  * Configure necessary nftables/iptables rules
+#  * Enable wireguard service
 - name: Nass server setup
   tags:
     - nass
@@ -48,7 +49,7 @@
         group: nass
         mode: '{{item.mode}}'
       with_items:
-        - { path: 'nass',            state: file,      mode: 700 } # This will be empty on first sync
+        - { path: 'nass',            state: file,      mode: 700 }
         - { path: '.password-store', state: directory, mode: 700 }
         - { path: '.gnupg',          state: directory, mode: 700 }
 
@@ -65,15 +66,6 @@
       shell:
         cmd: "rc-update add nass default"
         creates: /etc/runlevels/default/nass
-
-    # The Wireguard role will automatically enable wg1 if it exists
-    - name: Copy over Wireguard configuration
-      copy:
-        src: '{{release_build}}/wireguard/nass.cfg'
-        dest: /etc/wireguard/wg1.conf
-        owner: root
-        group: root
-        mode: 0600
     become: true
 
   - name: Initialize git repository
