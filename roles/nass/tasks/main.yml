@@ -1,5 +1,5 @@
 # This role assumes that ~/Repos/nass/arm64 contains a complete
-# arm64 build of `nass`.
+# arm64 build of `nass` and is built for a target running Alpine:3.16 on arm64.
 #
 # This role will:
 # 1. Create an application user and unpack the deployment configuration

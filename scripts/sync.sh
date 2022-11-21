@@ -12,6 +12,7 @@ node_modules
 .DS_Store
 .cache
 arm64
+net
 EOF
 
 find . \
@@ -22,5 +23,3 @@ find . \
   -o -name "*.tsx" -o -name "*.html" -o -name "*.scss" \
   -o -name "Dockerfile*" -o -name "*.yml" -o -name "*.svelte" |entr -n -s \
   "rsync --exclude-from=$EXCLUDE -r --delete ~/Repos/nass $REMOTE:~/Repos"
-
-
