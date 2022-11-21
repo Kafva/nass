@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
-: '''
-Generate a users.yml along with a corresponding wireguard configurations.
-Refer to the top level variables for configuration.
-'''
+# Generate a users.yml along with corresponding Wireguard configurations.
 die(){ printf "$1\n" >&2 ; exit 1; }
 info(){ printf "\033[34m!>\033[0m $1\n" >&2; }
 err(){ printf "\033[31m!>\033[0m $1\n" >&2; }
@@ -22,10 +19,18 @@ wg_gen() {
 PrivateKey = $(cat "$privkey")
 Address = $2
 ListenPort = $WG_PORT
+EOF
+
+# Only set DNS and ping test for clients
+if [ "$3" = client ]; then
+  cat << EOF >> "$OUTPUT/wireguard/$1.cfg"
 DNS = $WG_DNS
 PostUp = ping -c1 $NASS_IP
 
 EOF
+else
+  echo >> "$OUTPUT/wireguard/$1.cfg"
+fi
 
 }
 
@@ -65,11 +70,11 @@ tls_key: tls/server.key
 EOF
 
 # == Wireguard configuration (server) ==
-wg_gen nass $NASS_IP
+wg_gen nass $NASS_IP server
 
 i=100
 for username in ${@:2}; do
-  wg_gen $username $WG_NET.$i
+  wg_gen $username $WG_NET.$i client
 
   # Add to users.yml
   printf -- "- name: $username\n  origins:\n    - $WG_NET.$i\n" >> \
@@ -79,7 +84,7 @@ for username in ${@:2}; do
   cat << EOF >> "$OUTPUT/wireguard/$username.cfg"
 [Peer] # nass
 PublicKey = $(cat "$OUTPUT/wireguard/nass.pub")
-Endpoint = $NASS_PUBLIC_IP:$NASS_PORT
+Endpoint = $NASS_PUBLIC_IP:$WG_PORT
 AllowedIPs = $NASS_IP/32
 PersistentKeepalive = 25
 EOF
