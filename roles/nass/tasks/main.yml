@@ -51,15 +51,19 @@
         owner: nass
         group: nass
 
-    - name: Make binary executable
+    - name: Ensure correct permissions
       file:
-        path: '{{nass_home}}/nass'
-        state: file
+        path: '{{nass_home}}/{{item.path}}'
+        state: '{{item.state}}'
         owner: nass
         group: nass
-        mode: "700"
+        mode: '{{item.mode}}'
+      with_items:
+        - { path: 'nass', state: file, mode: 700 }
+        - { path: '.password-store', state: directory, mode: 700 }
+        - { path: '.gnupg', state: directory, mode: 700 }
 
-    - name: Fix any ownership issues
+    - name: Ensure correct owner
       shell:
         cmd: "chown -R nass:nass {{nass_home}}"
 
@@ -76,17 +80,18 @@
     # The wireguard role will automatically enable wg1 if it exists
     - name: Copy over Wireguard configuration
       copy:
-        src: '{{release_build}}/wireguard/nass.cfg'
+        src: '{{nass_home}}/wireguard/nass.cfg'
         dest: /etc/wireguard/wg1.conf
         owner: root
         group: root
         mode: 0600
-  become: true
+        remote_src: true
+    become: true
 
-- name: Initialize git repository
-  become: true
-  become_user: nass
-  shell:
-    chdir: '{{nass_home}}'
-    cmd: "pass git init"
-    creates: '{{nass_home}}/.password-store/.git'
+  - name: Initialize git repository
+    become: true
+    become_user: nass
+    shell:
+      chdir: '{{nass_home}}'
+      cmd: "pass git init"
+      creates: '{{nass_home}}/.password-store/.git'
