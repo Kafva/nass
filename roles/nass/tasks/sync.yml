@@ -1,17 +1,23 @@
 - name: Sync current remote build to /tmp
   shell:
     cmd: rsync -r --delete {{nass_home}} /tmp
+- name: Sync current remote build to /tmp
+  shell:
+    cmd: rsync -r --delete --exclude=.password-store --exclude=.gnupg {{release_build}}/ /tmp/nass
+- name: Move config files into place
+  shell:
+    cmd: rsync -r --delete --exclude=.password-store --exclude=.gnupg {{release_build}}/ /tmp/nass
 
-- name: Push release build to tmp
 
-- name: Push directories
-  ansible.posix.synchronize:
-    src: "{{release_build}}/"
-    dest: '{{nass_home}}'
-    delete: true
-    rsync_opts:
-      # Ensure remote directories exist
-      - "--rsync-path='mkdir -p {{home}}/{{item}} && rsync'"
-      - "--exclude-from=$HOME/dots/misc/templates/rsync-ignore"
-  with_items: '{{to_sync}}'
+    # DONE, delete tmp file
+
+    #- name: Push release build to tmp
+    #  become: false
+    #  ansible.posix.synchronize:
+    #    src: "{{release_build}}/"
+    #    dest: '/tmp/nass'
+    #    delete: true
+    #    rsync_opts:
+    #      - "--exclude=.password-store"
+    #      - "--exclude=.gnupg"
 
