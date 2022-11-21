@@ -1,0 +1,17 @@
+- name: Sync current remote build to /tmp
+  shell:
+    cmd: rsync -r --delete {{nass_home}} /tmp
+
+- name: Push release build to tmp
+
+- name: Push directories
+  ansible.posix.synchronize:
+    src: "{{release_build}}/"
+    dest: '{{nass_home}}'
+    delete: true
+    rsync_opts:
+      # Ensure remote directories exist
+      - "--rsync-path='mkdir -p {{home}}/{{item}} && rsync'"
+      - "--exclude-from=$HOME/dots/misc/templates/rsync-ignore"
+  with_items: '{{to_sync}}'
+

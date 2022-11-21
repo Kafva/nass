@@ -13,6 +13,7 @@ node_modules
 .cache
 arm64
 net
+keys
 EOF
 
 find . \
