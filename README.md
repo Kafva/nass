@@ -14,7 +14,6 @@ service is designed to be accessible by a pre-defined set of users
 Source IP spoofing should only be an issue if a user has their Wireguard keys
 leaked.
 
-
 ## Deployment
 The deployment steps are designed to be compatible with Alpine v3.16 on arm64,
 other setups will require varying amounts of tweaking.
@@ -65,18 +64,10 @@ able to access the service from `https://nass:5678`.
 downloaded and installed from `https://nass:5678/app/ca.crt`
 (this must be done via _Safari_ to work on iOS).
 
+
 ## Development
 
-## Notes
-* Overlapping directory and file names are __not__ supported, e.g. `/a/b.gpg`
-and `/a.gpg` are not allowed to exist at the same time.
-
-## Similar projects
-* https://github.com/mssun/passforios
-* https://github.com/BenoitZugmeyer/pass-web
-
-<!--
-## Client
+### Client
 ```bash
 # Create subset font (i.e. exclude unused glyphs)
 pip install --user fonttools
@@ -92,34 +83,26 @@ yarn run lint
 yarn run test
 ```
 
-## Server
+### Server
 The container configurations should work with both Docker and Podman.
 ```bash
-# Release
-docker build --rm --tag=nass .
-docker run -p 5678:5678 -d nass
+# The server itself can be built with
+go build
 
-#== Development ==#
 # Start `watch` rebuild in Docker
-./scripts/docker_dev.sh fullclean
-
-# Tail application logs from the container
-./scripts/docker_dev.sh logs
+./scripts/devctl.sh watch
 
 # Test endpoints, e.g.
-curl -X POST -d "pass=jane" -L 'http://10.0.1.6:5678/get?path=Wallets/eth/main'|jq
-curl -X POST -d "pass=jane" -L 'http://10.0.1.6:5678/add?path=Wallets/eth/new'|jq
-curl -X GET -L 'http://10.0.1.6:5678/get?path=Wallets/eth/main'|jq
-
-#== Remote development ==#
-# Yes, it is a bit overcomplicated...
-(local)  ./scripts/remote.sh
-(remote) ./scripts/docker_dev.sh watch
-  (container) ./scripts/live.sh
-(remote) ./scripts/docker_dev.sh logs
-
+curl -X GET -L 'http://10.0.1.6:5678/get?path=Wallets/eth/main' | jq
 
 # Run server tests
 go test -v --run $test_name ./server
 ```
--->
+
+## Notes
+* Overlapping directory and file names are __not__ supported, e.g. `/a/b.gpg`
+and `/a.gpg` are not allowed to exist at the same time.
+
+## Similar projects
+* https://github.com/mssun/passforios
+* https://github.com/BenoitZugmeyer/pass-web
