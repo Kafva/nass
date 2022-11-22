@@ -58,6 +58,7 @@ find . \
     docker cp public $CONTAINER:/nass/ 2> /dev/null
     docker cp fonts $CONTAINER:/nass/ 2> /dev/null
     docker cp conf $CONTAINER:/nass/ 2> /dev/null
+    docker cp tls $CONTAINER:/nass/ 2> /dev/null
     docker cp scripts $CONTAINER:/nass/ 2> /dev/null
     docker exec -u root $CONTAINER chown -R nass:nass /nass
     docker exec $CONTAINER go build

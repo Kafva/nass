@@ -44,7 +44,7 @@
   }
 </script>
 
-<form method="dialog">
+<form autocomplete="off" method="dialog">
   <label for="pass">
     Authentication required
   </label>
