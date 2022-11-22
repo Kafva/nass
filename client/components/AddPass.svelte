@@ -110,8 +110,8 @@
     }
     suggestElement.setAttribute("data-match", match)
     suggestElement.innerText = match != suggestFallback ?
-                                        match + "/" + suggestFallback :
-                                        suggestFallback
+      match + "/" + suggestFallback :
+      suggestFallback
   }
 
   const keyDown = (event: KeyboardEvent) => {

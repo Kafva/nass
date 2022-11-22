@@ -6,7 +6,7 @@
   let message = ""
   let iconClass = ""
   let timeoutID: any = null
-  let percent = IsMobile() ? 125 : 140
+  const percent = IsMobile() ? 125 : 140
 
   msgTextStore.subscribe( (value:[string,string]) => {
     const timeout = MessageTimeouts[value[0]] || -1

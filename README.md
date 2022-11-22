@@ -72,6 +72,7 @@ downloaded and installed from
 ## Development
 The server is built with `go build` and the client is compiled with
 ```bash
+yarn
 pip install --user fonttools
 ./scripts/genfont.sh client && vite build
 ```
@@ -90,11 +91,10 @@ curl -X GET -L 'http://$ALLOWED_IP:5678/get?path=visa' | jq
 # IP as the origin of a user.
 ```
 
-
 The test suites that exist mainly focus on input validation.
 ```bash
-# Client tests (vitest)
-yarn run test
+# Client tests
+yarn run vitest
 
 # Server tests
 go test -v --run $test_name ./server
