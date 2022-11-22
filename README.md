@@ -2,6 +2,18 @@
 <img width=42 height=42 src="./public/assets/icon.png">&nbsp;&nbsp; nass
 </h1>
 
+nass provides a mobile friendly web interface for pass, 
+*[the standard unix password manager](https://www.passwordstore.org/)*.
+
+The application is designed to support multiple users, each with their own 
+subdirectory under `~/.password-store` and dedicated GPG key.
+
+Users are identified based on their source IP (i.e. no login prompt). The 
+service is designed to be accessible by a pre-defined set of users 
+(with one or more IPs assigned to them) in a Wireguard network.
+Source IP spoofing should only be an issue if a user has their Wireguard keys
+leaked.
+
 
 ## Deployment
 The deployment steps are designed to be compatible with Alpine v3.16 on arm64,
@@ -27,9 +39,9 @@ qrencode -t ansiutf8 < net/wireguard/$user.cfg
 
 3. Use [scripts/release.sh](/scripts/release.sh) to
   - Build the application in a container
-  - Setup a dedicated `nass` user and service on a remote server
-  - Push the build and all configurations
-  (including resources from `./keys` and `./net`) to the remote server.
+  - Setup a dedicated `nass` user and service on a remote server (Ansible)
+  - Push the build and all configurations (including resources from `./keys` 
+  and `./net`) to the remote server.
 ```bash
 #                            [build]   [ansible]   [sync]
 ./scripts/release.sh $SERVER true      true        true
@@ -54,6 +66,14 @@ downloaded and installed from `https://nass:5678/app/ca.crt`
 (this must be done via _Safari_ to work on iOS).
 
 ## Development
+
+## Notes
+* Overlapping directory and file names are __not__ supported, e.g. `/a/b.gpg`
+and `/a.gpg` are not allowed to exist at the same time.
+
+## Similar projects
+* https://github.com/mssun/passforios
+* https://github.com/BenoitZugmeyer/pass-web
 
 <!--
 ## Client
@@ -103,6 +123,3 @@ curl -X GET -L 'http://10.0.1.6:5678/get?path=Wallets/eth/main'|jq
 go test -v --run $test_name ./server
 ```
 -->
-## Notes
-* Overlapping directory and file names are __not__ supported, e.g. `/a/b.gpg`
-and `/a.gpg` are not allowed to exist at the same time.
