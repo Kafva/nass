@@ -49,6 +49,8 @@
         group: nass
         mode: '{{item.mode}}'
       with_items:
+        # Empty files will be created on first deployment
+        - { path: 'importkey.sh',    state: file,      mode: 755 }
         - { path: 'nass',            state: file,      mode: 700 }
         - { path: '.password-store', state: directory, mode: 700 }
         - { path: '.gnupg',          state: directory, mode: 700 }

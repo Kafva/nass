@@ -4,6 +4,8 @@
 
 
 ## Deployment
+The deployment steps are designed to be compatible with Alpine v3.16 on arm64,
+other setups will require varying amounts of tweaking.
 
 1. Create keys for each user with [scripts/genkey.sh](/scripts/genkey.sh)
 ```bash
@@ -11,35 +13,49 @@
 ```
 and backup up the exported `./keys`.
 
-2. Generate a `users.yml` configuration and Wireguard resources with
-[scripts/genconf.sh](/scripts/genconf.sh), output is placed under `./net`.
+2. Generate a `users.yml` configuration for the server and Wireguard
+configurations with [scripts/genconf.sh](/scripts/genconf.sh),
+output is placed under `./net`.
 ```bash
-./scripts/genconf.sh $(curl -s ifconfig.co) $user1 $user2 ...
+./scripts/genconf.sh $server_public_ip $user1 $user2 ...
+```
+A Wireguard configuration will be created for each user, these can be
+easily distributed as QR codes:
+```bash
+qrencode -t ansiutf8 < net/wireguard/$user.cfg
 ```
 
-3. Create a release build, the output is placed under `./arm64` and copies
-the relevant files from `./keys` and `./net`.
+3. Use [scripts/release.sh](/scripts/release.sh) to
+  - Build the application in a container
+  - Setup a dedicated `nass` user and service on a remote server
+  - Push the build and all configurations
+  (including resources from `./keys` and `./net`) to the remote server.
 ```bash
-./scripts/release.sh
+#                            [build]   [ansible]   [sync]
+./scripts/release.sh $SERVER true      true        true
 ```
 
-4. Generate a self-signed certificate for the server (`CN=nass`)
-  - Place the CA certificate at `./arm64/dist/ca.crt`
-  - Place the server certificate and key under `./arm64/tls/server.{crt,key}`
+4. Generate a self-signed certificate for the server (default: `CN=nass`)
+  - Place the CA certificate at `/srv/nass/dist/ca.crt`
+  - Place the server certificate and key under `/srv/nass/tls/server.{crt,key}`
 
-6. Configure the server with an application user and the resources from `./arm64`
-using [roles/nass](/roles/nass/tasks/main.yml).
-
-7. As the `nass` application user, import each user's key
+5. As the `nass` application user, import each user's key:
 ```bash
 ./importkey.sh $user1
-./importkey.sh $user2
 ...
 ```
-8. Reboot to launch the service
+6. Reboot to launch the `nass` service
+7. Configure the server with a resolver (e.g. dnsmasq) that resolves `nass` to
+the Wireguard address of the server.
+8. After importing their Wireguard configuration, each client should now be
+able to access the service from `https://nass:5678`.
+9. The CA used for the self-signed certificate on the server can be
+downloaded and installed from `https://nass:5678/app/ca.crt`
+(this must be done via _Safari_ to work on iOS).
 
----
+## Development
 
+<!--
 ## Client
 ```bash
 # Create subset font (i.e. exclude unused glyphs)
@@ -86,7 +102,7 @@ curl -X GET -L 'http://10.0.1.6:5678/get?path=Wallets/eth/main'|jq
 # Run server tests
 go test -v --run $test_name ./server
 ```
-
+-->
 ## Notes
 * Overlapping directory and file names are __not__ supported, e.g. `/a/b.gpg`
 and `/a.gpg` are not allowed to exist at the same time.
