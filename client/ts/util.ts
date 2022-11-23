@@ -68,8 +68,19 @@ const CopyToClipboard = async (value: string) => {
       "Clipboard is inaccessible, the site origin needs to be over https:// or localhost"
     )
   } else {
-    await navigator.clipboard.writeText(value)
-    msgTextStore.set([MessageText.clipboard, ""])
+    try {
+      // clipboard.writeText() does not work on iOS...
+      // https://developer.apple.com/forums/thread/691873
+      //
+      const data = [new ClipboardItem({"text/plain": value})];
+
+      //await navigator.clipboard.write(data)
+      //await navigator.clipboard.writeText(value)
+
+      msgTextStore.set([MessageText.clipboard, ""])
+    } catch (e) {
+      msgTextStore.set([MessageText.err, (e as Error).message])
+    }
   }
 }
 
