@@ -43,6 +43,7 @@
   @use "../scss/vars";
 
   div {
+    text-align: center;
     position: fixed;
     border-radius: 2%;
     color: vars.$white;

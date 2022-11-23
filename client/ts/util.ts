@@ -62,7 +62,7 @@ const GetHTMLElements = function<Type extends Element>(selector:string, root: El
 
 /** Overwrite the clipbaord and create a message alert */
 const CopyToClipboard = async (value: string) => {
-  if (!Object.keys(navigator).includes('clipboard')) {
+  if (!window.isSecureContext) {
     msgTextStore.set([MessageText.err, "Clipboard is inaccessible"])
     Err(
       "Clipboard is inaccessible, the site origin needs to be over https:// or localhost"

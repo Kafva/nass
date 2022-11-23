@@ -30,7 +30,7 @@
 
   //import { MessageText } from '../ts/config';
   //import { msgTextStore } from '../ts/store'
-  //setTimeout(()=>msgTextStore.set([MessageText.pathOverlap, ""]), 1000)
+  //setTimeout(()=>msgTextStore.set([MessageText.clipboard, ""]), 1000)
 
 
   if (Config.debug) {
