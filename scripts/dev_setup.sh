@@ -15,16 +15,24 @@ DB=(
   john/Wallets/eth/main
   john/Github/James0x1
   john/Github/James0x2
+  john/Github/averylongnamethatcouldmessupformatting
+  john/level1/level2/level3/level4
+  john/level1/level2/tmp
+  john/level1/tmp
   john/visa
   john/mastercard
+  john/averylongnamethatcouldmessupformatting
 
   jane/Wallets/xmr/main
   jane/Wallets/xmr/frozen
   jane/Wallets/eth/main
-  jane/Github/Jane0x1
-  jane/Github/Jane0x2
+  jane/Github/averylongnamethatcouldmessupformatting
+  jane/level1/level2/level3/level4
+  jane/level1/level2/tmp
+  jane/level1/tmp
   jane/visa
   jane/mastercard
+  jane/averylongnamethatcouldmessupformatting
 )
 
 

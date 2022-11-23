@@ -155,6 +155,15 @@
     & > span {
       // Vertical centering
       display: inline-flex;
+
+      // Text overflow
+      //display: inline-block;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      overflow-wrap: break-word;
+      hyphens: auto;
+      width: 50%;
+
       align-items: center;
       &::before {
         // Spacing between text and icon
