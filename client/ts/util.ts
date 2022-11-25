@@ -60,29 +60,16 @@ const GetHTMLElements = function<Type extends Element>(selector:string, root: El
   return el
 }
 
-/** Overwrite the clipbaord and create a message alert */
-const CopyToClipboard = async (value: string) => {
+const SupportsClipboardWrite = (): boolean => {
   if (!window.isSecureContext) {
     msgTextStore.set([MessageText.err, "Clipboard is inaccessible"])
     Err(
       "Clipboard is inaccessible, the site origin needs to be over https:// or localhost"
     )
-  } else {
-    try {
-      // clipboard.writeText() does not work on iOS...
-      // https://developer.apple.com/forums/thread/691873
-      //
-      const data = [new ClipboardItem({"text/plain": value})];
-
-      //await navigator.clipboard.write(data)
-      //await navigator.clipboard.writeText(value)
-
-      msgTextStore.set([MessageText.clipboard, ""])
-    } catch (e) {
-      msgTextStore.set([MessageText.err, (e as Error).message])
-    }
   }
+  return window.isSecureContext
 }
+
 
 /** Platform check based on viewport width and UA. */
 const IsMobile = (): boolean => {
@@ -111,5 +98,5 @@ const Err = (...args: any) => {
   console.log("%c ERROR ", 'background: #ed493e; color: #f5e4f3', ...args)
 }
 
-export { fly, fade, GetHTMLElement, GetHTMLElements, CopyToClipboard,
-  IsMobile, IsLikelySafari, Debug, Err }
+export { fly, fade, GetHTMLElement, GetHTMLElements,
+  SupportsClipboardWrite, IsMobile, IsLikelySafari, Debug, Err }

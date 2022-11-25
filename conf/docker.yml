@@ -6,6 +6,6 @@ debug: true
 color: true
 
 single_user: false
-tls_enabled: false
+tls_enabled: true
 tls_cert: tls/server.crt
 tls_key: tls/server.key

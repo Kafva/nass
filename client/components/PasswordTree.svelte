@@ -5,7 +5,7 @@
   import { Config, MessageText} from '../ts/config'
   import { FoldPolicy } from '../ts/types'
   import type { ApiResponse, AuthInfo, PassItem } from '../ts/types'
-  import { CopyToClipboard, Debug, IsMobile } from '../ts/util'
+  import { Debug, IsMobile, SupportsClipboardWrite } from '../ts/util'
   import { ApiStatusResponse } from '../ts/types'
   import type PassEntry from '../ts/PassEntry'
   import ApiRequest from '../ts/ApiRequest'
@@ -60,13 +60,32 @@
     }
   }
 
-  const handleGetPass = (useClipboard: boolean) => {
-    api.getPass(path, "").then((apiRes: ApiResponse) => {
+  const handleGetPass = (useClipboard: boolean): Promise<string | undefined> => {
+    return api.getPass(path, "").then((apiRes: ApiResponse) => {
       switch (apiRes.status) {
       case ApiStatusResponse.success:
         Debug("Already authenticated", apiRes)
-        if (useClipboard) {
-          CopyToClipboard(apiRes.value)
+        if (useClipboard && SupportsClipboardWrite() ) {
+         // WebKit (Safari and iOS) does not support `clipboard.writeText()` outside
+         // of user interaction handlers, i.e. onclick etc.
+         // https://webkit.org/blog/10855/async-clipboard-api/ 
+         //
+         // This can be circumvented by using `ClipboardItem`
+         return new Promise(apiRes.value)
+
+         //const text = new ClipboardItem({
+         //  "text/plain": fetch(this.sourceUrlValue)
+         //    .then(response => response.text())
+         //    .then(text => new Blob([text], { type: "text/plain" }))
+         //})
+         //navigator.clipboard.write([text])
+
+
+         //navigator.clipboard.writeText(apiRes.value).then( () =>
+         //  msgTextStore.set([MessageText.clipboard, ""])
+         //).catch( e => {
+         //  msgTextStore.set([MessageText.err, (e as Error).message])
+         //})
         } else {
           showPassStore.set({
             path: path,
@@ -115,7 +134,23 @@
         <div class="buttons">
           {#if isLeaf}
             <span role="button" class="nf {Config.clipboardIcon}"
-                  on:click="{() => handleGetPass(true) }"/>
+                  on:click="{ () => { 
+                  const clipboardItem = new ClipboardItem({'text/plain': handleGetPass(true)
+                    .then(text => { 
+                      new Blob([text != null ? text : ''], { type: 'text/plain' })
+                    }) 
+                  })
+                  navigator.clipboard.write([clipboardItem]).catch(e => {
+                     msgTextStore.set([MessageText.err, e.message]) 
+                  })
+
+                  //.then( (blob) => {
+                  //  if (blob != null) {
+                  //    Debug('this', blob)
+                  //    navigator.clipboard.write([blob])
+                  //  }
+                  //})
+            }}"/>
             <span role="button" class="nf {Config.showPassword}"
                   on:click="{() => handleGetPass(false) }"/>
           {/if}

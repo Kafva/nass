@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { authInfoStore, showPassStore } from "../ts/store";
-  import { CopyToClipboard, Debug, Err } from "../ts/util";
-  import type { ApiResponse, PassItem } from '../ts/types';
-  import { Config } from "../ts/config";
-  import { ApiStatusResponse } from "../ts/types";
+  import { authInfoStore, showPassStore, msgTextStore } from "../ts/store";
+  import { SupportsClipboardWrite, Debug, Err } from "../ts/util";
+  import type { ApiResponse, PassItem  } from '../ts/types';
+  import { Config, MessageText } from "../ts/config";
+  import { ApiStatusResponse  } from "../ts/types";
   import ApiRequest from "../ts/ApiRequest";
 
   export let visible: boolean;
@@ -21,8 +21,12 @@
         if (apiRes.status == ApiStatusResponse.success ) {
           Debug("Authentication successful: ", apiRes)
 
-          if ($authInfoStore.useClipboard) {
-            CopyToClipboard(apiRes.value)
+          if ($authInfoStore.useClipboard && SupportsClipboardWrite()) {
+            navigator.clipboard.writeText(apiRes.value).then( () =>
+              msgTextStore.set([MessageText.clipboard, ""])
+            ).catch( e => {
+              msgTextStore.set([MessageText.err, (e as Error).message])
+            })
           } else {
             showPassStore.set({
               path: $authInfoStore.path,
