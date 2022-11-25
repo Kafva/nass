@@ -10,41 +10,49 @@
   const api = new ApiRequest()
   let passInput: string;
 
-  /**
-   * Maybe not great to have an event listener for every keyboard event on
-   * a password prompt...
-   */
-  const handleKeyDown = (event: KeyboardEvent) => {
-    switch (event.key) {
-    case "Enter":
-      api.getPass($authInfoStore.path, passInput).then( (apiRes: ApiResponse) => {
-        if (apiRes.status == ApiStatusResponse.success ) {
-          Debug("Authentication successful: ", apiRes)
+  const handleRequest = (): Promise<string> => {
+    return api.getPass($authInfoStore.path, passInput).then( (apiRes: ApiResponse) => {
+      if (apiRes.status == ApiStatusResponse.success ) {
+        Debug("Authentication successful: ", apiRes)
 
-          if ($authInfoStore.useClipboard && SupportsClipboardWrite()) {
-            navigator.clipboard.writeText(apiRes.value).then( () =>
-              msgTextStore.set([MessageText.clipboard, ""])
-            ).catch( e => {
-              msgTextStore.set([MessageText.err, (e as Error).message])
-            })
-          } else {
-            showPassStore.set({
-              path: $authInfoStore.path,
-              password: apiRes.value
-            } as PassItem)
-          }
-
-          // Restore the passInfo store...
-          authInfoStore.set({path: "", useClipboard: false})
-          // ...and close the outer <Dialog/>
-          visible = false
-
+        if ($authInfoStore.useClipboard && SupportsClipboardWrite()) {
+           return Promise.resolve(apiRes.value)
         } else {
-          Err("Error", apiRes.desc)
+          showPassStore.set({
+            path: $authInfoStore.path,
+            password: apiRes.value
+          } as PassItem)
         }
-      })
-      break;
-    }
+      } else {
+        Err("Error", apiRes.desc)
+      }
+      return Promise.resolve("")
+    })
+  }
+
+  // Wrapper for WebKit compatible clipboard writing
+  //  https://webkit.org/blog/10855/async-clipboard-api/
+  const handleKeyDown = (event: KeyboardEvent) => {
+     if (event.key == 'Enter') {
+       const textItem = new ClipboardItem({"text/plain": handleRequest()})
+       // Do not overwrite the clipboard with an empty string
+       if ($authInfoStore.useClipboard) {
+         navigator.clipboard.write([textItem])
+          .then(() => {
+            msgTextStore.set([MessageText.clipboard, ""])
+            // Restore the passInfo store...
+            authInfoStore.set({path: "", useClipboard: false})
+            // ...and close the outer <Dialog/>
+            visible = false
+          })
+          .catch(e => {
+            msgTextStore.set([MessageText.err, (e as Error).message])
+         })
+         .finally( () => {
+         })
+       }
+
+     }
   }
 
 

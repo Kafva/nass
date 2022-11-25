@@ -99,13 +99,14 @@
   }
 
 
-  // WebKit (Safari and iOS) does not support `clipboard.writeText()` outside
+  // WebKit (Safari and iOS) does not support `clipboard.write*()` outside
   // of user interaction handlers, i.e. onclick etc.
-  // https://webkit.org/blog/10855/async-clipboard-api/
-  //
-  // The clipboard.write() API can be used to circumvent this and expects an
+  // so we need a wrapper around the `api.getPass()` call for clipboard
+  // management. The clipboard.write() API expects an
   // array of ClipboardItem objects as input. Each item is a key-mapping from
   // a MIME-type to a Promise that resolves to a Blob() or string.
+  //
+  // https://webkit.org/blog/10855/async-clipboard-api/
   const handleClipboard = () => {
      const textItem = new ClipboardItem({"text/plain": handleGetPass(true)})
 
