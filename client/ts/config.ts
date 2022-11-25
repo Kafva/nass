@@ -10,7 +10,7 @@ class Config {
    * No folders are allowed with this set to 0
    * One '/' is allowed if it is set to 1, etc.
    */
-  static readonly maxPassDepth = 6
+  static readonly maxPassDepth = 4
 
   // Icon classes
   static readonly dropdownClosed = 'nf-fa-angle_right'

@@ -61,7 +61,7 @@ const GetHTMLElements = function<Type extends Element>(selector:string, root: El
 }
 
 const SupportsClipboardWrite = (): boolean => {
-  if (!window.isSecureContext) {
+  if (!window.isSecureContext || !('clipboard' in navigator)) {
     msgTextStore.set([MessageText.err, "Clipboard is inaccessible"])
     Err(
       "Clipboard is inaccessible, the site origin needs to be over https:// or localhost"

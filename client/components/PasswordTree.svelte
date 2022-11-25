@@ -22,7 +22,9 @@
   // --------------------------------
   // | <span name/> | <div buttons/> |
   // --------------------------------
-  // Increase the left-justification as we go to deeper levels
+  // Increase the left-justification as we go to deeper levels.
+  // We decrease the width of the <span/> by the same proportion
+  // to avoid overlap between the buttons and text.
   const marginLeft = `${(entry.parents.length) * 20}px`
 
   const path = entry.path()
@@ -110,7 +112,6 @@
   // https://webkit.org/blog/10855/async-clipboard-api/
   const handleClipboard = () => {
      const textItem = new ClipboardItem({"text/plain": handleGetPass(true)})
-
      navigator.clipboard.write([textItem])
       .catch(e => {
         msgTextStore.set([MessageText.err, (e as Error).message])
@@ -127,7 +128,9 @@
       <span role="button" class="nf { isLeaf ? Config.passwordIcon :
           (open ? Config.dropdownOpen : Config.dropdownClosed) }"
             on:click="{handleMainClick}"
-            style:margin-left={marginLeft}>
+            style:margin-left={marginLeft}
+            style:width="{`calc(100% - ${marginLeft}px - 15px)`}"
+            title="{entry.name}">
         {entry.name}
       </span>
 
@@ -135,12 +138,15 @@
         <div class="buttons">
           {#if isLeaf}
             <span role="button" class="nf {Config.clipboardIcon}"
-                  on:click="{handleClipboard}"/>
+                  on:click="{handleClipboard}"
+                  title="Copy to clipboard"/>
             <span role="button" class="nf {Config.showPassword}"
-                  on:click="{() => handleGetPass(false) }"/>
+                  on:click="{() => handleGetPass(false) }"
+                  title="Show password"/>
           {/if}
           <span role="button" class="nf {Config.deleteIcon}"
-                on:click="{handleDelPass}"/>
+                on:click="{handleDelPass}"
+                title="Delete entry"/>
         </div>
       {/if}
     </div>
@@ -161,30 +167,26 @@
     @include vars.fade-in(0.5s);
     display: grid;
     grid-template-columns: 0.65fr 0.35fr;
-    text-align: center;
+    text-align: left;
     font-size: vars.$font_medium;
     white-space: nowrap;
-    padding: 4px 0 4px 0;
-    margin: 2px 0 5px 0;
+    padding: 4px 0 15px 0;
+    margin: 2px 0 15px 0;
     @include vars.mobile {
       border-radius: 5%;
       // Increase height on mobile to avoid cluttered UI
-      height: 10vh;
+      padding: 30px 0 25px 0;
     }
 
     & > span {
-      // Vertical centering
-      display: inline-flex;
-
-      // Text overflow
-      //display: inline-block;
+      // Text overflow requires inline-block
+      display: inline-block;
       text-overflow: ellipsis;
       overflow: hidden;
       overflow-wrap: break-word;
       hyphens: auto;
-      width: 50%;
-
       align-items: center;
+
       &::before {
         // Spacing between text and icon
         margin: 20px;
@@ -209,8 +211,10 @@
 
       span {
         // Vertical centering
-        display: inline-flex;
+        //display: inline-flex;
+        display: inline-block;
         align-items: center;
+        width: 100%;
 
         // == Mobile ==
         @include vars.mobile {
