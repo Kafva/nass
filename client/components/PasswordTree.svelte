@@ -48,6 +48,16 @@
     }
   })
 
+  const handleMainClick = () => {
+    if (!isLeaf) {
+      foldPolicyStore.set(FoldPolicy.localControl)
+      open = !open
+    }
+    if (IsMobile()) {
+      visibleButtonsStore.set(path)
+    }
+  }
+
   const handleDelPass = () => {
     if (confirm(`Are you sure you want to delete '${path}'?`)) {
       api.delPass(path).then((apiRes: ApiResponse) => {
@@ -60,32 +70,13 @@
     }
   }
 
-  const handleGetPass = (useClipboard: boolean): Promise<string | undefined> => {
+  const handleGetPass = (useClipboard: boolean): Promise<string> => {
     return api.getPass(path, "").then((apiRes: ApiResponse) => {
       switch (apiRes.status) {
       case ApiStatusResponse.success:
         Debug("Already authenticated", apiRes)
         if (useClipboard && SupportsClipboardWrite() ) {
-         // WebKit (Safari and iOS) does not support `clipboard.writeText()` outside
-         // of user interaction handlers, i.e. onclick etc.
-         // https://webkit.org/blog/10855/async-clipboard-api/ 
-         //
-         // This can be circumvented by using `ClipboardItem`
-         return new Promise(apiRes.value)
-
-         //const text = new ClipboardItem({
-         //  "text/plain": fetch(this.sourceUrlValue)
-         //    .then(response => response.text())
-         //    .then(text => new Blob([text], { type: "text/plain" }))
-         //})
-         //navigator.clipboard.write([text])
-
-
-         //navigator.clipboard.writeText(apiRes.value).then( () =>
-         //  msgTextStore.set([MessageText.clipboard, ""])
-         //).catch( e => {
-         //  msgTextStore.set([MessageText.err, (e as Error).message])
-         //})
+         return Promise.resolve(apiRes.value)
         } else {
           showPassStore.set({
             path: path,
@@ -103,17 +94,28 @@
         break;
       default: // Errors and auth failures are handled internally by `api`
       }
+      return Promise.resolve("")
     })
   }
 
-  const handleMainClick = () => {
-    if (!isLeaf) {
-      foldPolicyStore.set(FoldPolicy.localControl)
-      open = !open
-    }
-    if (IsMobile()) {
-      visibleButtonsStore.set(path)
-    }
+
+  // WebKit (Safari and iOS) does not support `clipboard.writeText()` outside
+  // of user interaction handlers, i.e. onclick etc.
+  // https://webkit.org/blog/10855/async-clipboard-api/
+  //
+  // The clipboard.write() API can be used to circumvent this and expects an
+  // array of ClipboardItem objects as input. Each item is a key-mapping from
+  // a MIME-type to a Promise that resolves to a Blob() or string.
+  const handleClipboard = () => {
+     const textItem = new ClipboardItem({"text/plain": handleGetPass(true)})
+
+     navigator.clipboard.write([textItem])
+      .then(() =>
+        msgTextStore.set([MessageText.clipboard, ""])
+      )
+      .catch(e => {
+        msgTextStore.set([MessageText.err, (e as Error).message])
+     })
   }
 </script>
 
@@ -134,28 +136,12 @@
         <div class="buttons">
           {#if isLeaf}
             <span role="button" class="nf {Config.clipboardIcon}"
-                  on:click="{ () => { 
-                  const clipboardItem = new ClipboardItem({'text/plain': handleGetPass(true)
-                    .then(text => { 
-                      new Blob([text != null ? text : ''], { type: 'text/plain' })
-                    }) 
-                  })
-                  navigator.clipboard.write([clipboardItem]).catch(e => {
-                     msgTextStore.set([MessageText.err, e.message]) 
-                  })
-
-                  //.then( (blob) => {
-                  //  if (blob != null) {
-                  //    Debug('this', blob)
-                  //    navigator.clipboard.write([blob])
-                  //  }
-                  //})
-            }}"/>
+                  on:click="{handleClipboard}"/>
             <span role="button" class="nf {Config.showPassword}"
                   on:click="{() => handleGetPass(false) }"/>
           {/if}
           <span role="button" class="nf {Config.deleteIcon}"
-                on:click="{handleDelPass}" />
+                on:click="{handleDelPass}"/>
         </div>
       {/if}
     </div>
