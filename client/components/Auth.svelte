@@ -10,7 +10,13 @@
   const api = new ApiRequest()
   let passInput: string;
 
-  const handleRequest = (): Promise<string> => {
+  const hideAuth = () => {
+    // Hide the <Auth/> dialog after successful authentication
+    authInfoStore.set({path: "", useClipboard: false})
+    visible = false
+  }
+
+  const handleRequest = async (): Promise<string> => {
     return api.getPass($authInfoStore.path, passInput).then( (apiRes: ApiResponse) => {
       if (apiRes.status == ApiStatusResponse.success ) {
         Debug("Authentication successful: ", apiRes)
@@ -22,7 +28,10 @@
             path: $authInfoStore.path,
             password: apiRes.value
           } as PassItem)
+
+          hideAuth()
         }
+
       } else {
         Err("Error", apiRes.desc)
       }
@@ -40,15 +49,10 @@
          navigator.clipboard.write([textItem])
           .then(() => {
             msgTextStore.set([MessageText.clipboard, ""])
-            // Restore the passInfo store...
-            authInfoStore.set({path: "", useClipboard: false})
-            // ...and close the outer <Dialog/>
-            visible = false
+            hideAuth()
           })
           .catch(e => {
             msgTextStore.set([MessageText.err, (e as Error).message])
-         })
-         .finally( () => {
          })
        }
 

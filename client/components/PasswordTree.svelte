@@ -70,13 +70,14 @@
     }
   }
 
-  const handleGetPass = (useClipboard: boolean): Promise<string> => {
+  const handleGetPass = async (useClipboard: boolean): Promise<string> => {
     return api.getPass(path, "").then((apiRes: ApiResponse) => {
       switch (apiRes.status) {
       case ApiStatusResponse.success:
         Debug("Already authenticated", apiRes)
         if (useClipboard && SupportsClipboardWrite() ) {
-         return Promise.resolve(apiRes.value)
+          msgTextStore.set([MessageText.clipboard, ""])
+          return Promise.resolve(apiRes.value)
         } else {
           showPassStore.set({
             path: path,
@@ -111,9 +112,6 @@
      const textItem = new ClipboardItem({"text/plain": handleGetPass(true)})
 
      navigator.clipboard.write([textItem])
-      .then(() =>
-        msgTextStore.set([MessageText.clipboard, ""])
-      )
       .catch(e => {
         msgTextStore.set([MessageText.err, (e as Error).message])
      })
