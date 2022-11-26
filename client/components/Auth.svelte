@@ -54,9 +54,12 @@
       //
       // We need a check here and in `handleGetPass` to avoid
       // 'ClipboardItem is undefined' errors.
-      if ((IsLikelySafari() || IsMobile()) && SupportsClipboardWrite()) {
+      const useSafariHack = IsLikelySafari() || IsMobile()
+      const result = handleGetPass(useSafariHack)
+
+      if (useSafariHack && SupportsClipboardWrite()) {
         /* eslint-disable no-undef */
-        const textItem = new ClipboardItem({"text/plain": handleGetPass(true)})
+        const textItem = new ClipboardItem({"text/plain": result})
         // Do not overwrite the clipboard with an empty string
         if ($authInfoStore.useClipboard) {
           navigator.clipboard.write([textItem])
@@ -68,8 +71,6 @@
               msgTextStore.set([MessageText.err, (e as Error).message])
             })
         }
-      } else {
-        handleGetPass(false)
       }
       // Unfocus on enter to avoid hiding alert behind keyboard
       if (IsMobile()) {
