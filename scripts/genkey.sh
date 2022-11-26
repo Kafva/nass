@@ -46,6 +46,7 @@ gpg ${GPG_BATCH[@]} --export-secret-keys $KEYID > "$EXPORT_DIR/$NAME.gpg" &&
 
 # Delete from local keychain by default
 if ! $KEEP; then
+  info "Deleting from local keychain"
   gpg --delete-secret-keys $KEYID
   gpg --delete-keys $KEYID
 fi
