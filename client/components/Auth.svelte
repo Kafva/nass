@@ -21,7 +21,9 @@
       if (apiRes.status == ApiStatusResponse.success ) {
         Debug("Authentication successful: ", apiRes)
 
-        if ($authInfoStore.useClipboard && SupportsClipboardWrite()) {
+        // A prior call to `SupportsClipboardWrite()` that showed any
+        // errors is already present in `handleKeyDown()`.
+        if ($authInfoStore.useClipboard && SupportsClipboardWrite(true)) {
           if (useSafariHack) {
             return Promise.resolve(apiRes.value)
           } else {
@@ -51,13 +53,12 @@
       //  https://webkit.org/blog/10855/async-clipboard-api/
       // Note: neither the 'eye' or 'clipboard' buttons will work
       // on mobile or with Safari without
-      //
-      // We need a check here and in `handleGetPass` to avoid
-      // 'ClipboardItem is undefined' errors.
       const useSafariHack = IsLikelySafari() || IsMobile()
       const result = handleGetPass(useSafariHack)
 
-      if (useSafariHack && SupportsClipboardWrite()) {
+      // We need a check here and in `handleGetPass` to avoid
+      // 'ClipboardItem is undefined' errors.
+      if (useSafariHack && SupportsClipboardWrite(!$authInfoStore.useClipboard)) {
         /* eslint-disable no-undef */
         const textItem = new ClipboardItem({"text/plain": result})
         // Do not overwrite the clipboard with an empty string

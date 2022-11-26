@@ -61,7 +61,7 @@ const GetHTMLElements = function<Type extends Element>(selector:string, root: El
   return el
 }
 
-const SupportsClipboardWrite = (): boolean => {
+const SupportsClipboardWrite = (silent = false): boolean => {
   let err = ""
   if (!window.isSecureContext) {
     err = "Clipboard is inaccessible: https:// context is required"
@@ -69,7 +69,7 @@ const SupportsClipboardWrite = (): boolean => {
     err = "Clipboard is inaccessible: 'navigator' does not contain 'clipboard'"
   }
 
-  if (err != "") {
+  if (err != "" && !silent) {
     Err(err)
     msgTextStore.set([MessageText.err, err])
   }
