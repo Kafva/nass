@@ -34,15 +34,16 @@
     padding: 10px 0px 10px 0px;
 
     span {
-     overflow: hidden;
-     text-overflow: ellipsis;
 
      &:first-child {
         margin-bottom: 10px;
         border-bottom: 2px solid vars.$lilac;
+        overflow: hidden;
+        text-overflow: ellipsis;
      }
      &:nth-child(2) {
        font-size: vars.$font_small;
+       overflow: wrap;
      }
     }
   }

@@ -28,10 +28,8 @@
     Debug("Updated tree", rootEntry)
   })
 
-  //import { MessageText } from '../ts/config';
-  //import { msgTextStore } from '../ts/store'
-  //setTimeout(()=>msgTextStore.set([MessageText.clipboard, ""]), 1000)
-
+  // import { msgTextStore } from '../ts/store'
+  // setTimeout(()=>msgTextStore.set(["Debug", "message"]), 1000)
 
   if (Config.debug) {
     Config.dump()
@@ -48,6 +46,7 @@
 
 <Msg/>
 
+<!-- !! These define buttons AND a dialog !! -->
 <Dialog component={Help}    btnClass="nf-mdi-help" title="About" percent={20}/>
 <Dialog component={AddPass} btnClass="nf-fa-plus"  title="Add password"/>
 

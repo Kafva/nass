@@ -197,6 +197,9 @@
       overflow: hidden;
       overflow-wrap: anywhere;
       hyphens: auto;
+      // Ensure that the LHS always takes up 70% of the row,
+      // this indirectly aligns the RHS.
+      width: 70%;
 
       &::before {
         // Spacing between text and icon
@@ -208,7 +211,6 @@
     div.buttons {
       // Horizontal alignment
       display: inline-block;
-      //margin: 0 20px 30px 0;
 
       // Hide buttons icons without changing geometry
       color: vars.$white;

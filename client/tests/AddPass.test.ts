@@ -1,4 +1,4 @@
-import { Config, MessageText } from '../ts/config'
+import { Config, MessageText, passwordSymbols } from '../ts/config'
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { cleanup, fireEvent, render } from '@testing-library/svelte'
 import { msgTextStore, rootEntryStore } from '../ts/store'
@@ -124,15 +124,17 @@ describe('AddPass.svelte', () => {
     await addPath("001", MessageText.added, true, "hjkl")
     await addPath("002", MessageText.added, true, "_dir603Pw3Dd-uuJUVKL")
     await addPath("003", MessageText.added, true, "A".repeat(Config.textMaxLen))
-    await addPath("004", MessageText.added, true, "-§$!\"'#€%&()=?*<>_.@/")
+    await addPath("004", MessageText.added, true, passwordSymbols.replace("\\", ""))
     await addPath("005", MessageText.added, true, "åäö")
     await addPath("006", MessageText.added, true, "ÅÄÖ")
+    await addPath("007", MessageText.added, true, "Sometimes the default accessible name of an element is missing, or does not accurately describe its contents, and there is no content visible in the DOM that can be associated with the object to give it meaning.")
   })
 
   it('[PASSWORD] rejects passwords with invalid characters', async () => {
     await addPath("010", MessageText.invalidPass, false, "A".repeat(Config.textMaxLen+1))
     await addPath("020", MessageText.invalidPass, false, "\\a")
-    await addPath("030", MessageText.invalidPass, false, ">>> 🤣 <<<")
+    await addPath("030", MessageText.invalidPass, false, "\\")
+    await addPath("040", MessageText.invalidPass, false, ">>> 🤣 <<<")
   })
 
   it('[PASSWORD] rejects passwords that do not match', async () => {

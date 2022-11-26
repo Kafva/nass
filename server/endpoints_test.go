@@ -1,13 +1,13 @@
 package server
 
 import (
-  "net/http"
-  "net/http/httptest"
-  "os"
-  "runtime/debug"
-  "strconv"
-  "strings"
-  "testing"
+	"net/http"
+	"net/http/httptest"
+	"os"
+	"runtime/debug"
+	"strconv"
+	"strings"
+	"testing"
 )
 
 const USERNAME = "tester"
@@ -97,14 +97,17 @@ func Test_validatePassword(t *testing.T) {
   res := httptest.NewRecorder()
 
   maxLen, _ := strconv.Atoi(TEXT_MAX_LEN)
+  sentance := "Sometimes the default accessible name of an element is missing, or does not accurately describe its contents, and there is no content visible in the DOM that can be associated with the object to give it meaning."
+  symbols := strings.ReplaceAll(SYMBOLS, "\\", "")
 
   /* VALID */
   assert_validatePassword(t, res, "hjkl", "hjkl")
   assert_validatePassword(t, res, "_dir603Pw3Dd-uuJUVKL", "_dir603Pw3Dd-uuJUVKL")
   assert_validatePassword(t, res, strings.Repeat("A", maxLen), strings.Repeat("A", maxLen))
-  assert_validatePassword(t, res, "-§$!\"'#€%&()=?*<>_.@/", "-§$!\"'#€%&()=?*<>_.@/")
+  assert_validatePassword(t, res, symbols, symbols)
   assert_validatePassword(t, res, "åäö", "åäö")
   assert_validatePassword(t, res, "ÅÄÖ", "ÅÄÖ")
+  assert_validatePassword(t, res, sentance, sentance)
 
   /* INVALID */
   assert_validatePassword(t, res, "", "")
@@ -112,6 +115,7 @@ func Test_validatePassword(t *testing.T) {
   assert_validatePassword(t, res, "\n", "")
   assert_validatePassword(t, res, "\r", "")
   assert_validatePassword(t, res, ">>> 🤣 <<<", "")
+  assert_validatePassword(t, res, "\\", "")
   assert_validatePassword(t, res, strings.Repeat("A", maxLen+1), "")
 }
 

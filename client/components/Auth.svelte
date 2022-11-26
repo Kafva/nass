@@ -56,11 +56,8 @@
             msgTextStore.set([MessageText.err, (e as Error).message])
           })
       }
-
     }
   }
-
-
 </script>
 
 <form autocomplete="off" method="dialog">

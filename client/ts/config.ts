@@ -84,7 +84,8 @@ const MessageTimeouts: { [id: string]: number } = {
 
 // !! Mirrored in config.go !!
 const passentryRegex = "^[-_.@/a-zA-Z0-9]{1," + Config.textMaxLen + "}$"
-const passwordRegex = "^[-§$!\"'#€%&()=?*<>_.@/a-zA-Z0-9åäöÅÄÖ]{1," + Config.textMaxLen + "}$"
+const passwordSymbols = "- §$!\"'#€%&(){}[\\]:;=|?*<>_.,@/"
+const passwordRegex = "^[" + passwordSymbols +  "a-zA-Z0-9åäöÅÄÖ]{1," + Config.textMaxLen + "}$"
 
-
-export { Config, MessageText, MessageIcons, MessageTimeouts, passentryRegex, passwordRegex }
+export { Config, MessageText, MessageIcons, MessageTimeouts, passentryRegex,
+  passwordRegex, passwordSymbols }
