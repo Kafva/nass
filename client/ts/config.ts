@@ -74,7 +74,7 @@ const MessageTimeouts: { [id: string]: number } = {
   [MessageText.added]: 4000,
   [MessageText.deleted]: 4000,
   [MessageText.failed]: 8_000,
-  [MessageText.err]: -1,
+  [MessageText.err]: 10_000,
   [MessageText.pathOverlap]: 4000,
   [MessageText.invalidNesting]: 4000,
   [MessageText.invalidPath]: 4000,

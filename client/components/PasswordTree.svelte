@@ -111,11 +111,12 @@
   //
   // https://webkit.org/blog/10855/async-clipboard-api/
   const handleClipboard = () => {
-     const textItem = new ClipboardItem({"text/plain": handleGetPass(true)})
-     navigator.clipboard.write([textItem])
+    /* eslint-disable no-undef */
+    const textItem = new ClipboardItem({"text/plain": handleGetPass(true)})
+    navigator.clipboard.write([textItem])
       .catch(e => {
         msgTextStore.set([MessageText.err, (e as Error).message])
-     })
+      })
   }
 </script>
 

@@ -9,7 +9,7 @@
   // Top offset after `fly`
   export let percent = IsMobile() ? 30 : 60
   export let dialogClass = ""
-  export let title: string = ""
+  export let title = ""
 
   let visible = false
 

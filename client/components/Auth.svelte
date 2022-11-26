@@ -22,7 +22,7 @@
         Debug("Authentication successful: ", apiRes)
 
         if ($authInfoStore.useClipboard && SupportsClipboardWrite()) {
-           return Promise.resolve(apiRes.value)
+          return Promise.resolve(apiRes.value)
         } else {
           showPassStore.set({
             path: $authInfoStore.path,
@@ -42,21 +42,22 @@
   // Wrapper for WebKit compatible clipboard writing
   //  https://webkit.org/blog/10855/async-clipboard-api/
   const handleKeyDown = (event: KeyboardEvent) => {
-     if (event.key == 'Enter') {
-       const textItem = new ClipboardItem({"text/plain": handleRequest()})
-       // Do not overwrite the clipboard with an empty string
-       if ($authInfoStore.useClipboard) {
-         navigator.clipboard.write([textItem])
+    if (event.key == 'Enter') {
+      /* eslint-disable no-undef */
+      const textItem = new ClipboardItem({"text/plain": handleRequest()})
+      // Do not overwrite the clipboard with an empty string
+      if ($authInfoStore.useClipboard) {
+        navigator.clipboard.write([textItem])
           .then(() => {
             msgTextStore.set([MessageText.clipboard, ""])
             hideAuth()
           })
           .catch(e => {
             msgTextStore.set([MessageText.err, (e as Error).message])
-         })
-       }
+          })
+      }
 
-     }
+    }
   }
 
 
