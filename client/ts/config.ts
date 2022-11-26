@@ -46,6 +46,7 @@ enum MessageText {
   invalidPath = "Invalid format for path",
   invalidPass = "Invalid format for password",
   invalidVerify = "Passwords do not match",
+  unsupported = "Unsupported browser",
   failed = "Failed: ", // Only used for incorrect password entry
   err = "Error: ",
   valid = "Valid" // Only used internally
@@ -63,6 +64,7 @@ const MessageIcons: { [id: string]: string } = {
   [MessageText.invalidPath]: "nf-mdi-textbox",
   [MessageText.invalidPass]: "nf-mdi-textbox_password",
   [MessageText.invalidVerify]: "nf-mdi-textbox_password",
+  [MessageText.unsupported]: "nf-oct-issue_opened",
 }
 
 /**
@@ -80,6 +82,7 @@ const MessageTimeouts: { [id: string]: number } = {
   [MessageText.invalidPath]: 4000,
   [MessageText.invalidPass]: 4000,
   [MessageText.invalidVerify]: 4000,
+  [MessageText.unsupported]: 10_000
 }
 
 // !! Mirrored in config.go !!

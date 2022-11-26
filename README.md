@@ -101,8 +101,8 @@ go test -v --run $test_name ./server
 ```
 
 ## Notes
-* The mobile styling has only be tested to work as intended on recent versions
-  of iOS with Safari and Brave.
+* Functionality on mobile has only be tested to work as intended on recent
+  versions of iOS with Safari and Brave.
 * The generated subset font is not included into vite's build process, i.e. the
   warning `/app/assets/meslo-nass.ttf referenced in [...] didn't resolve at
   build time, it will remain unchanged to be resolved at runtime` triggered

@@ -39,9 +39,9 @@
           visible = false
         } // Errors are handled internally by `api`
       })
-      .catch( e => {
-        msgTextStore.set([MessageText.err, e])
-      })
+        .catch( e => {
+          msgTextStore.set([MessageText.err, e])
+        })
     }
   }
 
@@ -52,6 +52,9 @@
    * The patterns here match the corresponding server validation.
    */
   const pathIsValid = (path: string): MessageText => {
+    if (!Object.getOwnPropertyNames(Array.prototype).includes('matchAll')) {
+      return MessageText.unsupported
+    }
     const depth = (Array.from(path.matchAll(/\//g)) || []).length
 
     if (path.match(passentryRegex) == null ||
