@@ -225,7 +225,6 @@
 
         // == Mobile ==
         @include vars.mobile {
-          @include vars.fade-in(0.5s);
           font-size: vars.$font_icon_high_mobile;
           margin-left: 20px;
         }

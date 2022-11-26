@@ -2,7 +2,7 @@
 <img width=42 height=42 src="./public/assets/icon.png">&nbsp;&nbsp; nass
 </h1>
 
-nass provides a mobile friendly web interface for pass,
+A mobile friendly web interface for pass,
 *[the standard unix password manager](https://www.passwordstore.org/)*.
 
 The application is designed to support multiple users, each with their own
@@ -107,6 +107,8 @@ build time, it will remain unchanged to be resolved at runtime` triggered from
 `vite build` is intended.
 * Overlapping directory and file names are __not__ supported, e.g. `/a/b.gpg`
 and `/a.gpg` are not allowed to exist at the same time.
+* The [genconf.sh](/scripts/genconf.sh) script does not support generation of accounts
+with multiple origins, this needs to be manually configured.
 
 ## Similar projects
 * https://github.com/mssun/passforios

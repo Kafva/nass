@@ -1,6 +1,6 @@
 <script lang="ts">
   import { authInfoStore, showPassStore, msgTextStore } from "../ts/store";
-  import { SupportsClipboardWrite, Debug, Err } from "../ts/util";
+  import { SupportsClipboardWrite, Debug, Err, IsMobile } from "../ts/util";
   import type { ApiResponse, PassItem  } from '../ts/types';
   import { Config, MessageText } from "../ts/config";
   import { ApiStatusResponse  } from "../ts/types";
@@ -55,6 +55,10 @@
           .catch(e => {
             msgTextStore.set([MessageText.err, (e as Error).message])
           })
+      }
+      // Unfocus on enter to avoid hiding alert behind keyboard
+      if (IsMobile()) {
+        (event.target as HTMLInputElement).blur()
       }
     }
   }

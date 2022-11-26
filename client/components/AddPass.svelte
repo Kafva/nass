@@ -122,7 +122,7 @@
       // Force unfocus on enter, this is required on mobile
       // since the keyboard will otherwise obscure alerts
       if (IsMobile()) {
-        pathInputElement.blur()
+        (event.target as HTMLInputElement).blur()
       }
       break;
     // Auto-complete in path input
