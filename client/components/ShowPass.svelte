@@ -43,7 +43,7 @@
      }
      &:nth-child(2) {
        font-size: vars.$font_small;
-       overflow: wrap;
+       overflow-wrap: anywhere;
      }
     }
   }

@@ -185,6 +185,7 @@
 
   span.suggest {
     display: inline-block;
+    overflow: hidden;
     width: 100%;
     text-align: center;
     color: vars.$white;
