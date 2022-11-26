@@ -1,13 +1,13 @@
 <script lang="ts">
   import { authInfoStore, showPassStore, visibleButtonsStore } from '../ts/store';
-  import { fade, fly, IsMobile, IsTinyMobile } from '../ts/util';
+  import { fade, fly } from '../ts/util';
   import type { SvelteComponent } from "svelte";
 
   // The component to render inside of the modal
   export let component: typeof SvelteComponent
   export let btnClass: string
   // Top offset after `fly`
-  export let percent = IsTinyMobile() ? 15 : (IsMobile() ? 30 : 60)
+  export let percent: number
   export let dialogClass = ""
   export let title = ""
 
@@ -103,8 +103,10 @@
     // == Small mobile displays ==
     @include vars.tiny-mobile {
       font-size: vars.$font_small;
-      width: 70%;
+      width: vars.$dialog_width_tiny_mobile;
+      margin-left: 8%;
       height: fit-content;
+      max-height: calc(vars.$tiny_mobile_max_height - 50px);
       overflow-x: hidden;
       overflow-y: scroll;
     }

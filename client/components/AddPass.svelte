@@ -198,14 +198,16 @@
 
   form {
     text-align: center;
+    display: inline-block;
+    width: vars.$dialog_width;
+    @include vars.tiny-mobile {
+      width: vars.$dialog_width_tiny_mobile;
+    }
 
     div.form-item {
       font-size: vars.$font_small;
       display: grid;
-      grid-template-columns: 0.5fr 1fr;
-      @include vars.tiny-mobile {
-        grid-template-columns: 1fr 1fr; // Don't ask...
-      }
+      grid-template-columns: 50% 50%;
       align-items: center;
 
       input[type="checkbox"] {
@@ -226,6 +228,9 @@
         font-family: inherit;
         @include vars.input-style;
 
+        &[name="path"] {
+          width: 100%;
+        }
         &[name="verify"] {
             border-bottom: 2px solid;
             border-color: transparent;
@@ -234,7 +239,6 @@
           // Checkbox is not automatically centered in Safari
           display: inline-block;
           margin-left: 40%;
-          vertical-align: center;
         }
       }
     }

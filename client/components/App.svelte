@@ -1,6 +1,6 @@
 <script lang="ts">
   import { authInfoStore, foldPolicyStore, rootEntryStore, showPassStore, visibleButtonsStore } from '../ts/store'
-  import { Debug, GetHTMLElement, IsMobile } from '../ts/util'
+  import { Debug, GetHTMLElement, IsMobile, IsTinyMobile } from '../ts/util'
   import PassEntry from '../ts/PassEntry'
   import Search from './Search.svelte'
   import PasswordTree from './PasswordTree.svelte'
@@ -13,7 +13,10 @@
   import { FoldPolicy } from '../ts/types';
   import { Config } from '../ts/config';
 
-  const centerFlyPercent = IsMobile() ? 40 : 150;
+  const centerFlyPercent = IsMobile() ? 70 : 150;
+  const helpFlyPercent = IsTinyMobile() ? 10 : 20;
+  const addPassFlyPercent = IsMobile() ? 30 : 60;
+
   const tmpl = GetHTMLElement<HTMLDivElement>("#tmpl")
   let rootEntry = new PassEntry("", [], [], [])
 
@@ -48,8 +51,10 @@
 <Msg/>
 
 <!-- !! These define buttons AND a dialog !! -->
-<Dialog component={Help}    btnClass="nf-mdi-help" title="About" percent={20}/>
-<Dialog component={AddPass} btnClass="nf-fa-plus"  title="Add password"/>
+<Dialog component={Help}    btnClass="nf-mdi-help" title="About"
+        percent={helpFlyPercent}/>
+<Dialog component={AddPass} btnClass="nf-fa-plus"  title="Add password"
+        percent={addPassFlyPercent}/>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <span role="button"
