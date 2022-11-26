@@ -16,4 +16,4 @@ retab server/*.go client/{components/*.svelte,ts/*.ts,scss/*.scss,tests/*.ts} \
   conf/* roles/nass/tasks/*.yml index.html Dockerfile* main.go README.md \
   *.js *.cjs go.mod *.json scripts/*.sh
 
-eslint client/{ts,components,tests}
+eslint client/{ts,components,tests} $@

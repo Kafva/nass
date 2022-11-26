@@ -7,7 +7,7 @@
   export let component: typeof SvelteComponent
   export let btnClass: string
   // Top offset after `fly`
-  export let percent = IsTinyMobile() ? 5 : (IsMobile() ? 30 : 60)
+  export let percent = IsTinyMobile() ? 15 : (IsMobile() ? 30 : 60)
   export let dialogClass = ""
   export let title = ""
 
@@ -104,7 +104,7 @@
     @include vars.tiny-mobile {
       font-size: vars.$font_small;
       width: 70%;
-      height: 75%;
+      height: fit-content;
       overflow-x: hidden;
       overflow-y: scroll;
     }

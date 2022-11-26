@@ -1,6 +1,6 @@
 <script lang="ts">
   import { authInfoStore, showPassStore, msgTextStore } from "../ts/store";
-  import { SupportsClipboardWrite, Debug, Err, IsMobile } from "../ts/util";
+  import { SupportsClipboardWrite, Debug, Err, IsMobile, IsLikelySafari } from "../ts/util";
   import type { ApiResponse, PassItem  } from '../ts/types';
   import { Config, MessageText } from "../ts/config";
   import { ApiStatusResponse  } from "../ts/types";
@@ -16,22 +16,28 @@
     visible = false
   }
 
-  const handleRequest = async (): Promise<string> => {
+  const handleGetPass = async (useSafariHack: boolean): Promise<string> => {
     return api.getPass($authInfoStore.path, passInput).then( (apiRes: ApiResponse) => {
       if (apiRes.status == ApiStatusResponse.success ) {
         Debug("Authentication successful: ", apiRes)
 
         if ($authInfoStore.useClipboard && SupportsClipboardWrite()) {
-          return Promise.resolve(apiRes.value)
+          if (useSafariHack) {
+            return Promise.resolve(apiRes.value)
+          } else {
+            navigator.clipboard.writeText(apiRes.value).then( () => {
+              msgTextStore.set([MessageText.clipboard, ""])
+            })
+          }
         } else {
+          // We will fallback to the regular display option if clipboard
+          // is unsupported.
           showPassStore.set({
             path: $authInfoStore.path,
             password: apiRes.value
           } as PassItem)
-
-          hideAuth()
         }
-
+        hideAuth()
       } else {
         Err("Error", apiRes.desc)
       }
@@ -39,22 +45,31 @@
     })
   }
 
-  // Wrapper for WebKit compatible clipboard writing
-  //  https://webkit.org/blog/10855/async-clipboard-api/
   const handleKeyDown = (event: KeyboardEvent) => {
     if (event.key == 'Enter') {
-      /* eslint-disable no-undef */
-      const textItem = new ClipboardItem({"text/plain": handleRequest()})
-      // Do not overwrite the clipboard with an empty string
-      if ($authInfoStore.useClipboard) {
-        navigator.clipboard.write([textItem])
-          .then(() => {
-            msgTextStore.set([MessageText.clipboard, ""])
-            hideAuth()
-          })
-          .catch(e => {
-            msgTextStore.set([MessageText.err, (e as Error).message])
-          })
+      // Wrapper for WebKit compatible clipboard writing
+      //  https://webkit.org/blog/10855/async-clipboard-api/
+      // Note: neither the 'eye' or 'clipboard' buttons will work
+      // on mobile or with Safari without
+      //
+      // We need a check here and in `handleGetPass` to avoid
+      // 'ClipboardItem is undefined' errors.
+      if ((IsLikelySafari() || IsMobile()) && SupportsClipboardWrite()) {
+        /* eslint-disable no-undef */
+        const textItem = new ClipboardItem({"text/plain": handleGetPass(true)})
+        // Do not overwrite the clipboard with an empty string
+        if ($authInfoStore.useClipboard) {
+          navigator.clipboard.write([textItem])
+            .then(() => {
+              msgTextStore.set([MessageText.clipboard, ""])
+              hideAuth()
+            })
+            .catch(e => {
+              msgTextStore.set([MessageText.err, (e as Error).message])
+            })
+        }
+      } else {
+        handleGetPass(false)
       }
       // Unfocus on enter to avoid hiding alert behind keyboard
       if (IsMobile()) {
@@ -65,10 +80,7 @@
 </script>
 
 <form autocomplete="off" method="dialog">
-  <label for="pass">
-    Authentication required
-  </label>
-
+  <label for="pass">Authentication required</label>
   <div>
     <span class="nf {Config.passwordPrompt}"/>
     <input type="password"

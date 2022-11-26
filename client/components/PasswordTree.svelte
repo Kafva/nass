@@ -5,7 +5,7 @@
   import { Config, MessageText} from '../ts/config'
   import { FoldPolicy } from '../ts/types'
   import type { ApiResponse, AuthInfo, PassItem } from '../ts/types'
-  import { Debug, IsMobile, SupportsClipboardWrite } from '../ts/util'
+  import { Debug, IsLikelySafari, IsMobile, SupportsClipboardWrite } from '../ts/util'
   import { ApiStatusResponse } from '../ts/types'
   import type PassEntry from '../ts/PassEntry'
   import ApiRequest from '../ts/ApiRequest'
@@ -72,14 +72,20 @@
     }
   }
 
-  const handleGetPass = async (useClipboard: boolean): Promise<string> => {
+  const handleGetPassWithRetry = async (useClipboard: boolean, useSafariHack: boolean): Promise<string> => {
     return api.getPass(path, "").then((apiRes: ApiResponse) => {
       switch (apiRes.status) {
       case ApiStatusResponse.success:
         Debug("Already authenticated", apiRes)
-        if (useClipboard && SupportsClipboardWrite() ) {
-          msgTextStore.set([MessageText.clipboard, ""])
-          return Promise.resolve(apiRes.value)
+
+        if (useClipboard) {
+          if (useSafariHack) {
+            return Promise.resolve(apiRes.value)
+          } else {
+            navigator.clipboard.writeText(apiRes.value).then( () => {
+              msgTextStore.set([MessageText.clipboard, ""])
+            })
+          }
         } else {
           showPassStore.set({
             path: path,
@@ -102,22 +108,36 @@
   }
 
 
-  // WebKit (Safari and iOS) does not support `clipboard.write*()` outside
-  // of user interaction handlers, i.e. onclick etc.
-  // so we need a wrapper around the `api.getPass()` call for clipboard
-  // management. The clipboard.write() API expects an
-  // array of ClipboardItem objects as input. Each item is a key-mapping from
-  // a MIME-type to a Promise that resolves to a Blob() or string.
-  //
-  // https://webkit.org/blog/10855/async-clipboard-api/
+  /** Handler for clipboard button */
   const handleClipboard = () => {
-    /* eslint-disable no-undef */
-    const textItem = new ClipboardItem({"text/plain": handleGetPass(true)})
-    navigator.clipboard.write([textItem])
-      .catch(e => {
-        msgTextStore.set([MessageText.err, (e as Error).message])
-      })
+    if (SupportsClipboardWrite()) {
+      const useSafariHack = IsLikelySafari() || IsMobile()
+      // WebKit (Safari and iOS) does not support `clipboard.write*()` outside
+      // of user interaction handlers, i.e. onclick etc.
+      // so we need a wrapper around the `api.getPass()` call for clipboard
+      // management. The clipboard.write() API expects an
+      // array of ClipboardItem objects as input. Each item is a key-mapping from
+      // a MIME-type to a Promise that resolves to a Blob() or string.
+      //
+      // https://webkit.org/blog/10855/async-clipboard-api/
+      if (useSafariHack) {
+        /* eslint-disable no-undef */
+        const textItem = new ClipboardItem({
+          "text/plain": handleGetPassWithRetry(true, useSafariHack)
+        })
+        navigator.clipboard.write([textItem])
+          .then( () => {
+            msgTextStore.set([MessageText.clipboard, ""])
+          })
+          .catch(e => {
+            msgTextStore.set([MessageText.err, (e as Error).message])
+          })
+      } else {
+        handleGetPassWithRetry(true, useSafariHack)
+      }
+    }
   }
+
 </script>
 
 {#if entry.matchesQuery(currentQuery)}
@@ -142,7 +162,7 @@
                   on:click="{handleClipboard}"
                   title="Copy to clipboard"/>
             <span role="button" class="nf {Config.showPassword}"
-                  on:click="{() => handleGetPass(false) }"
+                  on:click="{() => handleGetPassWithRetry(false, false) }"
                   title="Show password"/>
           {/if}
           <span role="button" class="nf {Config.deleteIcon}"

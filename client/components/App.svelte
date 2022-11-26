@@ -13,6 +13,7 @@
   import { FoldPolicy } from '../ts/types';
   import { Config } from '../ts/config';
 
+  const centerFlyPercent = IsMobile() ? 40 : 150;
   const tmpl = GetHTMLElement<HTMLDivElement>("#tmpl")
   let rootEntry = new PassEntry("", [], [], [])
 
@@ -28,8 +29,8 @@
     Debug("Updated tree", rootEntry)
   })
 
-  // import { msgTextStore } from '../ts/store'
-  // setTimeout(()=>msgTextStore.set(["Debug", "message"]), 1000)
+  //import { msgTextStore } from '../ts/store'
+  //setTimeout(()=>msgTextStore.set([MessageText.clipboard, ""]), 1000)
 
   if (Config.debug) {
     Config.dump()
@@ -65,9 +66,10 @@
 <Search/>
 
 {#if $authInfoStore.path != ""}
-  <Dialog component={Auth}     btnClass="" percent={150}/>
+  <Dialog component={Auth}     btnClass="" percent={centerFlyPercent}/>
 {:else if $showPassStore.path != ""}
-  <Dialog component={ShowPass} btnClass="" percent={150} dialogClass="show-pass"/>
+  <Dialog component={ShowPass} btnClass="" percent={centerFlyPercent}
+          dialogClass="show-pass"/>
 {/if}
 
 <!-- With #key the password tree will be re-created from scratch when changes

@@ -52,7 +52,7 @@ $cover_z: 9;
 @mixin tiny-mobile() {
   @media
     (min-width: $mobile_min_width) and
-    (max-width: $mobile_max_width) and 
+    (max-width: $mobile_max_width) and
     (max-height: $tiny_mobile_max_height) {
     @content;
   }

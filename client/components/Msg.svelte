@@ -6,7 +6,7 @@
   let message = ""
   let iconClass = ""
   let timeoutID: any = null
-  const percent = IsMobile() ? 125 : 140
+  const percent = IsMobile() ? -125 : -140
 
   msgTextStore.subscribe( (value:[string,string]) => {
     const timeout = MessageTimeouts[value[0]] || -1
@@ -30,7 +30,7 @@
 {#if message.length != 0}
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div role="button"
-       transition:fly="{{ from: 'bottom', percent: percent, duration: 200 }}"
+       transition:fly="{{ percent: percent, duration: 200 }}"
        on:click="{()=> msgTextStore.set(['','']) }">
        <p title={message}>
         <span class="{'nf '+ iconClass}"/> {message}

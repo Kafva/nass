@@ -1,6 +1,7 @@
 import { Config, MessageText } from "./config"
 import { msgTextStore } from "./store"
 
+
 /**
  * Custom fly transition to avoid a CSP hack with the current Svelte
  * implementation.
@@ -8,7 +9,7 @@ import { msgTextStore } from "./store"
  * This method expects the element in question to be off-screen by default.
  */
 const fly = function(node: HTMLElement, {
-  from = 'top', percent = 30, delay = 0, duration = 1000
+  percent = 30, delay = 0, duration = 1000
 }) {
   return {
     delay,
@@ -23,7 +24,7 @@ const fly = function(node: HTMLElement, {
       //  -100% (downwards): element should start below the bottom of the viewport
       //
       node.style.setProperty("transform",
-        `translateY(${from == 'top' ? '' : '-'}${t * percent}%)`)
+        `translateY(${t * percent}%)`)
       node.style.setProperty("opacity", `${t}`)
     }
   }
@@ -61,13 +62,18 @@ const GetHTMLElements = function<Type extends Element>(selector:string, root: El
 }
 
 const SupportsClipboardWrite = (): boolean => {
-  if (!window.isSecureContext || !('clipboard' in navigator)) {
-    msgTextStore.set([MessageText.err, "Clipboard is inaccessible"])
-    Err(
-      "Clipboard is inaccessible, the site origin needs to be over https:// or localhost"
-    )
+  let err = ""
+  if (!window.isSecureContext) {
+    err = "Clipboard is inaccessible: https:// context is required"
+  } else if (!('clipboard' in navigator)) {
+    err = "Clipboard is inaccessible: 'navigator' does not contain 'clipboard'"
   }
-  return window.isSecureContext
+
+  if (err != "") {
+    Err(err)
+    msgTextStore.set([MessageText.err, err])
+  }
+  return err == ""
 }
 
 
