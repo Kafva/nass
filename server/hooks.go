@@ -4,6 +4,7 @@ import (
   "encoding/json"
   "io/fs"
   "net/http"
+  "os"
   "path/filepath"
   "strings"
   "text/template"
@@ -44,7 +45,15 @@ func TemplateHook(next http.Handler) http.Handler {
         return
       }
 
-      passTree := PassEntry{ Name: user.Name }
+      version, err := os.ReadFile("VERSION")
+      if err != nil {
+        version = []byte("unknown")
+      }
+
+      htmlTemplateData := HtmlTemplateData {
+        PassTree: PassEntry{ Name: user.Name },
+        Version: string(version),
+      }
 
       filepath.WalkDir(rootDir, func (path string, d fs.DirEntry, err error) error {
         name := d.Name()
@@ -57,14 +66,14 @@ func TemplateHook(next http.Handler) http.Handler {
         }
 
         nodes := strings.Split(strings.TrimPrefix(path, rootDir+"/"), "/")
-        passTree.AddChildren(nodes)
+        htmlTemplateData.PassTree.AddChildren(nodes)
         return nil
       })
 
       // Only allow resources to be loaded from whitelisted domains
       res.Header().Add("Content-Security-Policy", CSP_VALUE)
 
-      tmpl.Execute(res, passTree)
+      tmpl.Execute(res, htmlTemplateData)
     } else {
       next.ServeHTTP(res, req)
     }

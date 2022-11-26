@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Config } from "../ts/config";
+  const version = document.getElementById("version")!.innerText
 </script>
 
 <div>
@@ -7,6 +8,7 @@
   <h1>nass</h1>
   <p>A web interface for pass, <i>"the standard unix password manager"</i></p>
   <a rel="noreferrer" href="https://github.com/Kafva/nass" target="_blank">https://github.com/Kafva/nass</a>
+  <span>version: { version }</span>
 </div>
 
 <ul>

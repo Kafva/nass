@@ -2,6 +2,11 @@ package server
 
 import "strings"
 
+type HtmlTemplateData struct {
+  PassTree PassEntry
+  Version string
+}
+
 type PassEntry struct {
   Name string
   Children []PassEntry

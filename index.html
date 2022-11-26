@@ -23,7 +23,8 @@
   <script src="/client/ts/main.ts" type="module"></script>
 
   <div id="root"></div>
-  <div hidden id="tmpl">{{ template "passfolder" . }}</div>
+  <div hidden id="tmpl">{{ template "passfolder" .PassTree }}</div>
+  <div hidden id="version">{{ .Version }}</div>
 </body>
 
 </html>

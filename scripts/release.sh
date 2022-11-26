@@ -37,13 +37,14 @@ fi
 # user in deployment.
 mkdir -p -m 700 $OUT/{.password-store,.gnupg,wireguard}
 
-cp net/nass.yml           $OUT/conf/nass.yml
-cp net/users.yml          $OUT/conf
-cp conf/gitconfig         $OUT/.gitconfig
-cp conf/gpg-agent.conf    $OUT/.gnupg
-cp -r keys                $OUT
-cp net/wireguard/nass*    $OUT/wireguard
-cp scripts/importkey.sh   $OUT
+cp net/nass.yml              $OUT/conf/nass.yml
+cp net/users.yml             $OUT/conf
+cp conf/gitconfig            $OUT/.gitconfig
+cp conf/gpg-agent.conf       $OUT/.gnupg
+cp -r keys                   $OUT
+cp net/wireguard/nass*       $OUT/wireguard
+cp scripts/importkey.sh      $OUT
+git rev-parse --short HEAD > $OUT/VERSION
 
 
 # Automatically fetch self-signed certs if available
