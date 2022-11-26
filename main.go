@@ -12,16 +12,16 @@ package main
 // for each user.
 
 import (
-	"flag"
-	"io/ioutil"
-	"math/rand"
-	"net/http"
-	"strconv"
-	"time"
+  "flag"
+  "io/ioutil"
+  "math/rand"
+  "net/http"
+  "strconv"
+  "time"
 
-	"gopkg.in/yaml.v3"
+  "gopkg.in/yaml.v3"
 
-	. "github.com/Kafva/nass/server"
+  . "github.com/Kafva/nass/server"
 )
 
 

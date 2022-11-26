@@ -54,7 +54,7 @@
 <span role="button"
       class="nf {$foldPolicyStore == FoldPolicy.allOpen ? Config.foldIcon :
                                                           Config.unfoldIcon}"
-      title="{$foldPolicyStore == FoldPolicy.allOpen ? 'Fold all' : 
+      title="{$foldPolicyStore == FoldPolicy.allOpen ? 'Fold all' :
                                                        'Unfold all'}"
       on:click="{() =>
           foldPolicyStore.set($foldPolicyStore == FoldPolicy.allOpen ?

@@ -1,13 +1,13 @@
 package server
 
 import (
-	"net/http"
-	"net/http/httptest"
-	"os"
-	"runtime/debug"
-	"strconv"
-	"strings"
-	"testing"
+  "net/http"
+  "net/http/httptest"
+  "os"
+  "runtime/debug"
+  "strconv"
+  "strings"
+  "testing"
 )
 
 const USERNAME = "tester"
