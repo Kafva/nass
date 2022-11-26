@@ -165,43 +165,49 @@
 
   div.row {
     @include vars.fade-in(0.5s);
-    display: grid;
-    grid-template-columns: 0.65fr 0.35fr;
+    display: flex;
+    align-items: center;
+
     text-align: left;
     font-size: vars.$font_medium;
     white-space: nowrap;
+
+    // Dimensions
     padding: 4px 0 15px 0;
     margin: 2px 0 15px 0;
-    @include vars.mobile {
-      border-radius: 5%;
-      // Increase height on mobile to avoid cluttered UI
-      padding: 30px 0 25px 0;
-    }
-
-    & > span {
-      // Text overflow requires inline-block
-      display: inline-block;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      overflow-wrap: break-word;
-      hyphens: auto;
-      align-items: center;
-
-      &::before {
-        // Spacing between text and icon
-        margin: 20px;
-      }
-    }
 
     // Always show the border (translucently)
     // to avoid geometry changes on :hover()
     border-bottom: solid 1px;
     border-color: rgba(0,0,0,0.0);
 
+    @include vars.mobile {
+      border-radius: 5%;
+      // Increase height on mobile to avoid cluttered UI
+      // and horizontal padding.
+      padding: 30px 15px 25px;
+    }
+
+    // == LHS ==
+    & > span {
+      // Text overflow requires inline-block
+      display: inline-block;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      overflow-wrap: anywhere;
+      hyphens: auto;
+
+      &::before {
+        // Spacing between text and icon
+        margin-right: 20px;
+      }
+    }
+
+    // == RHS ==
     div.buttons {
       // Horizontal alignment
-      display: inline-flex;
-      justify-content: space-evenly;
+      display: inline-block;
+      //margin: 0 20px 30px 0;
 
       // Hide buttons icons without changing geometry
       color: vars.$white;
@@ -210,18 +216,15 @@
       }
 
       span {
-        // Vertical centering
-        //display: inline-flex;
         display: inline-block;
-        align-items: center;
-        width: 100%;
+        // Spacing between buttons
+        margin: 0 10px 0 10px;
 
         // == Mobile ==
         @include vars.mobile {
           @include vars.fade-in(0.5s);
           font-size: vars.$font_icon_high_mobile;
-          height: 100%;
-          width: 100%;
+          margin-left: 20px;
         }
       }
     }

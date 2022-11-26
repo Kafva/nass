@@ -19,6 +19,8 @@ class Config {
   static readonly passwordPrompt = 'nf-fa-angle_double_right'
   static readonly clipboardIcon = 'nf-mdi-clipboard_outline'
   static readonly suggestIcon = 'nf-custom-folder_open'
+  static readonly foldIcon = 'nf-oct-fold'
+  static readonly unfoldIcon = 'nf-oct-unfold'
 
   static readonly showPassword = 'nf-oct-eye'
   static readonly deleteIcon = 'nf-fa-minus'

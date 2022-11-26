@@ -4,13 +4,14 @@
   import type { SvelteComponent } from "svelte";
 
   // The component to render inside of the modal
-  export let component: typeof SvelteComponent;
-  export let btnClass: string;
+  export let component: typeof SvelteComponent
+  export let btnClass: string
   // Top offset after `fly`
   export let percent = IsMobile() ? 30 : 60
   export let dialogClass = ""
+  export let title: string = ""
 
-  let visible = false;
+  let visible = false
 
   /**
    * Clear all stores related to a dialog and disable the local
@@ -51,10 +52,11 @@
 {#if btnClass != ""}
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <span role="button" class="{'nf '+ btnClass}"
+        title="{title}"
         on:click="{() => {
           visible = true
           visibleButtonsStore.set('')
-  }}"></span>
+  }}"/>
 {/if}
 
 <style lang="scss">

@@ -48,13 +48,15 @@
 
 <Msg/>
 
-<Dialog component={Help}    btnClass="nf-mdi-help" percent={20}/>
-<Dialog component={AddPass} btnClass="nf-fa-plus"/>
+<Dialog component={Help}    btnClass="nf-mdi-help" title="About" percent={20}/>
+<Dialog component={AddPass} btnClass="nf-fa-plus"  title="Add password"/>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <span role="button"
-      class="nf {$foldPolicyStore == FoldPolicy.allOpen ? 'nf-oct-fold' :
-                                                          'nf-oct-unfold'}"
+      class="nf {$foldPolicyStore == FoldPolicy.allOpen ? Config.foldIcon :
+                                                          Config.unfoldIcon}"
+      title="{$foldPolicyStore == FoldPolicy.allOpen ? 'Fold all' : 
+                                                       'Unfold all'}"
       on:click="{() =>
           foldPolicyStore.set($foldPolicyStore == FoldPolicy.allOpen ?
                               FoldPolicy.allClosed : FoldPolicy.allOpen)
