@@ -35,6 +35,9 @@
     font-size: vars.$font_small;
     display: inline-block;
     width: calc(vars.$dialog_width - 10px);
+    @include vars.tiny-mobile {
+      width: inherit;
+    }
     text-align: left;
     padding: 10px;
     li {

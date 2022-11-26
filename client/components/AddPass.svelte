@@ -203,11 +203,18 @@
       font-size: vars.$font_small;
       display: grid;
       grid-template-columns: 0.5fr 1fr;
+      @include vars.tiny-mobile {
+        grid-template-columns: 1fr 1fr; // Don't ask...
+      }
       align-items: center;
 
       input[type="checkbox"] {
         height: 60%;
         width: 100%;
+        @include vars.tiny-mobile {
+          height: auto;
+          width: auto;
+        }
       }
 
       label,input {

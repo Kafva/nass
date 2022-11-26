@@ -101,14 +101,16 @@ go test -v --run $test_name ./server
 ```
 
 ## Notes
-* The generated subset font is not included into vite's build process, i.e.
-the warning `/app/assets/meslo-nass.ttf referenced in [...] didn't resolve at
-build time, it will remain unchanged to be resolved at runtime` triggered from
-`vite build` is intended.
+* The mobile styling has only be tested to work as intended on recent versions
+  of iOS with Safari and Brave.
+* The generated subset font is not included into vite's build process, i.e. the
+  warning `/app/assets/meslo-nass.ttf referenced in [...] didn't resolve at
+  build time, it will remain unchanged to be resolved at runtime` triggered
+  from `vite build` is intended.
 * Overlapping directory and file names are __not__ supported, e.g. `/a/b.gpg`
-and `/a.gpg` are not allowed to exist at the same time.
-* The [genconf.sh](/scripts/genconf.sh) script does not support generation of accounts
-with multiple origins, this needs to be manually configured.
+  and `/a.gpg` are not allowed to exist at the same time.
+* The [genconf.sh](/scripts/genconf.sh) script does not support generation of
+  accounts with multiple origins, this needs to be manually configured.
 
 ## Similar projects
 * https://github.com/mssun/passforios

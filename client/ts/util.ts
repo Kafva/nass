@@ -77,6 +77,11 @@ const IsMobile = (): boolean => {
          && document.body.clientWidth <= 480 // !! vars.$mobile_max_width !!
 }
 
+/** For very small displays (iPhone 4/5) */
+const IsTinyMobile = (): boolean => {
+  return IsMobile() && document.body.clientHeight <= 480
+}
+
 /**
  * Used as a conditional for if elements should have the `.safari` class to
  * apply browser specific styling.
@@ -99,4 +104,5 @@ const Err = (...args: any) => {
 }
 
 export { fly, fade, GetHTMLElement, GetHTMLElements,
-  SupportsClipboardWrite, IsMobile, IsLikelySafari, Debug, Err }
+  SupportsClipboardWrite, IsMobile, IsLikelySafari, Debug, Err,
+  IsTinyMobile }
