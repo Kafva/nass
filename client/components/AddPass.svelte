@@ -39,6 +39,9 @@
           visible = false
         } // Errors are handled internally by `api`
       })
+      .catch( e => {
+        msgTextStore.set([MessageText.err, e])
+      })
     }
   }
 

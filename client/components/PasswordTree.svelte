@@ -69,10 +69,14 @@
           msgTextStore.set([MessageText.deleted, path])
         } // Errors are handled internally by `api`
       })
+      .catch(e => {
+        msgTextStore.set([MessageText.err, e])
+      })
     }
   }
 
-  const handleGetPassWithRetry = async (useClipboard: boolean, useSafariHack: boolean): Promise<string> => {
+  const handleGetPassWithRetry = async (useClipboard: boolean, 
+   useSafariHack: boolean): Promise<string> => {
     return api.getPass(path, "").then((apiRes: ApiResponse) => {
       switch (apiRes.status) {
       case ApiStatusResponse.success:
@@ -102,6 +106,10 @@
         break;
       default: // Errors and auth failures are handled internally by `api`
       }
+      return Promise.resolve("")
+    })
+    .catch(e => {
+      msgTextStore.set([MessageText.err, e])
       return Promise.resolve("")
     })
   }
