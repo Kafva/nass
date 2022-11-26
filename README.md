@@ -94,7 +94,7 @@ curl -X GET -L 'http://$ALLOWED_IP:5678/get?path=visa' | jq
 The test suites that exist mainly focus on input validation.
 ```bash
 # Client tests
-yarn run vitest
+yarn run test
 
 # Server tests
 go test -v --run $test_name ./server

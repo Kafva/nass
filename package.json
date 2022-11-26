@@ -1,12 +1,13 @@
 {
   "name": "nass",
+  "author": "kafva",
+  "description": "A mobile friendly web interface for pass",
+  "license": "The Unlicense",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "build": "vite build",
     "test": "vitest",
-    "check": "svelte-check --tsconfig ./tsconfig.json",
     "lint": "./scripts/lint.sh"
   },
   "devDependencies": {
