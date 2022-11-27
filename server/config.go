@@ -17,7 +17,7 @@ const GEN_PASS_CHARS =
 // The expected output if PIN entry is required to fetch a secret
 const GPG_FAIL_STRING = "gpg: decryption failed: No secret key"
 
-var CSP_VALUE = "default-src 'self';"
+const CSP_VALUE = "default-src 'self';"
 
 // Server configuration object
 type Config struct {
@@ -58,6 +58,7 @@ func DefaultConfig() Config {
 
 var USERS  = []User{}
 var CONFIG = DefaultConfig()
+var VERSION = "unknown"
 
 // !! These settings should match those in client/config.ts !!
 

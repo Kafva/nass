@@ -4,7 +4,6 @@ import (
   "encoding/json"
   "io/fs"
   "net/http"
-  "os"
   "path/filepath"
   "strings"
   "text/template"
@@ -45,14 +44,9 @@ func TemplateHook(next http.Handler) http.Handler {
         return
       }
 
-      version, err := os.ReadFile("VERSION")
-      if err != nil {
-        version = []byte("unknown")
-      }
-
       htmlTemplateData := HtmlTemplateData {
         PassTree: PassEntry{ Name: user.Name },
-        Version: string(version),
+        Version: VERSION,
       }
 
       filepath.WalkDir(rootDir, func (path string, d fs.DirEntry, err error) error {

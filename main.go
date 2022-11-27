@@ -12,16 +12,17 @@ package main
 // for each user.
 
 import (
-  "flag"
-  "io/ioutil"
-  "math/rand"
-  "net/http"
-  "strconv"
-  "time"
+	"flag"
+	"io/ioutil"
+	"math/rand"
+	"net/http"
+	"os"
+	"strconv"
+	"time"
 
-  "gopkg.in/yaml.v3"
+	"gopkg.in/yaml.v3"
 
-  . "github.com/Kafva/nass/server"
+	. "github.com/Kafva/nass/server"
 )
 
 
@@ -54,6 +55,11 @@ func main(){
     if err != nil {
       Die(err)
     }
+  }
+
+  version, err := os.ReadFile("VERSION")
+  if err == nil {
+    VERSION = string(version)
   }
 
   // Seed randomness for password generation
