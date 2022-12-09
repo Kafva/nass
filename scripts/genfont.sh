@@ -6,7 +6,7 @@ Also create a .min.css file with classes for each glyph.
 '''
 die(){ printf "$1\n" >&2 ; exit 1; }
 info(){ printf "\033[34m!>\033[0m $1\n" >&2; }
-usage="usage: $(basename $0) <client source> <full font> <font output> <.min.css output>"
+usage="usage: [ASSETS_ENDPOINT=] [FONT_FAMILY=] [GLYPH_INDEX=] $(basename $0) <client source> <full font> <font output> <.min.css output>"
 
 command -v pyftsubset &> /dev/null || die "Missing pyftsubset"
 [ -z "$1" ] && die "$usage"
@@ -16,8 +16,9 @@ FULL_FONT=${2:-fonts/meslo-nerd-fonts.ttf}
 TTF=${3:-./public/assets/meslo-nass.ttf}
 MIN_CSS=${4:-fonts/nerd-fonts-nass.min.css}
 
-readonly FONT_FAMILY="Meslo"
-readonly GLYPH_INDEX=./fonts/nerdfonts.raw
+ASSETS_ENDPOINT=${ASSETS_ENDPOINT:-/app/assets}
+FONT_FAMILY=${FONT_FAMILY:-Meslo}
+GLYPH_INDEX=${GLYPH_INDEX:-"./fonts/nerdfonts.raw"}
 MATCHED_GLYPHS=$(mktemp)
 CSS=$(mktemp)
 SUBSET=$(mktemp)
@@ -40,7 +41,7 @@ echo "==============================="
 cat << EOF > $CSS
 @font-face {
   font-family: "$FONT_FAMILY";
-  src: url("/app/assets/$(basename $TTF)") format("truetype");
+  src: url("$ASSETS_ENDPOINT/$(basename $TTF)") format("truetype");
   font-weight: 400;
   font-style: normal;
 }
