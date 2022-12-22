@@ -7,9 +7,9 @@
   // The <span/> content disappears mid-animation which triggers a change in
   // geometry, to avoid this we use transparent placeholder text on:blur.
   showPassStore.subscribe( (passItem: PassItem) => {
-    if (container) {
-      container.style.color = passItem.path == "" ? "transparent" : "inherit"
-    }
+      if (container) {
+          container.style.color = passItem.path == "" ? "transparent" : "inherit"
+      }
   })
   const spanWidth = 20
 </script>

@@ -29,7 +29,7 @@ module.exports = {
     "sort-imports": "off",
     "no-extra-semi": "warn",
     "no-extra-semi": "warn",
-    "indent": ["error", 2],
+    "indent": ["error", 4],
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/ban-types": "off"

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { authInfoStore, foldPolicyStore, msgTextStore, queryStringStore,
-    rootEntryStore, showPassStore, visibleButtonsStore }
-    from '../ts/store'
+      rootEntryStore, showPassStore, visibleButtonsStore }
+      from '../ts/store'
   import { Config, MessageText} from '../ts/config'
   import { FoldPolicy } from '../ts/types'
   import type { ApiResponse, AuthInfo, PassItem } from '../ts/types'
@@ -31,93 +31,93 @@
   const api = new ApiRequest()
 
   queryStringStore.subscribe((value: string) => {
-    currentQuery = value.toLowerCase()
+      currentQuery = value.toLowerCase()
   })
 
   // Restore the row layout if another path has visible buttons
   visibleButtonsStore.subscribe((value: string) => {
-    showButtons = value == path
+      showButtons = value == path
   })
 
   foldPolicyStore.subscribe((value: FoldPolicy) => {
-    switch (value) {
-    case FoldPolicy.allOpen:
-      open = true
-      break
-    case FoldPolicy.allClosed:
-      open = false
-      break
-    }
+      switch (value) {
+      case FoldPolicy.allOpen:
+          open = true
+          break
+      case FoldPolicy.allClosed:
+          open = false
+          break
+      }
   })
 
   const handleMainClick = () => {
-    if (!isLeaf) {
-      foldPolicyStore.set(FoldPolicy.localControl)
-      open = !open
-    }
-    if (IsMobile()) {
-      visibleButtonsStore.set(path)
-    }
+      if (!isLeaf) {
+          foldPolicyStore.set(FoldPolicy.localControl)
+          open = !open
+      }
+      if (IsMobile()) {
+          visibleButtonsStore.set(path)
+      }
   }
 
   const handleDelPass = () => {
-    if (confirm(`Are you sure you want to delete '${path}'?`)) {
-      api.delPass(path).then((apiRes: ApiResponse) => {
-        if (apiRes.status == ApiStatusResponse.success) {
-          const newTree = $rootEntryStore.updateTree(path, true)
-          rootEntryStore.set(newTree)
-          msgTextStore.set([MessageText.deleted, path])
-        } // Errors are handled internally by `api`
-      })
-        .catch(e => {
-          msgTextStore.set([MessageText.err, e])
-        })
-    }
+      if (confirm(`Are you sure you want to delete '${path}'?`)) {
+          api.delPass(path).then((apiRes: ApiResponse) => {
+              if (apiRes.status == ApiStatusResponse.success) {
+                  const newTree = $rootEntryStore.updateTree(path, true)
+                  rootEntryStore.set(newTree)
+                  msgTextStore.set([MessageText.deleted, path])
+              } // Errors are handled internally by `api`
+          })
+              .catch(e => {
+                  msgTextStore.set([MessageText.err, e])
+              })
+      }
   }
 
   const handleGetPassWithRetry = async (useClipboard: boolean,
-    useSafariHack: boolean): Promise<string> => {
-    return api.getPass(path, "").then((apiRes: ApiResponse) => {
-      switch (apiRes.status) {
-      case ApiStatusResponse.success:
-        Debug("Already authenticated", apiRes)
+      useSafariHack: boolean): Promise<string> => {
+      return api.getPass(path, "").then((apiRes: ApiResponse) => {
+          switch (apiRes.status) {
+          case ApiStatusResponse.success:
+              Debug("Already authenticated", apiRes)
 
-        if (useClipboard) {
-          msgTextStore.set([MessageText.clipboard, ""])
-          if (useSafariHack) {
-            return Promise.resolve(apiRes.value)
-          } else {
-            navigator.clipboard.writeText(apiRes.value) // !! No await
+              if (useClipboard) {
+                  msgTextStore.set([MessageText.clipboard, ""])
+                  if (useSafariHack) {
+                      return Promise.resolve(apiRes.value)
+                  } else {
+                      navigator.clipboard.writeText(apiRes.value) // !! No await
+                  }
+              } else {
+                  showPassStore.set({
+                      path: path,
+                      password: apiRes.value
+                  } as PassItem)
+              }
+              break;
+          case ApiStatusResponse.retry:
+              // The authentication dialog is open as long
+              // as a non-empty path is set togheter with an empty value
+              authInfoStore.set({
+                  path: path,
+                  useClipboard: useClipboard
+              } as AuthInfo)
+              break;
+          default: // Errors and auth failures are handled internally by `api`
           }
-        } else {
-          showPassStore.set({
-            path: path,
-            password: apiRes.value
-          } as PassItem)
-        }
-        break;
-      case ApiStatusResponse.retry:
-        // The authentication dialog is open as long
-        // as a non-empty path is set togheter with an empty value
-        authInfoStore.set({
-          path: path,
-          useClipboard: useClipboard
-        } as AuthInfo)
-        break;
-      default: // Errors and auth failures are handled internally by `api`
-      }
-      return Promise.resolve("")
-    })
-      .catch(e => {
-        msgTextStore.set([MessageText.err, e])
-        return Promise.resolve("")
+          return Promise.resolve("")
       })
+          .catch(e => {
+              msgTextStore.set([MessageText.err, e])
+              return Promise.resolve("")
+          })
   }
 
 
   /** Handler for clipboard button */
   const handleClipboard = () => {
-    if (SupportsClipboardWrite()) {
+      if (SupportsClipboardWrite()) {
       // WebKit (Safari and iOS) does not support `clipboard.write*()` outside
       // of user interaction handlers, i.e. onclick etc.
       // so we need a wrapper around the `api.getPass()` call for clipboard
@@ -126,20 +126,20 @@
       // a MIME-type to a Promise that resolves to a Blob() or string.
       //
       // https://webkit.org/blog/10855/async-clipboard-api/
-      const useSafariHack = IsLikelySafari() || IsMobile()
-      const result = handleGetPassWithRetry(true, useSafariHack)
+          const useSafariHack = IsLikelySafari() || IsMobile()
+          const result = handleGetPassWithRetry(true, useSafariHack)
 
-      if (useSafariHack) {
-        /* eslint-disable no-undef */
-        const textItem = new ClipboardItem({
-          "text/plain": result
-        })
-        navigator.clipboard.write([textItem])
-          .catch(e => {
-            msgTextStore.set([MessageText.err, (e as Error).message])
-          })
+          if (useSafariHack) {
+              /* eslint-disable no-undef */
+              const textItem = new ClipboardItem({
+                  "text/plain": result
+              })
+              navigator.clipboard.write([textItem])
+                  .catch(e => {
+                      msgTextStore.set([MessageText.err, (e as Error).message])
+                  })
+          }
       }
-    }
   }
 
 </script>

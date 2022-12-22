@@ -18,17 +18,17 @@
    * visibility flag.
    */
   const hideDialog = () => {
-    authInfoStore.set({path: "", useClipboard: false})
-    showPassStore.set({path: "", password: ""})
-    visible = false
+      authInfoStore.set({path: "", useClipboard: false})
+      showPassStore.set({path: "", password: ""})
+      visible = false
   }
 
   const handleKeyDown = (event: KeyboardEvent) => {
-    switch (event.key) {
-    case "Escape":
-      hideDialog()
-      break;
-    }
+      switch (event.key) {
+      case "Escape":
+          hideDialog()
+          break;
+      }
   }
 </script>
 

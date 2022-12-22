@@ -18,31 +18,31 @@
   const suggestFallback = "..."
 
   const validateSubmit = () => {
-    // Automatically remove trailing and leading '/'
-    const path = pathInput.replace(/^\//, "").replace(/\/$/, "")
-    const pathMsg = pathIsValid(path)
-    const passMsg = passwordIsValid()
+      // Automatically remove trailing and leading '/'
+      const path = pathInput.replace(/^\//, "").replace(/\/$/, "")
+      const pathMsg = pathIsValid(path)
+      const passMsg = passwordIsValid()
 
-    if (pathMsg != MessageText.valid) {
-      msgTextStore.set([pathMsg, ""])
-    } else if (!generatePass && passMsg != MessageText.valid) {
-      msgTextStore.set([passMsg, ""])
-    } else {
-      // Conditions met at this point:
-      //  * Path is valid
-      //  * generatePass is set OR the password+verification is valid
-      api.addPass(path, passInput, generatePass).then( (apiRes: ApiResponse) => {
-        if (apiRes.status == ApiStatusResponse.success) {
-          msgTextStore.set([MessageText.added, path])
-          const newTree = $rootEntryStore.updateTree(path, false)
-          rootEntryStore.set(newTree)
-          visible = false
-        } // Errors are handled internally by `api`
-      })
-        .catch( e => {
-          msgTextStore.set([MessageText.err, e])
-        })
-    }
+      if (pathMsg != MessageText.valid) {
+          msgTextStore.set([pathMsg, ""])
+      } else if (!generatePass && passMsg != MessageText.valid) {
+          msgTextStore.set([passMsg, ""])
+      } else {
+          // Conditions met at this point:
+          //  * Path is valid
+          //  * generatePass is set OR the password+verification is valid
+          api.addPass(path, passInput, generatePass).then( (apiRes: ApiResponse) => {
+              if (apiRes.status == ApiStatusResponse.success) {
+                  msgTextStore.set([MessageText.added, path])
+                  const newTree = $rootEntryStore.updateTree(path, false)
+                  rootEntryStore.set(newTree)
+                  visible = false
+              } // Errors are handled internally by `api`
+          })
+              .catch( e => {
+                  msgTextStore.set([MessageText.err, e])
+              })
+      }
   }
 
   /**
@@ -52,26 +52,26 @@
    * The patterns here match the corresponding server validation.
    */
   const pathIsValid = (path: string): MessageText => {
-    if (!Object.getOwnPropertyNames(Array.prototype).includes('matchAll')) {
-      return MessageText.unsupported
-    }
-    const depth = (Array.from(path.matchAll(/\//g)) || []).length
+      if (!Object.getOwnPropertyNames(Array.prototype).includes('matchAll')) {
+          return MessageText.unsupported
+      }
+      const depth = (Array.from(path.matchAll(/\//g)) || []).length
 
-    if (path.match(passentryRegex) == null ||
+      if (path.match(passentryRegex) == null ||
         path.includes("//") ||
         path.includes(".gpg") ||
         path.includes("..") ||
         path.includes("/.") ||
         path.includes("./")) {
-      return MessageText.invalidPath
-    } else if (depth > Config.maxPassDepth) {
-      return MessageText.invalidNesting
-    } else if ($rootEntryStore.pathHasOverlap(path)) {
+          return MessageText.invalidPath
+      } else if (depth > Config.maxPassDepth) {
+          return MessageText.invalidNesting
+      } else if ($rootEntryStore.pathHasOverlap(path)) {
       // This check is the main reason why the rootEntry needs to be
       // globally available.
-      return MessageText.pathOverlap
-    }
-    return MessageText.valid
+          return MessageText.pathOverlap
+      }
+      return MessageText.valid
   }
 
   /**
@@ -80,14 +80,14 @@
    * Returns MessageText.valid on success.
    */
   const passwordIsValid = (): MessageText => {
-    if (passInput == null) {
-      return MessageText.invalidPass
-    } else if (passInput.match(passwordRegex) == null) { // Dissallows ""
-      return MessageText.invalidPass
-    } else if (passInput != (verifyInput || "")) { // passInput is valid
-      return MessageText.invalidVerify
-    }
-    return MessageText.valid
+      if (passInput == null) {
+          return MessageText.invalidPass
+      } else if (passInput.match(passwordRegex) == null) { // Dissallows ""
+          return MessageText.invalidPass
+      } else if (passInput != (verifyInput || "")) { // passInput is valid
+          return MessageText.invalidVerify
+      }
+      return MessageText.valid
   }
 
 /**
@@ -95,54 +95,54 @@
   * on user input to the path <input/>.
   */
   const keyUp = () => {
-    // Clear placeholder when the input is empty
-    if (pathInput == null || pathInput == "") {
-      suggestElement.innerText = suggestFallback
-      return
-    }
-
-    let match = suggestFallback
-    for (const subpath of $rootEntryStore.subpaths) {
-      // Limit the autocomplete matching to non-leaf nodes
-      // Paths entered with a leading slash will not get autocompletion
-      if (!subpath.includes("/")) { continue; }
-
-      const nonLeaf = subpath.slice(0, subpath.lastIndexOf('/'))
-      // Use the first match
-      if (pathInput.startsWith(nonLeaf) || nonLeaf.startsWith(pathInput)) {
-        match = nonLeaf
-        break
+      // Clear placeholder when the input is empty
+      if (pathInput == null || pathInput == "") {
+          suggestElement.innerText = suggestFallback
+          return
       }
-    }
-    suggestElement.setAttribute("data-match", match)
-    suggestElement.innerText = match != suggestFallback ?
-      match + "/" + suggestFallback :
-      suggestFallback
+
+      let match = suggestFallback
+      for (const subpath of $rootEntryStore.subpaths) {
+          // Limit the autocomplete matching to non-leaf nodes
+          // Paths entered with a leading slash will not get autocompletion
+          if (!subpath.includes("/")) { continue; }
+
+          const nonLeaf = subpath.slice(0, subpath.lastIndexOf('/'))
+          // Use the first match
+          if (pathInput.startsWith(nonLeaf) || nonLeaf.startsWith(pathInput)) {
+              match = nonLeaf
+              break
+          }
+      }
+      suggestElement.setAttribute("data-match", match)
+      suggestElement.innerText = match != suggestFallback ?
+          match + "/" + suggestFallback :
+          suggestFallback
   }
 
   const keyDown = (event: KeyboardEvent) => {
-    switch (event.key) {
-    case 'Enter':
-      event.preventDefault()
-      validateSubmit()
-      // Force unfocus on enter, this is required on mobile
-      // since the keyboard will otherwise obscure alerts
-      if (IsMobile()) {
-        (event.target as HTMLInputElement).blur()
-      }
-      break;
-    // Auto-complete in path input
-    case 'Tab':
-    case 'ArrowRight':
-      if ((event.target as HTMLInputElement).name == "path") {
-        const suggestion = suggestElement.getAttribute("data-match")
-        if (suggestion != null &&
-            suggestion.length > pathInputElement.value.length) {
+      switch (event.key) {
+      case 'Enter':
           event.preventDefault()
-          pathInputElement.value = suggestion
-        }
+          validateSubmit()
+          // Force unfocus on enter, this is required on mobile
+          // since the keyboard will otherwise obscure alerts
+          if (IsMobile()) {
+              (event.target as HTMLInputElement).blur()
+          }
+          break;
+          // Auto-complete in path input
+      case 'Tab':
+      case 'ArrowRight':
+          if ((event.target as HTMLInputElement).name == "path") {
+              const suggestion = suggestElement.getAttribute("data-match")
+              if (suggestion != null &&
+            suggestion.length > pathInputElement.value.length) {
+                  event.preventDefault()
+                  pathInputElement.value = suggestion
+              }
+          }
       }
-    }
   }
 </script>
 

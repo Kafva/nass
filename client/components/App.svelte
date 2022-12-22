@@ -28,15 +28,15 @@
   rootEntryStore.set(rootEntry)
 
   rootEntryStore.subscribe((newRoot: PassEntry) => {
-    rootEntry = newRoot
-    Debug("Updated tree", rootEntry)
+      rootEntry = newRoot
+      Debug("Updated tree", rootEntry)
   })
 
   //import { msgTextStore } from '../ts/store'
   //setTimeout(()=>msgTextStore.set([MessageText.clipboard, ""]), 1000)
 
   if (Config.debug) {
-    Config.dump()
+      Config.dump()
   }
 </script>
 

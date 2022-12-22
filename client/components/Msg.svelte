@@ -9,21 +9,21 @@
   const percent = IsMobile() ? -125 : -140
 
   msgTextStore.subscribe( (value:[string,string]) => {
-    const timeout = MessageTimeouts[value[0]] || -1
-    message = value[1] == "" ? value[0] : value[0] + " " + value[1]
-    iconClass = MessageIcons[value[0]] || ""
+      const timeout = MessageTimeouts[value[0]] || -1
+      message = value[1] == "" ? value[0] : value[0] + " " + value[1]
+      iconClass = MessageIcons[value[0]] || ""
 
-    // Cancel the current timeout if one is already in progress
-    if (timeoutID != null) {
-      clearTimeout(timeoutID)
-    }
+      // Cancel the current timeout if one is already in progress
+      if (timeoutID != null) {
+          clearTimeout(timeoutID)
+      }
 
-    if (timeout > 0) {
-      timeoutID = setTimeout(() => {
-        msgTextStore.set(["",""])
-        timeoutID = null
-      }, timeout)
-    }
+      if (timeout > 0) {
+          timeoutID = setTimeout(() => {
+              msgTextStore.set(["",""])
+              timeoutID = null
+          }, timeout)
+      }
   })
 </script>
 

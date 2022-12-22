@@ -12,99 +12,95 @@ package main
 // for each user.
 
 import (
-	"flag"
-	"io/ioutil"
-	"math/rand"
-	"net/http"
-	"os"
-	"strconv"
-	"time"
+    "flag"
+    "io/ioutil"
+    "math/rand"
+    "net/http"
+    "os"
+    "strconv"
+    "time"
 
-	"gopkg.in/yaml.v3"
+    "gopkg.in/yaml.v3"
 
-	. "github.com/Kafva/nass/server"
+    . "github.com/Kafva/nass/server"
 )
 
+func main() {
+    var user_config = ""
+    var server_config = ""
+    flag.StringVar(&user_config, "u", "", "Path to user configuration")
+    flag.StringVar(&server_config, "c", "", "Path to server configuration")
+    flag.Parse()
 
-func main(){
-  var user_config = ""
-  var server_config = ""
-  flag.StringVar(&user_config,   "u", "", "Path to user configuration")
-  flag.StringVar(&server_config, "c", "", "Path to server configuration")
-  flag.Parse()
-
-  if user_config != "" {
-    f,err := ioutil.ReadFile(user_config)
-    if err != nil {
-      Die(err)
+    if user_config != "" {
+        f, err := ioutil.ReadFile(user_config)
+        if err != nil {
+            Die(err)
+        }
+        err = yaml.Unmarshal(f, &USERS)
+        if err != nil {
+            Die(err)
+        }
+    } else {
+        Die("Missing [-u] users.yml configuration")
     }
-    err = yaml.Unmarshal(f, &USERS)
-    if err != nil {
-      Die(err)
+
+    if server_config != "" {
+        f, err := ioutil.ReadFile(server_config)
+        if err != nil {
+            Die(err)
+        }
+        err = yaml.Unmarshal(f, &CONFIG)
+        if err != nil {
+            Die(err)
+        }
     }
-  } else {
-    Die("Missing [-u] users.yml configuration")
-  }
 
-  if server_config != "" {
-    f,err := ioutil.ReadFile(server_config)
-    if err != nil {
-      Die(err)
+    version, err := os.ReadFile("VERSION")
+    if err == nil {
+        VERSION = string(version)
     }
-    err = yaml.Unmarshal(f, &CONFIG)
-    if err != nil {
-      Die(err)
+
+    // Seed randomness for password generation
+    rand.Seed(time.Now().UnixNano())
+
+    // Endpoints:
+    //  /get?path=Service/wow
+    //  /add?path=Service/wow  { value: '************' }
+    //  /del?path=Service/wow
+    //
+    http.HandleFunc("/get", GetPass)
+    http.HandleFunc("/add", AddPass)
+    http.HandleFunc("/del", DelPass)
+
+    // Web app resources are mounted at `/app`
+    // The entrypoint is `/app/index.html`
+    web_root := http.FileServer(http.Dir(WEBROOT))
+    http.Handle("/app/",
+        http.StripPrefix("/app", TemplateHook(DisableDirListings(web_root))))
+    http.HandleFunc("/", redirect_to_app)
+
+    listener := CONFIG.BindAddress + ":" + strconv.Itoa(CONFIG.Port)
+
+    if CONFIG.TlsEnabled {
+        Info("Listening on 'https://" + listener + "'...")
+        err := http.ListenAndServeTLS(listener,
+            CONFIG.TlsCert,
+            CONFIG.TlsKey, nil,
+        )
+        if err != nil {
+            Die("ListenAndServeTLS", err)
+        }
+    } else {
+        Info("Listening on 'http://" + listener + "'...")
+        http.ListenAndServe(listener, nil)
     }
-  }
-
-  version, err := os.ReadFile("VERSION")
-  if err == nil {
-    VERSION = string(version)
-  }
-
-  // Seed randomness for password generation
-  rand.Seed(time.Now().UnixNano())
-
-  // Endpoints:
-  //  /get?path=Service/wow
-  //  /add?path=Service/wow  { value: '************' }
-  //  /del?path=Service/wow
-  //
-  http.HandleFunc("/get",  GetPass)
-  http.HandleFunc("/add",  AddPass)
-  http.HandleFunc("/del",  DelPass)
-
-  // Web app resources are mounted at `/app`
-  // The entrypoint is `/app/index.html`
-  web_root := http.FileServer(http.Dir(WEBROOT))
-  http.Handle("/app/",
-    http.StripPrefix("/app", TemplateHook(DisableDirListings(web_root)),
-  ))
-  http.HandleFunc("/", redirect_to_app)
-
-
-  listener := CONFIG.BindAddress+":"+strconv.Itoa(CONFIG.Port)
-
-  if CONFIG.TlsEnabled {
-    Info("Listening on 'https://"+listener+"'...")
-    err := http.ListenAndServeTLS(listener,
-      CONFIG.TlsCert,
-      CONFIG.TlsKey, nil,
-    )
-    if err != nil {
-        Die("ListenAndServeTLS", err)
-    }
-  } else {
-    Info("Listening on 'http://"+listener+"'...")
-    http.ListenAndServe(listener, nil)
-  }
 }
 
 func redirect_to_app(res http.ResponseWriter, req *http.Request) {
     if req.URL.Path == "/" {
-      http.Redirect(res, req, "/app/index.html", 301)
+        http.Redirect(res, req, "/app/index.html", 301)
     } else {
-      http.NotFound(res, req)
+        http.NotFound(res, req)
     }
 }
-

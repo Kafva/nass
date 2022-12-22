@@ -1,3 +1,4 @@
+---
 # This role assumes that ~/Repos/nass/arm64 contains a complete
 # arm64 build of `nass` and is built for a target running Alpine:3.16 on arm64.
 #
@@ -12,8 +13,7 @@
 #  * Configure necessary nftables/iptables rules
 #  * Enable wireguard service
 - name: Nass server setup
-  tags:
-    - nass
+  tags: [nass]
   vars:
     nass_dir: ~/Repos/nass
     release_build: '{{nass_dir}}/arm64'
@@ -21,59 +21,55 @@
   block:
   # The acl package is needed to support `become_user`
   # https://docs.ansible.com/ansible-core/2.13/user_guide/become.html#risks-of-becoming-an-unprivileged-user
-  - name: As root
-    block:
-    - name: Install runtime dependencies
-      community.general.apk:
-        name:
-          - pass
-          - gpg-agent
-          - git
-          - acl
-        state: present
-        update_cache: true
+    - name: As root
+      block:
+        - name: Install runtime dependencies
+          community.general.apk:
+            name: [pass, gpg-agent, git, acl]
+            state: present
+            update_cache: true
 
-    - name: Create the nass user
-      user:
-        name: nass
-        shell: /sbin/nologin
-        home: '{{nass_home}}'
-        comment: Nass user
-        state: present
+        - name: Create the nass user
+          user:
+            name: nass
+            shell: /sbin/nologin
+            home: '{{nass_home}}'
+            comment: Nass user
+            state: present
 
-    - name: Ensure correct permissions
-      file:
-        path: '{{nass_home}}/{{item.path}}'
-        state: '{{item.state}}'
-        owner: nass
-        group: nass
-        mode: '{{item.mode}}'
-      with_items:
+        - name: Ensure correct permissions
+          file:
+            path: '{{nass_home}}/{{item.path}}'
+            state: '{{item.state}}'
+            owner: nass
+            group: nass
+            mode: '{{item.mode}}'
+          with_items:
         # Empty files will be created on first deployment
-        - { path: 'importkey.sh',    state: file,      mode: 755 }
-        - { path: 'nass',            state: file,      mode: 700 }
-        - { path: '.password-store', state: directory, mode: 700 }
-        - { path: '.gnupg',          state: directory, mode: 700 }
+            - {path: importkey.sh, state: file, mode: 755}
+            - {path: nass, state: file, mode: 700}
+            - {path: .password-store, state: directory, mode: 700}
+            - {path: .gnupg, state: directory, mode: 700}
 
-    - name: Ensure correct ownership
+        - name: Ensure correct ownership
+          shell:
+            cmd: chown -R nass:nass {{nass_home}}
+
+        - name: Install OpenRC service
+          copy:
+            src: '{{nass_dir}}/conf/nass.sh'
+            dest: /etc/init.d/nass
+            mode: 0755
+        - name: Enable service
+          shell:
+            cmd: rc-update add nass default
+            creates: /etc/runlevels/default/nass
+      become: true
+
+    - name: Initialize git repository
+      become: true
+      become_user: nass
       shell:
-        cmd: "chown -R nass:nass {{nass_home}}"
-
-    - name: Install OpenRC service
-      copy:
-        src: '{{nass_dir}}/conf/nass.sh'
-        dest: /etc/init.d/nass
-        mode: 0755
-    - name: Enable service
-      shell:
-        cmd: "rc-update add nass default"
-        creates: /etc/runlevels/default/nass
-    become: true
-
-  - name: Initialize git repository
-    become: true
-    become_user: nass
-    shell:
-      chdir: '{{nass_home}}'
-      cmd: "pass git init"
-      creates: '{{nass_home}}/.password-store/.git'
+        chdir: '{{nass_home}}'
+        cmd: pass git init
+        creates: '{{nass_home}}/.password-store/.git'

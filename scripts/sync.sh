@@ -17,10 +17,10 @@ keys
 EOF
 
 find . \
-  -path ./dist -prune -o \
-  -path ./.cache -prune -o \
-  -path ./node_modules -prune -o \
-  -name "*.sh" -o -name "*.md" -o -name "*.go" -o -name "*.js" -o -name "*.ts" \
-  -o -name "*.tsx" -o -name "*.html" -o -name "*.scss" \
-  -o -name "Dockerfile*" -o -name "*.yml" -o -name "*.svelte" |entr -n -s \
-  "rsync --exclude-from=$EXCLUDE -r --delete ~/Repos/nass $REMOTE:~/Repos"
+    -path ./dist -prune -o \
+    -path ./.cache -prune -o \
+    -path ./node_modules -prune -o \
+    -name "*.sh" -o -name "*.md" -o -name "*.go" -o -name "*.js" -o -name "*.ts" \
+    -o -name "*.tsx" -o -name "*.html" -o -name "*.scss" \
+    -o -name "Dockerfile*" -o -name "*.yml" -o -name "*.svelte" | entr -n -s \
+    "rsync --exclude-from=$EXCLUDE -r --delete ~/Repos/nass $REMOTE:~/Repos"

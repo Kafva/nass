@@ -3,72 +3,74 @@ package server
 import "strings"
 
 type HtmlTemplateData struct {
-  PassTree PassEntry
-  Version string
+    PassTree PassEntry
+    Version  string
 }
 
 type PassEntry struct {
-  Name string
-  Children []PassEntry
+    Name     string
+    Children []PassEntry
 }
 
 type User struct {
-  // Display name of the user
-  Name string
-  // The IP addresses which this user can connect from
-  Origins []string
+    // Display name of the user
+    Name string
+    // The IP addresses which this user can connect from
+    Origins []string
 }
 
 type ResponseStatus string
+
 const (
-  StatusRetry ResponseStatus = "retry"
-  StatusSuccess = "success"
-  StatusFailed = "failed"
-  StatusError = "error"
+    StatusRetry   ResponseStatus = "retry"
+    StatusSuccess                = "success"
+    StatusFailed                 = "failed"
+    StatusError                  = "error"
 )
 
 type JsonResponse struct {
-  Status ResponseStatus `json:"status"`
-  Desc string `json:"desc,omitempty"`
-  Value string `json:"value,omitempty"`
+    Status ResponseStatus `json:"status"`
+    Desc   string         `json:"desc,omitempty"`
+    Value  string         `json:"value,omitempty"`
 }
 
 //============================================================================//
 
 // Recursively create a `PassEntry` for each name in the provided array
 // with the first entry being the root parent, i.e.
-//  /a/b/c --> [a,b,c]
+//
+//    /a/b/c --> [a,b,c]
 //
 // Example output:
-//  {
-//    "Name": "user",
-//    "Children": [
-//      {
-//        "Name": "Service",
-//        "Children": [
-//          {
-//            "Name": "acc1.gpg",
-//            "Children": []
-//          },
-//          ...
-//        ]
-//      },
-//    ],
-//   ...
 //
+//    {
+//      "Name": "user",
+//      "Children": [
+//        {
+//          "Name": "Service",
+//          "Children": [
+//            {
+//              "Name": "acc1.gpg",
+//              "Children": []
+//            },
+//            ...
+//          ]
+//        },
+//      ],
+//     ...
 func (d *PassEntry) AddChildren(names []string) {
     // Add a child with the current first node name if one does not exist
     var idx = d.HasChildWithName(names[0])
     if idx == -1 {
-      d.Children = append(d.Children, PassEntry{
-        Name: strings.TrimSuffix(names[0], ".gpg"),
-        Children: []PassEntry{},
-      })
-      idx = len(d.Children)-1
+        d.Children = append(d.Children, PassEntry{
+            Name:     strings.TrimSuffix(names[0], ".gpg"),
+            Children: []PassEntry{},
+        })
+        idx = len(d.Children) - 1
     }
 
     // Basecase
-    if len(names)==1 {
+    if len(names) == 1 {
         return
     }
 
@@ -77,20 +79,19 @@ func (d *PassEntry) AddChildren(names []string) {
 }
 
 func (d *PassEntry) HasChildWithName(name string) int {
-  for i,child := range d.Children {
-    if child.Name == name {
-      return i
+    for i, child := range d.Children {
+        if child.Name == name {
+            return i
+        }
     }
-  }
-  return -1
+    return -1
 }
 
 func (u *User) HasOrigin(origin string) bool {
-  for _,o := range u.Origins {
-    if o == origin {
-      return true
+    for _, o := range u.Origins {
+        if o == origin {
+            return true
+        }
     }
-  }
-  return false
+    return false
 }
-

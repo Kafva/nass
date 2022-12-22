@@ -4,8 +4,11 @@ Subset a TTF file to only contain extended ASCII and
 the glyphs that are actually used in the application.
 Also create a .min.css file with classes for each glyph.
 '''
-die(){ printf "$1\n" >&2 ; exit 1; }
-info(){ printf "\033[34m!>\033[0m $1\n" >&2; }
+die() {
+    printf "$1\n" >&2
+    exit 1
+}
+info() { printf "\033[34m!>\033[0m $1\n" >&2; }
 usage="usage: [ASSETS_ENDPOINT=] [FONT_FAMILY=] [GLYPH_INDEX=] $(basename $0) <client source> <full font> <font output> <.min.css output>"
 
 command -v pyftsubset &> /dev/null || die "Missing pyftsubset"
@@ -25,14 +28,13 @@ SUBSET=$(mktemp)
 
 # Determine the unicode value of each glyph from a lookup table
 while read -r line; do
-  sed -nE "/${line/nf-/}\$/s/.*([a-f0-9]{4}) (.*)/\1 \2/p" \
-    $GLYPH_INDEX >> $MATCHED_GLYPHS
-done < <(grep -hiEoR "nf-[-_0-9a-z]+" $INPUT|sort -u)
+    sed -nE "/${line/nf-/}\$/s/.*([a-f0-9]{4}) (.*)/\1 \2/p" \
+        $GLYPH_INDEX >> $MATCHED_GLYPHS
+done < <(grep -hiEoR "nf-[-_0-9a-z]+" $INPUT | sort -u)
 
 info "Generating font and css for:"
 cat $MATCHED_GLYPHS
 echo "==============================="
-
 
 # == Generate CSS ==
 # NOTE: we do not directly include the TTF font into vite's build process
@@ -59,8 +61,8 @@ cat << EOF > $CSS
 EOF
 
 sed -E "s/.*([a-f0-9]{4}) (.*)/.nf-\2:before { content: \"\\\\\1\"; }/" \
-  $MATCHED_GLYPHS >> "$CSS"
-cat $CSS | tr -d ' '  | tr -d '\n' > $MIN_CSS
+    $MATCHED_GLYPHS >> "$CSS"
+cat $CSS | tr -d ' ' | tr -d '\n' > $MIN_CSS
 
 # == Generate subset font ==
 # Extended ASCII codepoints

@@ -16,9 +16,7 @@ command=/srv/nass/nass
 command_args="-c conf/nass.yml -u conf/users.yml"
 
 depend() {
-   need localmount
-   need net
-   need wireguard
+    need localmount
+    need net
+    need wireguard
 }
-
-
