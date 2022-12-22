@@ -2,10 +2,7 @@
 # Create a GPG key non-interactively for testing purposes
 # Interactive creation:
 #   gpg --full-generate-key
-die() {
-    printf "$1\n" >&2
-    exit 1
-}
+die() { printf "$1\n" >&2 && exit 1; }
 info() { printf "\033[34m!>\033[0m $1\n" >&2; }
 usage="usage: [KEEP=] $(basename $0) <name> <email> [passphrase]"
 

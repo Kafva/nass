@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
-die() {
-    printf "\033[31m!>\033[0m $1\n" >&2
-    exit 1
-}
+die() { printf "\033[31m!>\033[0m $1\n" >&2 && exit 1; }
 
 if [[ ! -f /.dockerenv && ! -f /run/.containerenv ]]; then
     printf "Not inside a container, run anyway? [y/N] "

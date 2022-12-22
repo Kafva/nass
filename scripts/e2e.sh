@@ -7,11 +7,7 @@ The tests should be ran on the same host that runs a `nass` container.
 with the `docker.yml` user configuration as the target.
 '''
 info() { printf "\033[34m!>\033[0m $1" >&2; }
-die() {
-    cleanup
-    printf "$1\n" >&2
-    exit 1
-}
+die() { cleanup && printf "$1\n" >&2 && exit 1; }
 
 readonly IFACE=enp6s0
 readonly NASS_IP=10.0.1.6

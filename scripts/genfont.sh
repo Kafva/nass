@@ -4,10 +4,7 @@ Subset a TTF file to only contain extended ASCII and
 the glyphs that are actually used in the application.
 Also create a .min.css file with classes for each glyph.
 '''
-die() {
-    printf "$1\n" >&2
-    exit 1
-}
+die() { printf "$1\n" >&2 && exit 1; }
 info() { printf "\033[34m!>\033[0m $1\n" >&2; }
 usage="usage: [ASSETS_ENDPOINT=] [FONT_FAMILY=] [GLYPH_INDEX=] $(basename $0) <client source> <full font> <font output> <.min.css output>"
 

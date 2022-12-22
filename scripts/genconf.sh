@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 # Generate a users.yml along with corresponding Wireguard configurations.
-die() {
-    printf "$1\n" >&2
-    exit 1
-}
+die() { printf "$1\n" >&2 && exit 1; }
 wg_gen() {
     local privkey="$OUTPUT/wireguard/$1.key"
     local pubkey="$OUTPUT/wireguard/$1.pub"

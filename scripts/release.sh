@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 # Cross compile for Alpine (arm64) and extract the results
-die() {
-    printf "$1\n" >&2
-    exit 1
-}
+die() { printf "$1\n" >&2 && exit 1; }
 info() { printf "\033[34m>>>\033[0m $1\n" >&2; }
 usage="usage: $(basename $0) <host> [build: bool] [ansible: bool] [sync: bool]"
 [[ -z "$2" || "$1" = '-h' ]] && die "$usage"
