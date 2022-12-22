@@ -12,9 +12,9 @@
 }}"/>
 
 <style lang="scss">
-  @use "../scss/vars";
+@use "../scss/vars";
 
-  input {
+input {
     @include vars.input-style;
     font-size: vars.$font_large;
     text-align: center;
@@ -22,5 +22,5 @@
     margin-bottom: 1vh;
     padding: 15px 0 15px 0;
     width: 100%;
-  }
+}
 </style>

@@ -186,9 +186,9 @@
 {/if}
 
 <style lang="scss">
-  @use "../scss/vars";
+@use "../scss/vars";
 
-  div.row {
+div.row {
     @include vars.fade-in(0.5s);
     display: flex;
     align-items: center;
@@ -207,69 +207,69 @@
     border-color: rgba(0,0,0,0.0);
 
     @include vars.mobile {
-      border-radius: 5%;
-      // Increase height on mobile to avoid cluttered UI
-      // and horizontal padding.
-      padding: 30px 15px 25px;
+        border-radius: 5%;
+        // Increase height on mobile to avoid cluttered UI
+        // and horizontal padding.
+        padding: 30px 15px 25px;
     }
 
     // == LHS ==
     & > span {
-      // Text overflow requires inline-block
-      display: inline-block;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      overflow-wrap: anywhere;
-      hyphens: auto;
-      // Ensure that the LHS always takes up 70% of the row,
-      // this indirectly aligns the RHS.
-      width: 70%;
+        // Text overflow requires inline-block
+        display: inline-block;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        overflow-wrap: anywhere;
+        hyphens: auto;
+        // Ensure that the LHS always takes up 70% of the row,
+        // this indirectly aligns the RHS.
+        width: 70%;
 
-      &::before {
-        // Spacing between text and icon
-        margin-right: 20px;
-      }
+        &::before {
+            // Spacing between text and icon
+            margin-right: 20px;
+        }
     }
 
     // == RHS ==
     div.buttons {
-      // Horizontal alignment
-      display: inline-block;
-
-      // Hide buttons icons without changing geometry
-      color: vars.$white;
-      @include vars.desktop {
-        opacity: 0;
-      }
-
-      span {
+        // Horizontal alignment
         display: inline-block;
-        // Spacing between buttons
-        margin: 0 10px 0 10px;
 
-        // == Mobile ==
-        @include vars.mobile {
-          font-size: vars.$font_icon_high_mobile;
-          margin-left: 20px;
+        // Hide buttons icons without changing geometry
+        color: vars.$white;
+        @include vars.desktop {
+            opacity: 0;
         }
-      }
+
+        span {
+            display: inline-block;
+            // Spacing between buttons
+            margin: 0 10px 0 10px;
+
+            // == Mobile ==
+            @include vars.mobile {
+                font-size: vars.$font_icon_high_mobile;
+                margin-left: 20px;
+            }
+        }
     }
 
     // == Desktop hover ==
     @include vars.desktop {
-      &:hover {
-        // Display buttons on the direct child
-        // when the parent element is hovered
-        border-color: vars.$lilac;
+        &:hover {
+            // Display buttons on the direct child
+            // when the parent element is hovered
+            border-color: vars.$lilac;
 
-        div.buttons {
-          opacity: 1.0;
+            div.buttons {
+                opacity: 1.0;
+            }
         }
-      }
 
-      div.buttons > span.nf:hover {
-        color: vars.$lilac;
-      }
+        div.buttons > span.nf:hover {
+            color: vars.$lilac;
+        }
     }
-  }
+}
 </style>

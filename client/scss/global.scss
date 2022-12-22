@@ -2,41 +2,41 @@
 
 // Hide scrollbar
 :global(*) {
-  scrollbar-width: none; // Firefox
+    scrollbar-width: none; // Firefox
 
-  &::-webkit-scrollbar { // Chrome and Safari
-    -webkit-appearance: none;
-    display: none;
-    width: 0;
-    height: 0;
-  }
+    &::-webkit-scrollbar { // Chrome and Safari
+        -webkit-appearance: none;
+        display: none;
+        width: 0;
+        height: 0;
+    }
 }
 
 :global(html), :global(body) {
-  // The @font-face for 'Meslo' is defined in `nerd-fonts.min.css`
-  font-family: Meslo, Arial;
-  height: 100%;
-  background-color: vars.$body_bg;
-  color: vars.$white;
+    // The @font-face for 'Meslo' is defined in `nerd-fonts.min.css`
+    font-family: Meslo, Arial;
+    height: 100%;
+    background-color: vars.$body_bg;
+    color: vars.$white;
 }
 
 :global([role="button"]), :global(button) {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 :global(div#root) {
-  // Centering within main container
-  width: vars.$tree_width;
-  @include vars.centering(vars.$tree_width);
+    // Centering within main container
+    width: vars.$tree_width;
+    @include vars.centering(vars.$tree_width);
 
-  @include vars.mobile {
-    // The rows should fill the entire X-axis on mobile
-    width: vars.$tree_width_mobile;
-    margin: 0;
-  }
+    @include vars.mobile {
+        // The rows should fill the entire X-axis on mobile
+        width: vars.$tree_width_mobile;
+        margin: 0;
+    }
 
-  text-align: left;
-  height: 100%;
-  overflow-x: hidden;
-  overflow-y: scroll;
+    text-align: left;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: scroll;
 }

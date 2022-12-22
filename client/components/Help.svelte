@@ -20,33 +20,33 @@
 </ul>
 
 <style lang="scss">
-  @use "../scss/vars";
+@use "../scss/vars";
 
-  div {
+div {
     text-align: center;
     h1 {
-      margin-bottom: 5px;
+        margin-bottom: 5px;
     }
     a {
-      font-style: italic;
-      color: vars.$pink;
+        font-style: italic;
+        color: vars.$pink;
     }
-  }
+}
 
-  ul {
+ul {
     list-style-type: disc;
     font-size: vars.$font_small;
     display: inline-block;
     width: calc(vars.$dialog_width - 10px);
     @include vars.tiny-mobile {
-      width: inherit;
+        width: inherit;
     }
     text-align: left;
     padding: 10px;
     li {
-      margin-left: 20px;
+        margin-left: 20px;
     }
-  }
+}
 
 </style>
 

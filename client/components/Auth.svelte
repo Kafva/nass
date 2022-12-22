@@ -95,9 +95,9 @@
 </form>
 
 <style lang="scss">
-  @use "../scss/vars";
+@use "../scss/vars";
 
-  form {
+form {
     text-align: center;
     font-size: vars.$font_medium;
     display: grid;
@@ -105,15 +105,15 @@
     padding: 10px 0px 10px 0px;
 
     div {
-     span {
-        font-size: vars.$font_large;
-        margin: 0 8px 0 0;
-      }
-      input {
-        @include vars.input-style();
-        font-size: inherit;
-      }
+        span {
+            font-size: vars.$font_large;
+            margin: 0 8px 0 0;
+        }
+        input {
+            @include vars.input-style();
+            font-size: inherit;
+        }
     }
-  }
+}
 </style>
 

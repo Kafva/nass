@@ -24,9 +24,9 @@
 </div>
 
 <style lang="scss">
-  @use "../scss/vars";
+@use "../scss/vars";
 
-  div {
+div {
     text-align: center;
     font-size: vars.$font_medium;
     display: grid;
@@ -35,18 +35,18 @@
 
     span {
 
-     &:first-child {
-        margin-bottom: 10px;
-        border-bottom: 2px solid vars.$lilac;
-        overflow: hidden;
-        text-overflow: ellipsis;
-     }
-     &:nth-child(2) {
-       font-size: vars.$font_small;
-       overflow-wrap: anywhere;
-     }
+        &:first-child {
+            margin-bottom: 10px;
+            border-bottom: 2px solid vars.$lilac;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        &:nth-child(2) {
+            font-size: vars.$font_small;
+            overflow-wrap: anywhere;
+        }
     }
-  }
+}
 
 </style>
 

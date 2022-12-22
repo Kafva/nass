@@ -1,0 +1,16 @@
+{
+    "overrides": [
+      {
+        "files": ["**/*.scss"],
+        "customSyntax": "postcss-scss"
+      },
+      {
+        "files": ["**/*.svelte"],
+        "customSyntax": "postcss-html"
+      }
+    ],
+    "rules": {
+        "indentation": [4, {"baseIndentLevel": 0}]
+    }
+}
+

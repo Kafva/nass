@@ -60,11 +60,11 @@
 {/if}
 
 <style lang="scss">
-  @use "../scss/vars";
+@use "../scss/vars";
 
-  $dialog_padding: 15px;
+$dialog_padding: 15px;
 
-  div#modalCover {
+div#modalCover {
     z-index: vars.$cover_z;
     position: fixed;
     left:0;
@@ -72,9 +72,9 @@
     width: 100vw;
     height: 100vh;
     background-color: vars.$black;
-  }
+}
 
-  div#dialog {
+div#dialog {
     overflow: hidden;
     overflow-wrap: anywhere;
     position: fixed;
@@ -88,8 +88,8 @@
     border-radius: 5%;
 
     &.show-pass {
-      border: 5px solid vars.$lilac;
-      border-radius: 0%;
+        border: 5px solid vars.$lilac;
+        border-radius: 0%;
     }
 
     width: vars.$dialog_width;
@@ -102,21 +102,21 @@
 
     // == Small mobile displays ==
     @include vars.tiny-mobile {
-      font-size: vars.$font_small;
-      width: vars.$dialog_width_tiny_mobile;
-      margin-left: 8%;
-      height: fit-content;
-      max-height: calc(vars.$tiny_mobile_max_height - 50px);
-      overflow-x: hidden;
-      overflow-y: scroll;
+        font-size: vars.$font_small;
+        width: vars.$dialog_width_tiny_mobile;
+        margin-left: 8%;
+        height: fit-content;
+        max-height: calc(vars.$tiny_mobile_max_height - 50px);
+        overflow-x: hidden;
+        overflow-y: scroll;
     }
-  }
+}
 
-  // Buttons float to the corner
-  span.nf {
+// Buttons float to the corner
+span.nf {
     @include vars.button-style;
     @include vars.mobile {
-      font-size: vars.$font_icon_high_mobile;
+        font-size: vars.$font_icon_high_mobile;
     }
-  }
+}
 </style>

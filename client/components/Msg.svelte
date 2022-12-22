@@ -40,9 +40,9 @@
 
 
 <style lang="scss">
-  @use "../scss/vars";
+@use "../scss/vars";
 
-  div {
+div {
     text-align: center;
     position: fixed;
     border-radius: 2%;
@@ -55,30 +55,30 @@
     @include vars.fixed-centering(vars.$msg_width, 0px);
 
     @include vars.mobile {
-      width: vars.$msg_width_mobile;
-      @include vars.fixed-centering(vars.$msg_width_mobile, 0px);
+        width: vars.$msg_width_mobile;
+        @include vars.fixed-centering(vars.$msg_width_mobile, 0px);
     }
 
     p {
-      font-size: vars.$font_small;
-      font-weight: bold;
-      margin: 16px 20px 16px 20px;
+        font-size: vars.$font_small;
+        font-weight: bold;
+        margin: 16px 20px 16px 20px;
 
-      text-overflow: ellipsis;
-      overflow: hidden;
-      overflow-wrap: break-word;
-      hyphens: auto;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        overflow-wrap: break-word;
+        hyphens: auto;
 
-      span {
-        margin-right: 10px;
-        font-size: vars.$font_medium;
-      }
+        span {
+            margin-right: 10px;
+            font-size: vars.$font_medium;
+        }
     }
 
     // Messages appear at the bottom of the screen so that they
     // do not overlap with the search bar.
     // The fly-effect uses a percentage >100% because of the placement.
     top: 100%;
-  }
+}
 </style>
 

@@ -187,9 +187,9 @@
 </form>
 
 <style lang="scss">
-  @use "../scss/vars";
+@use "../scss/vars";
 
-  span.suggest {
+span.suggest {
     display: inline-block;
     overflow: hidden;
     width: 100%;
@@ -197,75 +197,75 @@
     color: vars.$white;
     opacity: 0.7;
     &::before {
-      font-size: vars.$font_large;
-      margin: 10px;
+        font-size: vars.$font_large;
+        margin: 10px;
     }
-  }
+}
 
-  form {
+form {
     text-align: center;
     display: inline-block;
     width: vars.$dialog_width;
     @include vars.tiny-mobile {
-      width: vars.$dialog_width_tiny_mobile;
+        width: vars.$dialog_width_tiny_mobile;
     }
 
     div.form-item {
-      font-size: vars.$font_small;
-      display: grid;
-      grid-template-columns: 50% 50%;
-      align-items: center;
+        font-size: vars.$font_small;
+        display: grid;
+        grid-template-columns: 50% 50%;
+        align-items: center;
 
-      input[type="checkbox"] {
-        height: 60%;
-        width: 100%;
-        @include vars.tiny-mobile {
-          height: auto;
-          width: auto;
+        input[type="checkbox"] {
+            height: 60%;
+            width: 100%;
+            @include vars.tiny-mobile {
+                height: auto;
+                width: auto;
+            }
         }
-      }
 
-      label,input {
-        margin-top: 10px;
-      }
-      input {
-        padding: 5px 2px 5px 2px;
-        font-size: inherit;
-        font-family: inherit;
-        @include vars.input-style;
+        label,input {
+            margin-top: 10px;
+        }
+        input {
+            padding: 5px 2px 5px 2px;
+            font-size: inherit;
+            font-family: inherit;
+            @include vars.input-style;
 
-        &[name="path"] {
-          width: 100%;
+            &[name="path"] {
+                width: 100%;
+            }
+            &[name="verify"] {
+                border-bottom: 2px solid;
+                border-color: transparent;
+            }
+            &[name="generate"].safari {
+                // Checkbox is not automatically centered in Safari
+                display: inline-block;
+                margin-left: 40%;
+            }
         }
-        &[name="verify"] {
-            border-bottom: 2px solid;
-            border-color: transparent;
-        }
-        &[name="generate"].safari {
-          // Checkbox is not automatically centered in Safari
-          display: inline-block;
-          margin-left: 40%;
-        }
-      }
     }
 
     button {
-      font-size: vars.$font_large;
-      color: vars.$white;
+        font-size: vars.$font_large;
+        color: vars.$white;
 
-      padding: 5px 0px 5px 0px;
-      margin: 40px 0 10px 0;
-      border-radius: 5%;
-      width: 80px;
+        padding: 5px 0px 5px 0px;
+        margin: 40px 0 10px 0;
+        border-radius: 5%;
+        width: 80px;
 
-      outline: 0;
-      border: solid 2px;
-      border-color: rgba(0,0,0,0.0);
-      background-color: vars.$button_bg;
+        outline: 0;
+        border: solid 2px;
+        border-color: rgba(0,0,0,0.0);
+        background-color: vars.$button_bg;
 
-      @include vars.desktop-hover {
-        border-color: vars.$pink;
-      }
+        @include vars.desktop-hover {
+            border-color: vars.$pink;
+        }
     }
-  }
+}
 </style>
