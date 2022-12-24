@@ -52,10 +52,7 @@
    * The patterns here match the corresponding server validation.
    */
   const pathIsValid = (path: string): MessageText => {
-      if (!Object.getOwnPropertyNames(Array.prototype).includes('matchAll')) {
-          return MessageText.unsupported
-      }
-      const depth = (Array.from(path.matchAll(/\//g)) || []).length
+      const depth = path.split('').filter(c => c == '/').length
 
       if (path.match(passentryRegex) == null ||
         path.includes("//") ||
