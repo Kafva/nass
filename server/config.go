@@ -9,6 +9,9 @@ const WEBROOT = "./dist"
 // Length of auto-generated passwords
 const GEN_PASS_LEN = 24
 
+// Label for the [src='<...>'] of internal log messages 
+const INTERNAL_SRC = "internal"
+
 // Possible characters for auto-generated passwords
 const GEN_PASS_CHARS = "-_.@/0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 
