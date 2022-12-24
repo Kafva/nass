@@ -12,17 +12,17 @@ package main
 // for each user.
 
 import (
-	"flag"
-	"io/ioutil"
-	"math/rand"
-	"net/http"
-	"os"
-	"strconv"
-	"time"
+    "flag"
+    "io/ioutil"
+    "math/rand"
+    "net/http"
+    "os"
+    "strconv"
+    "time"
 
-	"gopkg.in/yaml.v3"
+    "gopkg.in/yaml.v3"
 
-	. "github.com/Kafva/nass/server"
+    . "github.com/Kafva/nass/server"
 )
 
 func main() {
@@ -83,7 +83,7 @@ func main() {
     listener := CONFIG.BindAddress + ":" + strconv.Itoa(CONFIG.Port)
 
     if CONFIG.TlsEnabled {
-        Info(INTERNAL_SRC, "Listening on 'https://" + listener + "'...")
+        Info(INTERNAL_SRC, "Listening on 'https://"+listener+"'...")
         err := http.ListenAndServeTLS(listener,
             CONFIG.TlsCert,
             CONFIG.TlsKey, nil,
@@ -92,7 +92,7 @@ func main() {
             Die(INTERNAL_SRC, "ListenAndServeTLS", err)
         }
     } else {
-        Info(INTERNAL_SRC, "Listening on 'http://" + listener + "'...")
+        Info(INTERNAL_SRC, "Listening on 'http://"+listener+"'...")
         http.ListenAndServe(listener, nil)
     }
 }

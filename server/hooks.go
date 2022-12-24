@@ -1,12 +1,12 @@
 package server
 
 import (
-	"encoding/json"
-	"io/fs"
-	"net/http"
-	"path/filepath"
-	"strings"
-	"text/template"
+    "encoding/json"
+    "io/fs"
+    "net/http"
+    "path/filepath"
+    "strings"
+    "text/template"
 )
 
 // Return 404 for any request that ends on a '/'
@@ -113,7 +113,7 @@ func MapReqToUser(res http.ResponseWriter, req *http.Request) User {
     }
 
     if user.Name == "" {
-        Warn(req.RemoteAddr, "Origin has no matching user: " + req.RemoteAddr)
+        Warn(req.RemoteAddr, "Origin has no matching user: "+req.RemoteAddr)
         ErrorResponse(res, "Invalid origin or user", http.StatusUnauthorized)
     }
 

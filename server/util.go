@@ -1,9 +1,9 @@
 package server
 
 import (
-	"log"
-	"os"
-	"strings"
+    "log"
+    "os"
+    "strings"
 )
 
 func Die(src string, strs ...interface{}) {
@@ -36,9 +36,9 @@ func Err(src string, args ...interface{}) {
 
 func logPrefix(src string, color string, label string) {
     if CONFIG.Color {
-        log.SetPrefix("\033[" + color + "m" + label + "\033[0m ["+src+"] ")
+        log.SetPrefix("\033[" + color + "m" + label + "\033[0m [" + src + "] ")
     } else {
-        log.SetPrefix(label + " ["+src+"] ")
+        log.SetPrefix(label + " [" + src + "] ")
     }
 }
 

@@ -1,14 +1,14 @@
 package server
 
 import (
-	"io"
-	"math/rand"
-	"net/http"
-	"os"
-	"os/exec"
-	"regexp"
-	"strings"
-	"sync"
+    "io"
+    "math/rand"
+    "net/http"
+    "os"
+    "os/exec"
+    "regexp"
+    "strings"
+    "sync"
 )
 
 // Lock to prevent concurrent invocations of `pass` by different users.
@@ -84,7 +84,7 @@ func GetPass(res http.ResponseWriter, req *http.Request) {
         }
     } else if err == nil {
         // Reply with decrypted password
-        Info(req.RemoteAddr, "Replying with password for '" + passPath + "'" + " to " + req.RemoteAddr)
+        Info(req.RemoteAddr, "Replying with password for '"+passPath+"'"+" to "+req.RemoteAddr)
         WriteResponse(res, StatusSuccess, "", output)
     } else {
         // Fallback for errors other than 'GPG_FAIL_STRING'
@@ -157,16 +157,16 @@ func AddPass(res http.ResponseWriter, req *http.Request) {
     if cmd.ProcessState.ExitCode() == 0 && generate {
         // Respond with generated passphrase
         WriteResponse(res, StatusSuccess, "", passphrase)
-        Info(req.RemoteAddr, "Generated passphrase for '" + passPath + "'")
+        Info(req.RemoteAddr, "Generated passphrase for '"+passPath+"'")
 
     } else if cmd.ProcessState.ExitCode() == 0 {
         WriteResponse(res, StatusSuccess, "", "")
-        Info(req.RemoteAddr, "Added passphrase for '" + passPath + "'")
+        Info(req.RemoteAddr, "Added passphrase for '"+passPath+"'")
 
     } else {
         ErrorResponse(res, "Failed to insert password",
             http.StatusInternalServerError)
-            Err(req.RemoteAddr, "Failed to insert password: '" + passPath + "'")
+        Err(req.RemoteAddr, "Failed to insert password: '"+passPath+"'")
     }
 }
 
@@ -203,7 +203,7 @@ func DelPass(res http.ResponseWriter, req *http.Request) {
                 http.StatusInternalServerError)
             return
         }
-        Info(req.RemoteAddr, "Deleted: '" + passPath + "'")
+        Info(req.RemoteAddr, "Deleted: '"+passPath+"'")
     } else {
         ErrorResponse(res, "Invalid path", http.StatusBadRequest)
         return
