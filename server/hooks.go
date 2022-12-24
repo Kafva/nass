@@ -113,7 +113,7 @@ func MapReqToUser(res http.ResponseWriter, req *http.Request) User {
     }
 
     if user.Name == "" {
-        Warn(req.RemoteAddr, "Origin has no matching user: "+req.RemoteAddr)
+        Warn(req.RemoteAddr, "Origin has no matching user")
         ErrorResponse(res, "Invalid origin or user", http.StatusUnauthorized)
     }
 

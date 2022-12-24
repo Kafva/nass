@@ -84,7 +84,7 @@ func GetPass(res http.ResponseWriter, req *http.Request) {
         }
     } else if err == nil {
         // Reply with decrypted password
-        Info(req.RemoteAddr, "Replying with password for '"+passPath+"'"+" to "+req.RemoteAddr)
+        Info(req.RemoteAddr, "Replying with password for '"+passPath+"'")
         WriteResponse(res, StatusSuccess, "", output)
     } else {
         // Fallback for errors other than 'GPG_FAIL_STRING'
