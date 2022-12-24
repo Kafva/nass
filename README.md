@@ -21,6 +21,9 @@ other setups will require varying amounts of tweaking.
 
 1. Create GPG keys for each user with [scripts/genkey.sh](/scripts/genkey.sh)
 ```bash
+# Start a session with history tracking disabled
+bash --init-file <(echo 'source ~/.bashrc; unset HISTFILE; set +o history')
+
 ./scripts/genkey.sh $name $email $master_password
 ```
 and backup up the exported `./keys`.
