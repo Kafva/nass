@@ -1,13 +1,13 @@
 package server
 
 import (
-    "net/http"
-    "net/http/httptest"
-    "os"
-    "runtime/debug"
-    "strconv"
-    "strings"
-    "testing"
+	"net/http"
+	"net/http/httptest"
+	"os"
+	"runtime/debug"
+	"strconv"
+	"strings"
+	"testing"
 )
 
 const USERNAME = "tester"
@@ -34,6 +34,19 @@ func assert_validatePassword(t *testing.T, res http.ResponseWriter,
     if expected != validated {
         debug.PrintStack()
         t.Error("Expected: '" + expected + "', Actual: '" + validated + "'")
+    }
+}
+
+func assert_formGet(t *testing.T, res http.ResponseWriter, body string, expected string) {
+    req := httptest.NewRequest(http.MethodPost, "/add?path=test", strings.NewReader(body))
+    req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+    req.ParseForm()
+
+    value := formGet(res, req, "pass", true)
+
+    if expected != value {
+        debug.PrintStack()
+        t.Error("Expected: '" + expected + "', Actual: '" + value + "'")
     }
 }
 
@@ -117,4 +130,10 @@ func Test_validatePassword(t *testing.T) {
     assert_validatePassword(t, res, ">>> 🤣 <<<", "")
     assert_validatePassword(t, res, "\\", "")
     assert_validatePassword(t, res, strings.Repeat("A", maxLen+1), "")
+}
+
+func Test_formGet(t *testing.T) {
+    res := httptest.NewRecorder()
+    assert_formGet(t, res, "pass=badpass&generate=false", "badpass")
+    assert_formGet(t, res, "pass=with%Percent&generate=false", "with%Percent")
 }
