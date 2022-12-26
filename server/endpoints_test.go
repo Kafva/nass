@@ -30,7 +30,7 @@ func assert_validatePath(t *testing.T, res http.ResponseWriter,
 // Test if password validation of `value` results in the `expected` output
 func assert_validatePassword(t *testing.T, res http.ResponseWriter,
     value string, expected string) {
-    validated := validatePassword(res, value)
+    validated,_ := validatePassword(value)
 
     if expected != validated {
         debug.PrintStack()
@@ -43,7 +43,7 @@ func assert_formGet(t *testing.T, res http.ResponseWriter, body string, expected
     req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
     req.ParseForm()
 
-    value := formGet(res, req, "pass", true)
+    value,_ := formGet(req, "pass", true)
 
     if expected != value {
         debug.PrintStack()
