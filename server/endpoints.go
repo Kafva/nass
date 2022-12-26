@@ -62,8 +62,8 @@ func GetPass(res http.ResponseWriter, req *http.Request) {
         }
 
         cmd.Env = append(cmd.Env,
-            "PASSWORD_STORE_GPG_OPTS=--pinentry-mode loopback --passphrase "+
-                passphrase,
+            "PASSWORD_STORE_GPG_OPTS=--pinentry-mode loopback --passphrase '"+
+                passphrase + "'",
         )
     }
 
