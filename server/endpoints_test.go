@@ -1,14 +1,14 @@
 package server
 
 import (
-    "net/http"
-    "net/http/httptest"
-    "net/url"
-    "os"
-    "runtime/debug"
-    "strconv"
-    "strings"
-    "testing"
+	"net/http"
+	"net/http/httptest"
+	"net/url"
+	"os"
+	"runtime/debug"
+	"strconv"
+	"strings"
+	"testing"
 )
 
 const USERNAME = "tester"
@@ -139,8 +139,12 @@ func Test_formGet(t *testing.T) {
     assert_formGet(t, res, "pass=bad%urlencoding&generate=false", "")
     assert_formGet(t, res, "pass=bad%&&urlencoding&generate=false", "")
 
+
     assert_formGet(t, res, "pass="+url.QueryEscape("good%urlencoding"),
         "good%urlencoding")
     assert_formGet(t, res, "pass="+url.QueryEscape("good%&&urlencoding"),
         "good%&&urlencoding")
+
+    assert_formGet(t, res, "pass=bad'", "")
+    assert_formGet(t, res, "pass="+url.QueryEscape("bad'"), "")
 }

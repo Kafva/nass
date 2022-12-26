@@ -61,9 +61,9 @@ func GetPass(res http.ResponseWriter, req *http.Request) {
             return
         }
 
-        cmd.Env = append(cmd.Env,
-            "PASSWORD_STORE_GPG_OPTS=--pinentry-mode loopback --passphrase '"+
-                passphrase + "'",
+        // TODO The passphrase could be a shell injection
+        cmd.Env = append(cmd.Env, 
+            "PASSWORD_STORE_GPG_OPTS=--pinentry-mode loopback --passphrase " + passphrase,
         )
     }
 
@@ -80,6 +80,7 @@ func GetPass(res http.ResponseWriter, req *http.Request) {
             WriteResponse(res, StatusRetry,
                 "Retry with password in POST request", "")
         } else {
+            Warn(req.RemoteAddr, "Incorrect password entry")
             WriteResponse(res, StatusFailed, "Incorrect password", "")
         }
     } else if err == nil {
@@ -304,6 +305,8 @@ func formGet(res http.ResponseWriter, req *http.Request, param string,
 
     if value == "" && mandatory {
         ErrorResponse(res, "Missing value for "+param, http.StatusBadRequest)
+    } else if param == "pass" && validatePassword(res, value) == "" {
+        return ""
     }
     return value
 }

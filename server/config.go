@@ -1,7 +1,7 @@
 package server
 
 import (
-    "os"
+	"os"
 )
 
 const WEBROOT = "./dist"
@@ -74,5 +74,5 @@ const MAX_PASS_DEPTH = 6
 const PASSENTRY_REGEX = "^[-_.@/a-zA-Z0-9]{1," + TEXT_MAX_LEN + "}$"
 
 // 1-`TEXT_MAX_LEN` alpha numeric characters including most ASCII symbols
-const SYMBOLS = "- §$!\"'#€%&(){}[\\]=:;|?*<>_.,@/"
+const SYMBOLS = "- §$!\"#€%&(){}[\\]=:;|?*<>_.,@/"
 const PASSWORD_REGEX = "^[" + SYMBOLS + "a-zA-Z0-9åäöÅÄÖ]{1," + TEXT_MAX_LEN + "}$"

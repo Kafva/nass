@@ -8,6 +8,7 @@ if [[ ! -f /.dockerenv && ! -f /run/.containerenv ]]; then
 fi
 
 USERS=(john jane)
+PASSPHRASE_SUFFIX='$(hey)'
 
 DB=(
     john/Wallets/btc/main
@@ -37,7 +38,7 @@ DB=(
 
 # Create development keys
 for u in ${USERS[@]}; do
-    ./scripts/genkey.sh $u $u@kafva.one "$u"
+    ./scripts/genkey.sh $u $u@kafva.one "$u${PASSPHRASE_SUFFIX}"
     ./scripts/importkey.sh "$u"
 done
 
@@ -47,7 +48,7 @@ for entry in ${DB[@]}; do
     pass insert ${entry} < <(printf "$password\n$password\n")
 
     # Extra GPG options for pass
-    export PASSPHRASE=$(cut -f1 -d/ <<< $entry)
+    export PASSPHRASE="$(cut -f1 -d/ <<< $entry)${PASSPHRASE_SUFFIX}"
     export PASSWORD_STORE_GPG_OPTS="--pinentry-mode loopback --passphrase $PASSPHRASE"
     plaintext=$(pass ${entry})
 
