@@ -64,9 +64,22 @@ func GetPass(res http.ResponseWriter, req *http.Request) {
             return
         }
 
-        // TODO The passphrase could be a shell injection
+        f, err := os.CreateTemp("", "pass")
+        if err !=  nil {
+            ErrorResponse(res, err.Error(), http.StatusInternalServerError)
+            return
+        }
+        tmpfile := f.Name()
+
+        defer os.Remove(tmpfile)
+
+        f.Write([]byte(passphrase))
+        f.Close()
+
+        // The passphrase could be a shell injection so we load it from a file
+        // instead of using '--passphrase' directly
         cmd.Env = append(cmd.Env,
-            "PASSWORD_STORE_GPG_OPTS=--pinentry-mode loopback --passphrase " + passphrase,
+            "PASSWORD_STORE_GPG_OPTS=--pinentry-mode loopback --passphrase-file " + tmpfile,
         )
     }
 
@@ -94,7 +107,6 @@ func GetPass(res http.ResponseWriter, req *http.Request) {
         Err(req.RemoteAddr, err)
         ErrorResponse(res, output, http.StatusBadRequest)
     }
-
 }
 
 /*
