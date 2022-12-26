@@ -1,13 +1,14 @@
 package server
 
 import (
-	"net/http"
-	"net/http/httptest"
-	"os"
-	"runtime/debug"
-	"strconv"
-	"strings"
-	"testing"
+    "net/http"
+    "net/http/httptest"
+    "net/url"
+    "os"
+    "runtime/debug"
+    "strconv"
+    "strings"
+    "testing"
 )
 
 const USERNAME = "tester"
@@ -135,5 +136,11 @@ func Test_validatePassword(t *testing.T) {
 func Test_formGet(t *testing.T) {
     res := httptest.NewRecorder()
     assert_formGet(t, res, "pass=badpass&generate=false", "badpass")
-    assert_formGet(t, res, "pass=with%Percent&generate=false", "with%Percent")
+    assert_formGet(t, res, "pass=bad%urlencoding&generate=false", "")
+    assert_formGet(t, res, "pass=bad%&&urlencoding&generate=false", "")
+
+    assert_formGet(t, res, "pass="+url.QueryEscape("good%urlencoding"),
+        "good%urlencoding")
+    assert_formGet(t, res, "pass="+url.QueryEscape("good%&&urlencoding"),
+        "good%&&urlencoding")
 }

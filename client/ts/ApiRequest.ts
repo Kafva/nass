@@ -38,17 +38,17 @@ export default class ApiRequest {
         return apiRes
     }
 
-    /**
-   * Fetch the value for a given path from the `/get` endpoint.
-   * If no cached credentials are available, the `ApiResponse`
-   * will be set to `ApiStatusResponse.retry`.
-   * The method uses msgText.set() on its own if an error occurs.
-   */
+    /*
+     * Fetch the value for a given path from the `/get` endpoint.
+     * If no cached credentials are available, the `ApiResponse`
+     * will be set to `ApiStatusResponse.retry`.
+     * The method uses msgText.set() on its own if an error occurs.
+     */
     async getPass(path: string, password: string): Promise<ApiResponse> {
         const reqInfo = password == "" ?
                     { method: 'GET' } as RequestInit :
                     { method: 'POST',
-                        body: `pass=${password}`,
+                        body: `pass=${encodeURI(password)}`,
                         headers: {
                             'content-type': 'application/x-www-form-urlencoded'
                         }
@@ -64,7 +64,7 @@ export default class ApiRequest {
     async addPass(path: string, pass: string, generate: boolean): Promise<ApiResponse> {
         return this.baseRequest(`/add?path=${path}`, {
             method: 'POST',
-            body: generate ? "generate=true" : `pass=${pass}`,
+            body: generate ? "generate=true" : `pass=${encodeURI(pass)}`,
             headers: {
                 'content-type': 'application/x-www-form-urlencoded'
             }
