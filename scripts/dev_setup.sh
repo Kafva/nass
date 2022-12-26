@@ -8,7 +8,7 @@ if [[ ! -f /.dockerenv && ! -f /run/.containerenv ]]; then
 fi
 
 USERS=(john jane)
-PASSPHRASE_SUFFIX='$(hey)'
+PASSPHRASE_SUFFIX='$(%)'
 
 DB=(
     john/Wallets/btc/main

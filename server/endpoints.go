@@ -1,15 +1,15 @@
 package server
 
 import (
-	"errors"
-	"io"
-	"math/rand"
-	"net/http"
-	"os"
-	"os/exec"
-	"regexp"
-	"strings"
-	"sync"
+    "errors"
+    "io"
+    "math/rand"
+    "net/http"
+    "os"
+    "os/exec"
+    "regexp"
+    "strings"
+    "sync"
 )
 
 // Lock to prevent concurrent invocations of `pass` by different users.
@@ -25,7 +25,7 @@ var DB_LOCK sync.Mutex
  2. If this fails, prompt the user for the master password and re-run:
     POST /get?path=<...>
     pass=<...>
-    PASSWORD_STORE_GPG_OPTS="--pinentry-mode loopback --passphrase $PASSPHRASE"
+    PASSWORD_STORE_GPG_OPTS="--pinentry-mode loopback --passphrase-file $PASSPHRASE_FILE"
 
     https://superuser.com/a/1212720/986426
 */
@@ -59,13 +59,13 @@ func GetPass(res http.ResponseWriter, req *http.Request) {
         req.ParseForm()
 
         passphrase, err := formGet(req, "pass", true)
-        if err !=  nil {
+        if err != nil {
             ErrorResponse(res, err.Error(), http.StatusBadRequest)
             return
         }
 
         f, err := os.CreateTemp("", "pass")
-        if err !=  nil {
+        if err != nil {
             ErrorResponse(res, err.Error(), http.StatusInternalServerError)
             return
         }
@@ -79,7 +79,7 @@ func GetPass(res http.ResponseWriter, req *http.Request) {
         // The passphrase could be a shell injection so we load it from a file
         // instead of using '--passphrase' directly
         cmd.Env = append(cmd.Env,
-            "PASSWORD_STORE_GPG_OPTS=--pinentry-mode loopback --passphrase-file " + tmpfile,
+            "PASSWORD_STORE_GPG_OPTS=--pinentry-mode loopback --passphrase-file "+tmpfile,
         )
     }
 
@@ -136,17 +136,16 @@ func AddPass(res http.ResponseWriter, req *http.Request) {
     req.ParseForm()
 
     passphrase, err := formGet(req, "pass", false)
-    if err !=  nil {
+    if err != nil {
         ErrorResponse(res, err.Error(), http.StatusBadRequest)
         return
     }
 
-    generate,err := formGet(req, "generate", false)
-    if err !=  nil {
+    generate, err := formGet(req, "generate", false)
+    if err != nil {
         ErrorResponse(res, err.Error(), http.StatusBadRequest)
         return
     }
-
 
     if generate == "true" {
         passphrase = genPass()
@@ -184,7 +183,6 @@ func AddPass(res http.ResponseWriter, req *http.Request) {
 
     retcode := cmd.ProcessState.ExitCode()
 
-
     if retcode == 0 && generate == "true" {
         // Respond with generated passphrase
         WriteResponse(res, StatusSuccess, "", passphrase)
@@ -195,7 +193,7 @@ func AddPass(res http.ResponseWriter, req *http.Request) {
         Info(req.RemoteAddr, "Added passphrase for '"+passPath+"'")
 
     } else {
-        msg := "Failed to insert password: '"+passPath+"'"
+        msg := "Failed to insert password: '" + passPath + "'"
         ErrorResponse(res, msg, http.StatusInternalServerError)
         Err(req.RemoteAddr, msg)
     }
@@ -305,10 +303,9 @@ func validatePath(res http.ResponseWriter,
     }
 }
 
-
 // Returns a sanitized password on success and an empty
 // string if validation fails.
-func validatePassword(password string) (string,error) {
+func validatePassword(password string) (string, error) {
     regex := regexp.MustCompile(PASSWORD_REGEX)
 
     if regex.Match([]byte(password)) {
@@ -336,7 +333,7 @@ func formGet(req *http.Request, param string, mandatory bool) (string, error) {
         return value, nil
 
     } else if value == "" && mandatory {
-        return "", errors.New("Missing value for "+param)
+        return "", errors.New("Missing value for " + param)
 
     } else if param == "pass" {
         validated, err := validatePassword(value)

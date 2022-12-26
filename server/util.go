@@ -1,12 +1,12 @@
 package server
 
 import (
-	"fmt"
-	"log"
-	"os"
-	"path/filepath"
-	"runtime"
-	"strings"
+    "fmt"
+    "log"
+    "os"
+    "path/filepath"
+    "runtime"
+    "strings"
 )
 
 func Die(src string, strs ...interface{}) {
@@ -44,9 +44,9 @@ func logPrefix(src string, color string, label string) {
         caller = filepath.Base(file) + ":" + fmt.Sprint(line) + " "
     }
     if CONFIG.Color {
-        log.SetPrefix("\033[" + color + "m" + label + "\033[0m [" + src + "] " +  caller)
+        log.SetPrefix("\033[" + color + "m" + label + "\033[0m [" + src + "] " + caller)
     } else {
-        log.SetPrefix(label + " [" + src + "] " +  caller)
+        log.SetPrefix(label + " [" + src + "] " + caller)
     }
 }
 
