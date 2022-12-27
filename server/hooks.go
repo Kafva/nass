@@ -42,7 +42,7 @@ func TemplateHook(next http.Handler) http.Handler {
             // has paths resolved by Vite
             var tmpl = template.Must(template.ParseFiles(WEBROOT + "/index.html"))
 
-            rootDir := password_root_dir(&user)
+            rootDir := passwordRootDir(&user)
             if !IsDir(rootDir) {
                 ErrorResponse(res, "Missing passwordstore", http.StatusInternalServerError)
                 return
@@ -122,7 +122,7 @@ func MapReqToUser(res http.ResponseWriter, req *http.Request) (User, error) {
     return user, nil
 }
 
-func password_root_dir(user *User) string {
+func passwordRootDir(user *User) string {
     if CONFIG.SingleUser {
         return ExpandTilde(CONFIG.Passwordstore)
     } else {

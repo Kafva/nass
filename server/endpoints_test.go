@@ -135,6 +135,7 @@ func Test_validatePassword(t *testing.T) {
 
 func Test_formGet(t *testing.T) {
     res := httptest.NewRecorder()
+    assert_formGet(t, res, "pass", "pass=with'quote", "with'quote")
     assert_formGet(t, res, "pass", "pass=badpass&generate=false", "badpass")
     assert_formGet(t, res, "pass", "pass=bad%urlencoding&generate=false", "")
     assert_formGet(t, res, "pass", "pass=bad%&&urlencoding&generate=false", "")
@@ -143,9 +144,6 @@ func Test_formGet(t *testing.T) {
         "good%urlencoding")
     assert_formGet(t, res, "pass", "pass="+url.QueryEscape("good%&&urlencoding"),
         "good%&&urlencoding")
-
-    assert_formGet(t, res, "pass", "pass=bad'", "")
-    assert_formGet(t, res, "pass", "pass="+url.QueryEscape("bad'"), "")
 
     assert_formGet(t, res, "generate", "generate=truee", "")
     assert_formGet(t, res, "generate", "generate=true", "true")
