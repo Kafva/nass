@@ -38,12 +38,12 @@ func assert_validatePassword(t *testing.T, res http.ResponseWriter,
     }
 }
 
-func assert_formGet(t *testing.T, res http.ResponseWriter, body string, expected string) {
+func assert_formGet(t *testing.T, res http.ResponseWriter, param string, body string, expected string) {
     req := httptest.NewRequest(http.MethodPost, "/add?path=test", strings.NewReader(body))
     req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
     req.ParseForm()
 
-    value, _ := formGet(req, "pass", true)
+    value, _ := formGet(req, param, true)
 
     if expected != value {
         debug.PrintStack()
@@ -135,15 +135,18 @@ func Test_validatePassword(t *testing.T) {
 
 func Test_formGet(t *testing.T) {
     res := httptest.NewRecorder()
-    assert_formGet(t, res, "pass=badpass&generate=false", "badpass")
-    assert_formGet(t, res, "pass=bad%urlencoding&generate=false", "")
-    assert_formGet(t, res, "pass=bad%&&urlencoding&generate=false", "")
+    assert_formGet(t, res, "pass", "pass=badpass&generate=false", "badpass")
+    assert_formGet(t, res, "pass", "pass=bad%urlencoding&generate=false", "")
+    assert_formGet(t, res, "pass", "pass=bad%&&urlencoding&generate=false", "")
 
-    assert_formGet(t, res, "pass="+url.QueryEscape("good%urlencoding"),
+    assert_formGet(t, res, "pass", "pass="+url.QueryEscape("good%urlencoding"),
         "good%urlencoding")
-    assert_formGet(t, res, "pass="+url.QueryEscape("good%&&urlencoding"),
+    assert_formGet(t, res, "pass", "pass="+url.QueryEscape("good%&&urlencoding"),
         "good%&&urlencoding")
 
-    assert_formGet(t, res, "pass=bad'", "")
-    assert_formGet(t, res, "pass="+url.QueryEscape("bad'"), "")
+    assert_formGet(t, res, "pass", "pass=bad'", "")
+    assert_formGet(t, res, "pass", "pass="+url.QueryEscape("bad'"), "")
+
+    assert_formGet(t, res, "generate", "generate=truee", "")
+    assert_formGet(t, res, "generate", "generate=true", "true")
 }

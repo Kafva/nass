@@ -2,6 +2,7 @@ package server
 
 import (
     "encoding/json"
+    "errors"
     "io/fs"
     "net/http"
     "path/filepath"
@@ -30,8 +31,9 @@ func DisableDirListings(next http.Handler) http.Handler {
 // we use a template to include these resources automatically on every request
 func TemplateHook(next http.Handler) http.Handler {
     return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-        user := MapReqToUser(res, req)
-        if user.Name == "" {
+        user, err := MapReqToUser(res, req)
+        if err != nil {
+            ErrorResponse(res, err.Error(), http.StatusUnauthorized)
             return
         }
 
@@ -100,7 +102,7 @@ func ErrorResponse(res http.ResponseWriter, desc string, code int) bool {
 
 // Verify that the origin of the requests matches an existing `User`.
 // Returns a user with an empty name if no match was found.
-func MapReqToUser(res http.ResponseWriter, req *http.Request) User {
+func MapReqToUser(res http.ResponseWriter, req *http.Request) (User, error) {
     var user = User{}
 
     if remoteIP := ipFromAddr(req); remoteIP != "" {
@@ -114,10 +116,10 @@ func MapReqToUser(res http.ResponseWriter, req *http.Request) User {
 
     if user.Name == "" {
         Warn(req.RemoteAddr, "Origin has no matching user")
-        ErrorResponse(res, "Invalid origin or user", http.StatusUnauthorized)
+        return user, errors.New("Invalid origin or user")
     }
 
-    return user
+    return user, nil
 }
 
 func password_root_dir(user *User) string {

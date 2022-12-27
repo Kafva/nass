@@ -30,14 +30,7 @@ var DB_LOCK sync.Mutex
     https://superuser.com/a/1212720/986426
 */
 func GetPass(res http.ResponseWriter, req *http.Request) {
-    res.Header().Set("Content-Type", "application/json")
-
-    if req.Method != http.MethodPost && req.Method != http.MethodGet {
-        ErrorResponse(res, "Unsupported method", http.StatusForbidden)
-        return
-    }
-
-    user := MapReqToUser(res, req)
+    user := endpointCommon(res, req, req.Method != http.MethodPost && req.Method != http.MethodGet)
     if user.Name == "" {
         return
     }
@@ -54,7 +47,6 @@ func GetPass(res http.ResponseWriter, req *http.Request) {
         cmd.Env = append(cmd.Env,
             "PASSWORD_STORE_GPG_OPTS=--pinentry-mode error --no-tty",
         )
-
     } else { // POST
         req.ParseForm()
 
@@ -116,14 +108,7 @@ POST /add?path=Service/web
     generate=[true|false]
 */
 func AddPass(res http.ResponseWriter, req *http.Request) {
-    res.Header().Set("Content-Type", "application/json")
-
-    if req.Method != http.MethodPost {
-        ErrorResponse(res, "Unsupported method", http.StatusForbidden)
-        return
-    }
-
-    user := MapReqToUser(res, req)
+    user := endpointCommon(res, req, req.Method != http.MethodPost)
     if user.Name == "" {
         return
     }
@@ -156,7 +141,7 @@ func AddPass(res http.ResponseWriter, req *http.Request) {
     defer stdin.Close()
 
     if err != nil {
-        ErrorResponse(res, "internal errror", http.StatusInternalServerError)
+        ErrorResponse(res, INTERNAL_ERR_STRING, http.StatusInternalServerError)
         Err(INTERNAL_SRC, "Failed to open pipe")
         return
     }
@@ -166,7 +151,7 @@ func AddPass(res http.ResponseWriter, req *http.Request) {
 
     err = cmd.Start()
     if err != nil {
-        ErrorResponse(res, "internal errror", http.StatusInternalServerError)
+        ErrorResponse(res, INTERNAL_ERR_STRING, http.StatusInternalServerError)
         Err(INTERNAL_SRC, "Failed to insert '"+passPath+"'")
         return
     }
@@ -176,7 +161,7 @@ func AddPass(res http.ResponseWriter, req *http.Request) {
     cmd.Wait()
 
     if err != nil {
-        ErrorResponse(res, "internal errror", http.StatusInternalServerError)
+        ErrorResponse(res, INTERNAL_ERR_STRING, http.StatusInternalServerError)
         Err(INTERNAL_SRC, "Error reading stdout", err)
         return
     }
@@ -204,14 +189,7 @@ This operation works for both directories and lone files
 DELETE /del?path=Service/web
 */
 func DelPass(res http.ResponseWriter, req *http.Request) {
-    res.Header().Set("Content-Type", "application/json")
-
-    if req.Method != http.MethodDelete {
-        ErrorResponse(res, "Unsupported method", http.StatusForbidden)
-        return
-    }
-
-    user := MapReqToUser(res, req)
+    user := endpointCommon(res, req, req.Method != http.MethodDelete)
     if user.Name == "" {
         return
     }
@@ -313,6 +291,24 @@ func validatePassword(password string) (string, error) {
     } else {
         return "", errors.New("Invalid password format")
     }
+}
+
+// Initial shared code between all endpoints
+func endpointCommon(res http.ResponseWriter, req *http.Request, method_condition bool) User {
+    res.Header().Set("Content-Type", "application/json")
+
+    if method_condition {
+        ErrorResponse(res, "Unsupported method", http.StatusForbidden)
+        return User{}
+    }
+
+    user, err := MapReqToUser(res, req)
+    if err != nil {
+        ErrorResponse(res, err.Error(), http.StatusUnauthorized)
+        return User{}
+    }
+
+    return user
 }
 
 // There is a built-in password generation option in `pass` but
