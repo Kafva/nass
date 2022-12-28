@@ -48,7 +48,7 @@ export default class ApiRequest {
         const reqInfo = password == "" ?
                     { method: 'GET' } as RequestInit :
                     { method: 'POST',
-                        body: `pass=${encodeURI(password)}`,
+                        body: `pass=${encodeURIComponent(password)}`,
                         headers: {
                             'content-type': 'application/x-www-form-urlencoded'
                         }
@@ -64,7 +64,7 @@ export default class ApiRequest {
     async addPass(path: string, pass: string, generate: boolean): Promise<ApiResponse> {
         return this.baseRequest(`/add?path=${path}`, {
             method: 'POST',
-            body: generate ? "generate=true" : `pass=${encodeURI(pass)}`,
+            body: generate ? "generate=true" : `pass=${encodeURIComponent(pass)}`,
             headers: {
                 'content-type': 'application/x-www-form-urlencoded'
             }
