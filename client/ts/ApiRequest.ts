@@ -5,6 +5,11 @@ import { Err } from "./util";
 import { msgTextStore } from "../ts/store";
 
 export default class ApiRequest {
+    /**
+     * NOTE: The following parameters need to be URL-encoded by the caller:
+     *    pass=<...> (body)
+     *    path=<...> (query string)
+     */
     private async baseRequest(url: string, reqInfo: RequestInit):
     Promise<ApiResponse> {
         if (Config.useMockApi) {

@@ -124,7 +124,6 @@ func Test_validatePassword(t *testing.T) {
     assert_validatePassword(t, res, sentance, sentance)
     assert_validatePassword(t, res, "\\", "\\")
     assert_validatePassword(t, res, symbols, symbols)
-    assert_validatePassword(t, res, "- §$!\"'#€%&(){}[\\]=:;|?*<>_.,+@", "- §$!\"'#€%&(){}[\\]=:;|?*<>_.,+@")
 
     /* INVALID */
     assert_validatePassword(t, res, "", "")
