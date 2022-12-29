@@ -106,7 +106,7 @@ div#dialog {
         width: vars.$dialog_width_tiny_mobile;
         margin-left: 8%;
         height: fit-content;
-        max-height: calc(vars.$tiny_mobile_max_height - 100px);
+        max-height: calc(vars.$tiny_mobile_max_height - 180px);
         overflow-x: hidden;
         overflow-y: scroll;
     }

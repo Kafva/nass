@@ -2,7 +2,7 @@
 $mobile_min_width: 320px;
 $mobile_max_width: 480px;
 $desktop_min_width: 1024px;
-$tiny_mobile_max_height: 480px;
+$tiny_mobile_max_height: 570px;
 
 // Colors
 $lilac:      #6e85d3;
@@ -49,12 +49,9 @@ $cover_z: 9;
     }
 }
 
-// For very small displays (iPhone 4/5)
+// For very small displays (iPhone SE)
 @mixin tiny-mobile() {
-    @media
-        (min-width: $mobile_min_width) and
-        (max-width: $mobile_max_width) and
-        (max-height: $tiny_mobile_max_height) {
+    @media (max-height: $tiny_mobile_max_height) {
         @content;
     }
 }
