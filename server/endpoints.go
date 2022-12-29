@@ -257,9 +257,6 @@ func validatePath(res http.ResponseWriter,
             // multiuser mode. All paths will be rejected if this file somehow
             // exists.
             for i := range nodes {
-                if i == len(nodes) {
-                    break
-                }
                 parentPath := CONFIG.Passwordstore + "/" + strings.Join(nodes[0:i+1], "/")
 
                 // A directory which overlaps with the new name is not allowed for the
