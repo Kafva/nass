@@ -87,6 +87,7 @@ describe('AddPass.svelte', () => {
         await addPath("-_.@",                         MessageText.added, true)
         await addPath("@.@/-_-",                      MessageText.added, true)
         await addPath("A".repeat(Config.textMaxLen),  MessageText.added, true)
+        await addPath("gg+",                          MessageText.added, true)
 
         // Leading and trailing slashes are trimmed away
         await addPath("/leading", MessageText.added, true)

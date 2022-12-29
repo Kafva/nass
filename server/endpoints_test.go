@@ -79,6 +79,7 @@ func Test_validatePath(t *testing.T) {
     assert_validatePath(t, res, req, &user, "a/b/c/q", USERNAME+"/a/b/c/q")
     assert_validatePath(t, res, req, &user, "Email/some@mail.co", USERNAME+"/Email/some@mail.co")
     assert_validatePath(t, res, req, &user, "Email/john.doe@mail.co", USERNAME+"/Email/john.doe@mail.co")
+    assert_validatePath(t, res, req, &user, url.QueryEscape("gg+"), USERNAME+"/gg+")
 
     /* INVALID */
     assert_validatePath(t, res, req, &user, "/", "")
@@ -118,18 +119,19 @@ func Test_validatePassword(t *testing.T) {
     assert_validatePassword(t, res, "hjkl", "hjkl")
     assert_validatePassword(t, res, "_dir603Pw3Dd-uuJUVKL", "_dir603Pw3Dd-uuJUVKL")
     assert_validatePassword(t, res, strings.Repeat("A", maxLen), strings.Repeat("A", maxLen))
-    assert_validatePassword(t, res, symbols, symbols)
     assert_validatePassword(t, res, "åäö", "åäö")
     assert_validatePassword(t, res, "ÅÄÖ", "ÅÄÖ")
     assert_validatePassword(t, res, sentance, sentance)
+    assert_validatePassword(t, res, "\\", "\\")
+    assert_validatePassword(t, res, symbols, symbols)
+    assert_validatePassword(t, res, "- §$!\"'#€%&(){}[\\]=:;|?*<>_.,+@", "- §$!\"'#€%&(){}[\\]=:;|?*<>_.,+@")
 
     /* INVALID */
     assert_validatePassword(t, res, "", "")
-    assert_validatePassword(t, res, "\\a", "")
+    assert_validatePassword(t, res, "\a", "")
     assert_validatePassword(t, res, "\n", "")
     assert_validatePassword(t, res, "\r", "")
     assert_validatePassword(t, res, ">>> 🤣 <<<", "")
-    assert_validatePassword(t, res, "\\", "")
     assert_validatePassword(t, res, strings.Repeat("A", maxLen+1), "")
 }
 

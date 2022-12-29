@@ -2,6 +2,7 @@ package server
 
 import (
     "os"
+    "regexp"
 )
 
 const WEBROOT = "./dist"
@@ -71,10 +72,10 @@ const TEXT_MAX_LEN = "255"
 // Maximum allowed folder depth in the password store
 const MAX_PASS_DEPTH = 6
 
-// 1-`TEXT_MAX_LEN` alpha numeric characters including '-', '_', '.' and '@'
+// 1-`TEXT_MAX_LEN` alpha numeric characters including '-', '+', '_', '.' and '@'
 // '/' is only allowed up to MAX_PASS_DEPTH times, checked separately
-const PASSENTRY_REGEX = "^[-_.@/a-zA-Z0-9]{1," + TEXT_MAX_LEN + "}$"
+var PASSENTRY_REGEX = regexp.MustCompile(`^[-_.@/a-zA-Z0-9+]{1,` + TEXT_MAX_LEN + "}$")
 
 // 1-`TEXT_MAX_LEN` alpha numeric characters including most ASCII symbols
-const SYMBOLS = "- §$!\"'#€%&(){}[\\]=:;|?*<>_.,@/"
-const PASSWORD_REGEX = "^[" + SYMBOLS + "a-zA-Z0-9åäöÅÄÖ]{1," + TEXT_MAX_LEN + "}$"
+var SYMBOLS = regexp.QuoteMeta(`- §$!"'#€%&(){}[\\]=:;|?*<>_.,+@/`)
+var PASSWORD_REGEX = regexp.MustCompile("^[" + SYMBOLS + "a-zA-Z0-9åäöÅÄÖ]{1," + TEXT_MAX_LEN + "}$")

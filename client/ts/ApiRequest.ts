@@ -54,15 +54,17 @@ export default class ApiRequest {
                         }
                     } as RequestInit
 
-        return this.baseRequest(`/get?path=${path}`, reqInfo)
+        // The 'path' can contain '+' (interpreted as blankspace in URLs)
+        // and therefore needs to be escaped.
+        return this.baseRequest(`/get?path=${encodeURIComponent(path)}`, reqInfo)
     }
 
     async delPass(path: string): Promise<ApiResponse> {
-        return this.baseRequest(`/del?path=${path}`, {method: 'DELETE'})
+        return this.baseRequest(`/del?path=${encodeURIComponent(path)}`, {method: 'DELETE'})
     }
 
     async addPass(path: string, pass: string, generate: boolean): Promise<ApiResponse> {
-        return this.baseRequest(`/add?path=${path}`, {
+        return this.baseRequest(`/add?path=${encodeURIComponent(path)}`, {
             method: 'POST',
             body: generate ? "generate=true" : `pass=${encodeURIComponent(pass)}`,
             headers: {

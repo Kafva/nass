@@ -7,7 +7,6 @@ import (
     "net/http"
     "os"
     "os/exec"
-    "regexp"
     "strings"
     "sync"
 )
@@ -239,9 +238,7 @@ func validatePath(res http.ResponseWriter,
         passPath = user.Name + "/" + passPath
     }
 
-    regex := regexp.MustCompile(PASSENTRY_REGEX)
-
-    if regex.Match([]byte(passPath)) &&
+    if PASSENTRY_REGEX.Match([]byte(passPath)) &&
         strings.Count(passPath, "/") <= MAX_PASS_DEPTH &&
         !strings.Contains(passPath, "//") &&
         !strings.Contains(passPath, ".gpg") &&
@@ -284,9 +281,7 @@ func validatePath(res http.ResponseWriter,
 // Returns a sanitized password on success and an empty
 // string if validation fails.
 func validatePassword(password string) (string, error) {
-    regex := regexp.MustCompile(PASSWORD_REGEX)
-
-    if regex.Match([]byte(password)) {
+    if PASSWORD_REGEX.Match([]byte(password)) {
         return password, nil
     } else {
         return "", errors.New("Invalid password format")
