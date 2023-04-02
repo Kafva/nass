@@ -1,7 +1,7 @@
 <script lang="ts">
   import ApiRequest from '../ts/ApiRequest';
   import { Config, MessageText, passentryRegex, passwordRegex } from '../ts/config';
-  import { msgTextStore, rootEntryStore } from '../ts/store';
+  import { msgTextStore, rootEntryStore, loadingTextStore } from '../ts/store';
   import { ApiStatusResponse } from '../ts/types';
   import type { ApiResponse } from '../ts/types';
   import { fade, IsLikelySafari, IsMobile } from '../ts/util';
@@ -18,10 +18,13 @@
   const suggestFallback = "..."
 
   const validateSubmit = () => {
+      if ($loadingTextStore != "") { return }
+
       // Automatically remove trailing and leading '/'
       const path = pathInput.replace(/^\//, "").replace(/\/$/, "")
       const pathMsg = pathIsValid(path)
       const passMsg = passwordIsValid()
+
 
       if (pathMsg != MessageText.valid) {
           msgTextStore.set([pathMsg, ""])
@@ -31,6 +34,7 @@
           // Conditions met at this point:
           //  * Path is valid
           //  * generatePass is set OR the password+verification is valid
+          loadingTextStore.set("Saving password...")
           api.addPass(path, passInput, generatePass).then( (apiRes: ApiResponse) => {
               if (apiRes.status == ApiStatusResponse.success) {
                   msgTextStore.set([MessageText.added, path])
@@ -41,6 +45,9 @@
           })
               .catch( e => {
                   msgTextStore.set([MessageText.err, e])
+              })
+              .finally(() => {
+                  loadingTextStore.set("")
               })
       }
   }

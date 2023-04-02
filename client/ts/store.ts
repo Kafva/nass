@@ -17,6 +17,9 @@ export const queryStringStore = writable("")
  */
 export const msgTextStore = writable<[string,string]>(["",""])
 
+/** If none empty, show the <Loading/> overlay. */
+export const loadingTextStore = writable<string>("")
+
 /**
  * Used to control if the <Auth/> dialog needs to be displayed and
  * wheter or not to use the clipboard to save requestsed passwords.

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { authInfoStore, foldPolicyStore, msgTextStore, queryStringStore,
-      rootEntryStore, showPassStore, visibleButtonsStore }
+      rootEntryStore, showPassStore, visibleButtonsStore, loadingTextStore }
       from '../ts/store'
   import { Config, MessageText} from '../ts/config'
   import { FoldPolicy } from '../ts/types'
@@ -61,7 +61,10 @@
   }
 
   const handleDelPass = () => {
+      if ($loadingTextStore != "") { return }
+
       if (confirm(`Are you sure you want to delete '${path}'?`)) {
+          loadingTextStore.set("Deleting password...")
           api.delPass(path).then((apiRes: ApiResponse) => {
               if (apiRes.status == ApiStatusResponse.success) {
                   const newTree = $rootEntryStore.updateTree(path, true)
@@ -72,11 +75,18 @@
               .catch(e => {
                   msgTextStore.set([MessageText.err, e])
               })
+              .finally(() => {
+                  loadingTextStore.set("")
+              })
       }
   }
 
   const handleGetPassWithRetry = async (useClipboard: boolean,
       useSafariHack: boolean): Promise<string> => {
+
+      if ($loadingTextStore != "") { return Promise.resolve("") }
+
+      loadingTextStore.set("Fetching password...")
       return api.getPass(path, "").then((apiRes: ApiResponse) => {
           switch (apiRes.status) {
           case ApiStatusResponse.success:
@@ -99,6 +109,7 @@
           case ApiStatusResponse.retry:
               // The authentication dialog is open as long
               // as a non-empty path is set togheter with an empty value
+              loadingTextStore.set("")
               authInfoStore.set({
                   path: path,
                   useClipboard: useClipboard
@@ -112,20 +123,23 @@
               msgTextStore.set([MessageText.err, e])
               return Promise.resolve("")
           })
+          .finally(() => {
+              loadingTextStore.set("")
+          })
   }
 
 
   /** Handler for clipboard button */
   const handleClipboard = () => {
       if (SupportsClipboardWrite()) {
-      // WebKit (Safari and iOS) does not support `clipboard.write*()` outside
-      // of user interaction handlers, i.e. onclick etc.
-      // so we need a wrapper around the `api.getPass()` call for clipboard
-      // management. The clipboard.write() API expects an
-      // array of ClipboardItem objects as input. Each item is a key-mapping from
-      // a MIME-type to a Promise that resolves to a Blob() or string.
-      //
-      // https://webkit.org/blog/10855/async-clipboard-api/
+          // WebKit (Safari and iOS) does not support `clipboard.write*()` outside
+          // of user interaction handlers, i.e. onclick etc.
+          // so we need a wrapper around the `api.getPass()` call for clipboard
+          // management. The clipboard.write() API expects an
+          // array of ClipboardItem objects as input. Each item is a key-mapping from
+          // a MIME-type to a Promise that resolves to a Blob() or string.
+          //
+          // https://webkit.org/blog/10855/async-clipboard-api/
           const useSafariHack = IsLikelySafari() || IsMobile()
           const result = handleGetPassWithRetry(true, useSafariHack)
 

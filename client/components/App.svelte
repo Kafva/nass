@@ -10,6 +10,7 @@
   import Auth from './Auth.svelte'
   import Msg from './Msg.svelte'
   import ShowPass from './ShowPass.svelte'
+  import Loading from './Loading.svelte'
   import { FoldPolicy } from '../ts/types';
   import { Config } from '../ts/config';
 
@@ -49,6 +50,8 @@
 }}"/>
 
 <Msg/>
+
+<Loading/>
 
 <!-- !! These define buttons AND a dialog !! -->
 <Dialog component={Help}    btnClass="nf-mdi-help" title="About"
