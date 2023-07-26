@@ -2,8 +2,11 @@
 # Cross compile for Alpine (arm64) and extract the results
 die() { printf "$1\n" >&2 && exit 1; }
 info() { printf "\033[34m>>>\033[0m $1\n" >&2; }
-usage="usage: $(basename $0) <host> [build: bool] [ansible: bool] [sync: bool]"
+warn() { printf "\033[33mWARN\033[0m: $1\n" >&2; }
+usage="usage: $(basename $0) <host> [build: bool] [ansible: bool] [sync-app: bool] [sync-config: bool]"
 [[ -z "$2" || "$1" = '-h' ]] && die "$usage"
+
+
 
 #==============================================================================#
 BECOME_METHOD=doas
@@ -17,7 +20,8 @@ WG_IFACE=wg1
 TARGET=$1
 BUILD_STEP=${2:-false}
 ANSIBLE_STEP=${3:-false}
-SYNC_STEP=${4:-false}
+SYNC_APP_STEP=${4:-false}
+SYNC_USER_CFG_STEP=${5:-false}
 #==============================================================================#
 
 if $BUILD_STEP; then
@@ -36,20 +40,23 @@ if $BUILD_STEP; then
     docker rm $container
 fi
 
-[ -d ./net ] || die "Stopping... missing ./net"
-
 # The $OUT directory will be the home directory of the application
 # user in deployment.
 mkdir -p -m 700 $OUT/{.password-store,.gnupg,wireguard}
 
-cp net/nass.yml $OUT/conf/nass.yml
-cp net/users.yml $OUT/conf
-cp conf/gitconfig $OUT/.gitconfig
-cp conf/gpg-agent.conf $OUT/.gnupg
-cp -r keys $OUT
-cp net/wireguard/nass* $OUT/wireguard
 cp scripts/importkey.sh $OUT
 git rev-parse --short HEAD > $OUT/VERSION
+cp conf/gitconfig $OUT/.gitconfig
+cp conf/gpg-agent.conf $OUT/.gnupg
+
+if [[ -d ./net && -d ./keys ]]; then
+    cp -r keys $OUT
+    cp net/nass.yml $OUT/conf/nass.yml
+    cp net/users.yml $OUT/conf
+    cp net/wireguard/nass* $OUT/wireguard
+else
+    warn "missing ./net and/or ./keys"
+fi
 
 # Automatically fetch self-signed certs if available
 if [ -d ~/.secret/selfsigned/nassca ]; then
@@ -57,6 +64,8 @@ if [ -d ~/.secret/selfsigned/nassca ]; then
     cp -v ~/.secret/selfsigned/nassca/nass.crt $OUT/tls/server.crt
     cp -v ~/.secret/ssl/nassca/certs/ca.crt $OUT/dist
 fi
+
+tar czf $TGZ $OUT
 
 #==============================================================================#
 if $ANSIBLE_STEP; then
@@ -73,18 +82,40 @@ EOF
 fi
 
 #==============================================================================#
-if $SYNC_STEP; then
-    info "Sync step"
-    tar czf $TGZ $OUT
+
+if $SYNC_APP_STEP; then
+    info "Sync application step"
     rsync $TGZ $TARGET:/tmp/$TGZ
 
-    # Update all application files and the wg interface configuration.
-    # If ./genconf.sh is re-ran (with the same input), it is enough
-    # to re-run the sync step for things to work.
     ssh -t $TARGET "$BECOME_METHOD -u $APP_USER \
-    tar -xzf /tmp/$TGZ -o -m -C $APP_USER_HOME --overwrite \
-      --strip-components 1; \
+      tar -xzf /tmp/$TGZ -o -m -C $APP_USER_HOME \
+        --overwrite \
+        --strip-components 1 \
+        $OUT/nass \
+        $OUT/VERSION \
+        $OUT/dist \
+        $OUT/importkey.sh \
+        $OUT/.gitconfig \
+        $OUT/.gnupg;
       rm /tmp/$TGZ
+      "
+    rm $TGZ
+fi
+
+if $SYNC_USER_CFG_STEP; then
+    info "Sync user configuration step"
+    rsync $TGZ $TARGET:/tmp/$TGZ
+
+    ssh -t $TARGET "$BECOME_METHOD -u $APP_USER \
+      tar -xzf /tmp/$TGZ -o -m -C $APP_USER_HOME \
+        --overwrite \
+        --strip-components 1 \
+        $OUT/tls \
+        $OUT/conf \
+        $OUT/wireguard \
+        $OUT/.password-store;
+      rm /tmp/$TGZ
+
       $BECOME_METHOD cp $APP_USER_HOME/wireguard/nass.cfg \
         /etc/wireguard/$WG_IFACE.conf
       "
