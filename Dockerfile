@@ -1,4 +1,4 @@
-FROM docker.io/alpine:3.16 as builder
+FROM docker.io/alpine:3.18 as builder
 ARG GOARCH
 
 # Build dependencies

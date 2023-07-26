@@ -15,9 +15,12 @@ APP_USER_HOME=/srv/nass
 APP_USER=$(basename $APP_USER_HOME)
 WG_IFACE=wg1
 TARGET=$1
+BUILD_STEP=${2:-false}
+ANSIBLE_STEP=${3:-false}
+SYNC_STEP=${4:-false}
 #==============================================================================#
 
-if ${2:-false}; then
+if $BUILD_STEP; then
     info "Build step"
     rm -rf $OUT
 
@@ -32,6 +35,8 @@ if ${2:-false}; then
     docker cp $container:/nass/dist $OUT
     docker rm $container
 fi
+
+[ -d ./net ] || die "Stopping... missing ./net"
 
 # The $OUT directory will be the home directory of the application
 # user in deployment.
@@ -54,7 +59,7 @@ if [ -d ~/.secret/selfsigned/nassca ]; then
 fi
 
 #==============================================================================#
-if ${3:-false}; then
+if $ANSIBLE_STEP; then
     info "Ansible step"
     cat << EOF > /tmp/$TARGET.yml
 ---
@@ -68,7 +73,7 @@ EOF
 fi
 
 #==============================================================================#
-if ${4:-false}; then
+if $SYNC_STEP; then
     info "Sync step"
     tar czf $TGZ $OUT
     rsync $TGZ $TARGET:/tmp/$TGZ
