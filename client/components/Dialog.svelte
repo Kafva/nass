@@ -51,6 +51,7 @@
 <!-- Some dialogs (like the password prompt) do not need an activation button -->
 {#if btnClass != ""}
   <!-- svelte-ignore a11y-click-events-have-key-events -->
+  <!-- svelte-ignore a11y-interactive-supports-focus -->
   <span role="button" class="{'nf '+ btnClass}"
         title="{title}"
         on:click="{() => {

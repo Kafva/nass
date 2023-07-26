@@ -47,7 +47,7 @@ qrencode -t ansiutf8 < net/wireguard/$user.cfg
   resources from `./keys` and `./net`) with the deployment target.
 ```bash
 #                            [build]   [ansible]   [sync-app] [sync-config]
-./scripts/release.sh $SERVER true      true        true       true  
+./scripts/release.sh $SERVER true      true        true       true
 ```
 
 4. Generate a self-signed certificate for the server (default: `CN=nass`)

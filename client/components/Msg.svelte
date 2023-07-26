@@ -29,6 +29,7 @@
 
 {#if message.length != 0}
   <!-- svelte-ignore a11y-click-events-have-key-events -->
+  <!-- svelte-ignore a11y-interactive-supports-focus -->
   <div role="button"
        transition:fly="{{ percent: percent, duration: 200 }}"
        on:click="{()=> msgTextStore.set(['','']) }">

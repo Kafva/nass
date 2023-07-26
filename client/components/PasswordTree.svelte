@@ -164,6 +164,7 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div class="row"
          style:background-color="{ showButtons ? 'rgba(25, 25, 24, 0.2)' : 'transparent' }">
+      <!-- svelte-ignore a11y-interactive-supports-focus -->
       <span role="button" class="nf { isLeaf ? Config.passwordIcon :
           (open ? Config.dropdownOpen : Config.dropdownClosed) }"
             on:click="{handleMainClick}"
@@ -176,13 +177,16 @@
       {#if showButtons || !IsMobile()}
         <div class="buttons">
           {#if isLeaf}
+            <!-- svelte-ignore a11y-interactive-supports-focus -->
             <span role="button" class="nf {Config.clipboardIcon}"
                   on:click="{handleClipboard}"
                   title="Copy to clipboard"/>
+            <!-- svelte-ignore a11y-interactive-supports-focus -->
             <span role="button" class="nf {Config.showPassword}"
                   on:click="{() => handleGetPassWithRetry(false, false) }"
                   title="Show password"/>
           {/if}
+          <!-- svelte-ignore a11y-interactive-supports-focus -->
           <span role="button" class="nf {Config.deleteIcon}"
                 on:click="{handleDelPass}"
                 title="Delete entry"/>
