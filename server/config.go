@@ -17,7 +17,7 @@ const INTERNAL_SRC = "internal"
 const GEN_PASS_CHARS = "-_.@/0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 
 // The expected output if PIN entry is required to fetch a secret
-const GPG_FAIL_STRING = "gpg: decryption failed: No secret key"
+const GPG_FAIL_STRING = "gpg: public key decryption failed: No pinentry\ngpg: decryption failed: No pinentry"
 
 const INTERNAL_ERR_STRING = "internal error"
 
