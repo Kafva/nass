@@ -95,7 +95,7 @@ func GetPass(res http.ResponseWriter, req *http.Request) {
         WriteResponse(res, StatusSuccess, "", output)
     } else {
         // Fallback for errors other than 'GPG_FAIL_STRING'
-        Err(req.RemoteAddr, err)
+        Err(req.RemoteAddr, output)
         ErrorResponse(res, output, http.StatusBadRequest)
     }
 }

@@ -42,7 +42,7 @@ gpg ${GPG_BATCH[@]} --export-secret-keys $KEYID > "$EXPORT_DIR/$NAME.gpg" &&
     info "Backed up secret key to '$EXPORT_DIR/$NAME.gpg'"
 
 # Decryption without pass:
-#   gpg --output - --decrypt .../password.gpg
+#   gpg --pinentry-mode loopback --output - --decrypt .../password.gpg
 
 # Delete from local keychain by default
 if ! $KEEP; then
