@@ -2,6 +2,8 @@
 <img width=42 height=42 src="./public/assets/icon.png">&nbsp;&nbsp; nass
 </h1>
 
+❗ Superseded by [kage](https://github.com/Kafva/kage) ❗
+
 A mobile friendly web interface for pass,
 *[the standard unix password manager](https://www.passwordstore.org/)*.
 
